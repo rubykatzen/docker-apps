@@ -1,6 +1,6 @@
 #!/bin/bash
-
-docker compose --env-file .env -f ./traefik/docker-compose.yml down
-docker compose --env-file .env -f ./portainer/docker-compose.yml down
-docker compose --env-file .env -f ./whoami/docker-compose.yml down
-docker compose --env-file .env -f ./beszel/docker-compose.yml down
+source apps.env
+for app in "${APPS[@]}"
+do
+  docker compose --env-file .env -f ./"${app}"/docker-compose.yml down
+done

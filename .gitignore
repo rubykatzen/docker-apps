@@ -1,2 +1,3 @@
 /portainer/data
 /traefik/acme.json
+.env

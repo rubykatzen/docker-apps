@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost.my`)"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.${DOMAIN}`)"
     networks:
       - traefik
 networks:

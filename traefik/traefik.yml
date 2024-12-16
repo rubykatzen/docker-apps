@@ -4,25 +4,31 @@ global:
 log:
   level: INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 accesslog: {}
-#  format: common # common, json, logfmt
-#  filePath: /var/log/traefik/access.log
+  # format: common # common, json, logfmt
+  # filePath: /var/log/traefik/access.log
 api:
   dashboard: true
-#  insecure: true
-#entryPoints:
-#  web:
-#    address: ":80"
-#    http:
-#      redirections:
-#        entryPoint:
-#          to: websecure
-#          scheme: https
-#          permanent: false
-#  websecure:
-#    address: ":443"
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: false
+  https:
+    address: ":443"
 providers:
   docker:
-#    endpoint: "unix:///var/run/docker.sock"
+    # endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     network: traefik
     watch: true
+certificatesResolvers:
+  acmeHttpChallengeResolver:
+    acme:
+      email: your_email@examdtfple.com
+      storage: acme.json
+      httpChallenge:
+        entryPoint: http

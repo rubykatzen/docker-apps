@@ -1,3 +1,4 @@
-/portainer/data
 /traefik/acme.json
+/portainer/data
+/beszel/beszel_data
 .env

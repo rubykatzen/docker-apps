@@ -1,0 +1,48 @@
+services:
+  mysql:
+    image: mysql:8.3
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=kimai
+      - MYSQL_USER=kimaiuser
+      - MYSQL_PASSWORD=kimaipassword
+      - MYSQL_ROOT_PASSWORD=changemeplease
+    command: --default-storage-engine innodb
+    restart: unless-stopped
+    healthcheck:
+      test: mysqladmin -p$$MYSQL_ROOT_PASSWORD ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+    networks:
+      - internal
+      - traefik
+  kimai:
+    image: kimai/kimai2:apache
+    volumes:
+      - ./data:/opt/kimai/var/data
+      - ./plugins:/opt/kimai/var/plugins
+    ports:
+      - 8001:8001
+    environment:
+      - ADMINMAIL=${ADMIN_MAIL}
+      - ADMINPASS=${ADMIN_PASS}
+      - "DATABASE_URL=mysql://kimaiuser:kimaipassword@mysql/kimai?charset=utf8mb4&serverVersion=8.3.0"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kimai.rule=Host(`kimai.${DOMAIN}`)"
+      - "traefik.http.services.portainer.loadbalancer.server.port=8001"
+    networks:
+      - internal
+      - traefik
+volumes:
+  data:
+  mysql:
+  plugins:
+networks:
+  internal:
+  traefik:
+    external: true

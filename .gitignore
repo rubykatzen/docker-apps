@@ -1,5 +1,7 @@
 /traefik/acme.json
 /*/data
 /*/mysql
+/*/postgresql
+/*/redis
 /*/plugins
 .env

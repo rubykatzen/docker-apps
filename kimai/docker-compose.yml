@@ -28,7 +28,7 @@ services:
       - 8001:8001
     environment:
       - ADMINMAIL=${ADMIN_MAIL}
-      - ADMINPASS=${ADMIN_PASS}
+      - ADMINPASS=${ADMIN_DEFAULT_PASS}
       - "DATABASE_URL=mysql://kimaiuser:kimaipassword@mysql/kimai?charset=utf8mb4&serverVersion=8.3.0"
     restart: unless-stopped
     labels:

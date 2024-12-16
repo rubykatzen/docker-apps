@@ -1,0 +1,37 @@
+services:
+  app:
+    image: monica
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      - APP_KEY=${ENCRYPTION_KEY}
+      - DB_HOST=mariadb
+      - DB_USERNAME=user-monica
+      - DB_PASSWORD=secret-password
+    ports:
+      - 8080:80
+    volumes:
+      - ./storage:/var/www/html/storage
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.monica.rule=Host(`monica.${DOMAIN}`)"
+    networks:
+      - internal
+      - traefik
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=monica
+      - MYSQL_USER=user-monica
+      - MYSQL_PASSWORD=secret-password
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - internal
+networks:
+  internal:
+  traefik:
+    external: true

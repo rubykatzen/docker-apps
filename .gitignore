@@ -6,3 +6,4 @@
 /*/redis
 /*/plugins
 .env
+apps.env

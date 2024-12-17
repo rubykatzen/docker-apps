@@ -28,7 +28,7 @@ providers:
 certificatesResolvers:
   acmeHttpChallengeResolver:
     acme:
-      email: your_email@examdtfple.com
+      email: ykirillov@icloud.com
       storage: acme.json
       httpChallenge:
         entryPoint: http

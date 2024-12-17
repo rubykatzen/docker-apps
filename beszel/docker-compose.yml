@@ -10,6 +10,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)"
+      - "traefik.http.routers.whoami.tls.certresolver=acmeHttpChallengeResolver"
     networks:
       - traefik
 networks:

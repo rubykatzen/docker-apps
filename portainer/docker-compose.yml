@@ -16,8 +16,9 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.http.routers.`${NAME}`.rule=Host(`${NAME}.${DOMAIN}`)"
+      - "traefik.http.routers.`${NAME}`.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.`${NAME}`.loadbalancer.server.port=9000"
 networks:
   traefik:
     external: true

@@ -15,7 +15,8 @@ services:
       - ./storage:/var/www/html/storage
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.monica.rule=Host(`monica.${DOMAIN}`)"
+      - "traefik.http.routers.`${NAME}`.rule=Host(`${NAME}.${DOMAIN}`)"
+      - "traefik.http.routers.`${NAME}`.tls.certresolver=acmeHttpChallengeResolver"
     networks:
       - internal
       - traefik

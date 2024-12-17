@@ -33,8 +33,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kimai.rule=Host(`kimai.${DOMAIN}`)"
-      - "traefik.http.services.portainer.loadbalancer.server.port=8001"
+      - "traefik.http.routers.`${NAME}`.rule=Host(`${NAME}.${DOMAIN}`)"
+      - "traefik.http.routers.`${NAME}`.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.`${NAME}`.loadbalancer.server.port=8001"
     networks:
       - internal
       - traefik

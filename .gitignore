@@ -5,5 +5,5 @@
 /*/postgresql
 /*/redis
 /*/plugins
-.env
-apps.env
+/.env
+/apps.env

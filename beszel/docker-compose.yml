@@ -1,7 +1,7 @@
 services:
   beszel:
     image: 'henrygd/beszel'
-    container_name: 'beszel'
+    container_name: ${NAME}
     restart: unless-stopped
     ports:
       - '8090:8090'
@@ -9,8 +9,8 @@ services:
       - ./data:/beszel_data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)"
-      - "traefik.http.routers.whoami.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.routers.`${NAME}`.rule=Host(`${NAME}.${DOMAIN}`)"
+      - "traefik.http.routers.`${NAME}`.tls.certresolver=acmeHttpChallengeResolver"
     networks:
       - traefik
 networks:

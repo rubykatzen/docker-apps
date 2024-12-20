@@ -15,10 +15,6 @@ services:
       - ./acme.json:/acme.json
     networks:
       - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.rule=Host(`${NAME}.${DOMAIN}`)"
 networks:
   traefik:
     external: true

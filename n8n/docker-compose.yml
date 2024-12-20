@@ -63,9 +63,9 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.`${NAME}`.rule=Host(`${NAME}.${DOMAIN}`)"
-      - "traefik.http.routers.`${NAME}`.tls.certresolver=acmeHttpChallengeResolver"
-      - "traefik.http.services.`${NAME}`.loadbalancer.server.port=5678"
+      - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
+      - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${NAME}.loadbalancer.server.port=5678"
   n8n-worker:
     <<: *shared
     command: worker

@@ -14,8 +14,7 @@ services:
             REDIS_URL: "redis://redis:6379/"
             PUPPETEER_WS_ENDPOINT: "ws://browserless:3000" # marked
             ACCESS_KEY: ${RSSHUB_ACCESS_KEY}
-            TWITTER_USERNAME: ${RSSHUB_TWITTER_USERNAME}
-            TWITTER_PASSWORD: ${RSSHUB_TWITTER_PASSWORD}
+            TWITTER_AUTH_TOKEN: ${RSSHUB_TWITTER_AUTH_TOKEN}
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:1200/healthz?key=${RSSHUB_ACCESS_KEY}" ]
             interval: 30s

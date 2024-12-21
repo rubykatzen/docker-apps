@@ -53,6 +53,7 @@ services:
       - internal
   n8n:
     <<: *shared
+    container_name: ${NAME}
     ports:
       - "5678:5678"
     networks:

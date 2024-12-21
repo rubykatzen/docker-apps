@@ -18,6 +18,8 @@ x-shared: &shared
   volumes:
     - ./data:/home/node/.n8n
   depends_on:
+    initContainer:
+      condition: service_completed_successfully
     redis:
       condition: service_healthy
     postgres:
@@ -71,6 +73,11 @@ services:
       - n8n
     networks:
       - internal
+  initContainer:
+    image: busybox
+    command: [ 'sh', '-c', 'chown -R 1000:1000 /home/node/.n8n' ]
+    volumes:
+      - ./data:/home/node/.n8n
 volumes:
   postgresql:
   data:

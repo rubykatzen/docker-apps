@@ -22,6 +22,7 @@ x-shared: &shared
     - redis
   volumes:
     - ./data:/home/node/.n8n
+    - ./files:/files
   depends_on:
     initContainer:
       condition: service_completed_successfully

@@ -11,9 +11,9 @@ services:
       - /run/udev:/run/udev:ro
       - ./config:/opt/scrutiny/config
       - ./influxdb:/opt/scrutiny/influxdb
-    devices:
-      - "/dev/sda"
-      - "/dev/nvme0"
+#    devices:
+#      - "/dev/sda"
+#      - "/dev/nvme0"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"

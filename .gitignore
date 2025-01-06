@@ -1,12 +1,15 @@
 /traefik/acme.json
 /*/data
 /*/storage
+/*/config
 /*/files
 /*/keys
 /*/mysql
 /*/postgresql
 /*/redis
+/*/influxdb
 /*/plugins
 /.env
 /apps.env
 /servers.env
+/runtipi

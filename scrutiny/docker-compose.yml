@@ -16,7 +16,6 @@ services:
       - ./influxdb:/opt/scrutiny/influxdb
     devices:
       - "/dev/sda"
-      - "/dev/sdb"
       - "/dev/nvme0"
     labels:
       - "traefik.enable=true"

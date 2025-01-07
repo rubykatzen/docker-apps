@@ -13,7 +13,6 @@ services:
       - DB_CONNECTION=sqlite
       - SPEEDTEST_SCHEDULE='*/10 * * * *'
       - SPEEDTEST_SERVERS='55462,54504'
-      - TZ=${GENERIC_TIMEZONE}
     volumes:
       - ./data:/config
       - ./keys:/config/keys

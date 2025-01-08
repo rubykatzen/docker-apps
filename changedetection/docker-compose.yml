@@ -8,6 +8,8 @@ services:
     expose:
       - 5000
     restart: unless-stopped
+    environment:
+      - PLAYWRIGHT_DRIVER_URL=ws://sockpuppetbrowser:3000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"

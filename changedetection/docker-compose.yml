@@ -13,8 +13,28 @@ services:
       - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
       - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
       - "traefik.http.services.${NAME}.loadbalancer.server.port=5000"
+    depends_on:
+        sockpuppetbrowser:
+            condition: service_started
     networks:
+      - internal
       - traefik
+
+  # Sockpuppetbrowser is basically chrome wrapped in an API for allowing fast fetching of web-pages.
+  # RECOMMENDED FOR FETCHING PAGES WITH CHROME
+  sockpuppetbrowser:
+    hostname: sockpuppetbrowser
+    image: dgtlmoon/sockpuppetbrowser:latest
+    restart: unless-stopped
+    environment:
+        - SCREEN_WIDTH=1920
+        - SCREEN_HEIGHT=1024
+        - SCREEN_DEPTH=16
+        - MAX_CONCURRENT_CHROME_PROCESSES=10
+    networks:
+      - internal
+
 networks:
+  internal:
   traefik:
     external: true

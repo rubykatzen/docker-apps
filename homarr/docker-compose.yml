@@ -1,0 +1,22 @@
+services:
+    homarr:
+        container_name: homarr
+        image: ghcr.io/ajnart/homarr:latest
+        restart: unless-stopped
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+            - ./config:/app/data/configs
+            - ./icons:/app/public/icons
+            - ./data:/data
+        expose:
+            - 7575
+        networks:
+            - traefik
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
+            - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
+            - "traefik.http.services.${NAME}.loadbalancer.server.port=7575"
+networks:
+    traefik:
+        external: true

@@ -49,7 +49,7 @@ services:
                 soft: 65535
                 hard: 65535
         environment:
-            - TZ=${TZ}
+            - TZ=${GENERIC_TIMEZONE}
             - TMPDIR=/var/lib/plausible/tmp
             # required: https://github.com/plausible/community-edition/wiki/configuration#required
             - BASE_URL=https://${NAME}.${DOMAIN}

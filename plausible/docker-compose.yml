@@ -34,7 +34,7 @@ services:
         networks:
             - internal
     plausible:
-        image: ghcr.io/plausible/community-edition:v2.1.4
+        image: ghcr.io/plausible/community-edition
         restart: unless-stopped
         command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
         depends_on:

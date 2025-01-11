@@ -9,7 +9,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - APP_KEY=${ENCRYPTION_KEY}
+      - APP_KEY=${DAPPS_KEY_HEX_16}
       - DB_CONNECTION=sqlite
       - SPEEDTEST_SCHEDULE='*/10 * * * *'
       - SPEEDTEST_SERVERS='55462,54504'

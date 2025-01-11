@@ -1,6 +1,6 @@
 include:
-  - ../apps/postgres.yml
-  - ../apps/redis.yml
+  - ../postgres.yml
+  - ../redis.yml
 services:
   activepieces:
     image: ghcr.io/activepieces/activepieces:latest
@@ -38,7 +38,7 @@ services:
       - postgres
       - redis
     volumes:
-      - ../apps-data/${APP_NAME}/cache:/usr/src/app/cache
+      - ../../apps-data/${APP_NAME}/cache:/usr/src/app/cache
     networks:
       - internal
       - traefik

@@ -26,7 +26,7 @@ services:
   # RECOMMENDED FOR FETCHING PAGES WITH CHROME
   sockpuppetbrowser:
     hostname: sockpuppetbrowser
-    image: dgtlmoon/sockpuppetbrowser:latest
+    image: dgtlmoon/sockpuppetbrowser
     restart: unless-stopped
     environment:
         - SCREEN_WIDTH=1920

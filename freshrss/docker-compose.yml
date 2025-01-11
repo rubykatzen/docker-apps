@@ -1,6 +1,6 @@
 services:
     freshrss:
-        image: freshrss/freshrss:latest
+        image: freshrss/freshrss
         container_name: freshrss
         hostname: freshrss
         restart: unless-stopped

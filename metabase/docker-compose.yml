@@ -1,6 +1,6 @@
 services:
     postgres:
-        image: postgres:latest
+        image: postgres
         container_name: postgres
         hostname: postgres
         volumes:
@@ -12,7 +12,7 @@ services:
         networks:
             - internal
     metabase:
-        image: metabase/metabase:latest
+        image: metabase/metabase
         container_name: metabase
         hostname: metabase
         volumes:

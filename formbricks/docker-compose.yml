@@ -129,7 +129,7 @@ services:
   formbricks:
     <<: *environment
     restart: unless-stopped
-    image: ghcr.io/formbricks/formbricks:latest
+    image: ghcr.io/formbricks/formbricks
     depends_on:
       - postgres
     expose:

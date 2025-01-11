@@ -7,20 +7,20 @@ services:
       - SYS_ADMIN
     environment:
       - COLLECTOR_CRON_SCHEDULE='0 */1 * * *'
-    ports:
-      - "8080:8080" # webapp
-      - "8086:8086" # influxDB admin
+    expose:
+      - 8080 # webapp
+      - 8086 # influxDB admin
     volumes:
       - /run/udev:/run/udev:ro
-      - ./data:/opt/scrutiny/config
-      - ./influxdb:/opt/scrutiny/influxdb
+      - ../../apps-data/${APP_NAME}/config:/opt/scrutiny/config
+      - ../../apps-data/${APP_NAME}/influxdb:/opt/scrutiny/influxdb
     devices:
       - "/dev/sda"
       - "/dev/nvme0"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
-      - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
     networks:
       - traefik
 networks:

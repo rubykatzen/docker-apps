@@ -16,7 +16,7 @@ services:
       ## 256 bit encryption key, 32 hex character
       AP_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_16}
       ## JWT Secret
-      AP_JWT_SECRET: ${DAPPS_KEY_HEX_32}
+      AP_JWT_SECRET: ${SECRET_KEY}
       AP_ENVIRONMENT: prod
       AP_FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
       AP_WEBHOOK_TIMEOUT_SECONDS: 30

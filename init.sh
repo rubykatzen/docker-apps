@@ -1,6 +1,8 @@
 #!/bin/bash
 cp .env.example .env
 cp apps.env.example apps.env
-touch traefik/acme.json
-chmod 600 traefik/acme.json
+mkdir apps-data
+mkdir apps-data/traefik
+touch apps-data/traefik/acme.json
+chmod 600 apps-data/traefik/acme.json
 docker network create traefik

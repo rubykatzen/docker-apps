@@ -28,7 +28,7 @@ providers:
 certificatesResolvers:
   acmeHttpChallengeResolver:
     acme:
-      email: ykirillov@icloud.com
+      email: ykirillov@icloud.com # Use ENV
       storage: acme.json
       httpChallenge:
         entryPoint: http

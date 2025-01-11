@@ -9,7 +9,7 @@ services:
     volumes:
       - ../apps-data/${APP_NAME}/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "${APP_NAME}"]
+      test: ["CMD", "pg_isready", "-d", "${APP_NAME}", "-U", "${APP_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 10

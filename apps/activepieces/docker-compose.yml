@@ -12,11 +12,11 @@ services:
       # It's advisable to consult the documentation and use the tools/deploy.sh to generate the passwords, keys, instead of manually filling them.
       AP_ENGINE_EXECUTABLE_PATH: dist/packages/engine/main.js
       ## Random Long Password (Optional for community edition)
-      AP_API_KEY: ${ENCRYPTION_KEY_HEX_64}
+      AP_API_KEY: ${DAPPS_KEY_HEX_64}
       ## 256 bit encryption key, 32 hex character
-      AP_ENCRYPTION_KEY: ${ENCRYPTION_KEY_HEX_16}
+      AP_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_16}
       ## JWT Secret
-      AP_JWT_SECRET: ${SECRET_KEY}
+      AP_JWT_SECRET: ${DAPPS_KEY_HEX_32}
       AP_ENVIRONMENT: prod
       AP_FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
       AP_WEBHOOK_TIMEOUT_SECONDS: 30

@@ -1,4 +1,5 @@
 /traefik/acme.json
+/apps-data/*
 /*/data
 /*/storage
 /*/extensions

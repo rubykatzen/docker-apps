@@ -1,23 +1,7 @@
+include:
+  - ../apps/postgres.yml
+  - ../apps/redis.yml
 services:
-  postgres:
-    image: 'postgres:latest'
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: activepiecesdb
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_USER: activepieces
-    volumes:
-      - ./postgresql:/var/lib/postgresql/data
-    networks:
-      - internal
-  redis:
-    image: 'redis:latest'
-    container_name: redis
-    restart: unless-stopped
-    volumes:
-      - ./redis:/data
-    networks:
-      - internal
   activepieces:
     image: ghcr.io/activepieces/activepieces:latest
     container_name: activepieces
@@ -34,12 +18,12 @@ services:
       ## JWT Secret
       AP_JWT_SECRET: ${SECRET_KEY}
       AP_ENVIRONMENT: prod
-      AP_FRONTEND_URL: https://${NAME}.${DOMAIN}
+      AP_FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
       AP_WEBHOOK_TIMEOUT_SECONDS: 30
       AP_TRIGGER_DEFAULT_POLL_INTERVAL: 5
-      AP_POSTGRES_USERNAME: activepieces
-      AP_POSTGRES_PASSWORD: mysecretpassword
-      AP_POSTGRES_DATABASE: activepiecesdb
+      AP_POSTGRES_USERNAME: ${APP_NAME}
+      AP_POSTGRES_PASSWORD: ${DAPPS_POSTGRES_PASSWORD}
+      AP_POSTGRES_DATABASE: ${APP_NAME}
       AP_POSTGRES_HOST: postgres
       AP_POSTGRES_PORT: 5432
       AP_EXECUTION_MODE: UNSANDBOXED
@@ -54,15 +38,15 @@ services:
       - postgres
       - redis
     volumes:
-      - ./cache:/usr/src/app/cache
+      - ../apps-data/${APP_NAME}/cache:/usr/src/app/cache
     networks:
       - internal
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
-      - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
-      - "traefik.http.services.${NAME}.loadbalancer.server.port=80"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=80"
 networks:
   internal:
   traefik:

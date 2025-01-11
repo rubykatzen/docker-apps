@@ -11,6 +11,7 @@
 /*/mongodb
 /*/clickhouse
 /*/logs
+/*/cache
 /*/redis
 /*/influxdb
 /*/plugins

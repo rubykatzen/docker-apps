@@ -11,7 +11,8 @@ services:
       - WEBUI_PORT=443
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
-      - ../../apps-data/${APP_NAME}/media/torrents:/media/torrents
+      - ../../apps-data/${APP_NAME}/downloads:/downloads
+      - ../../apps-data/${APP_NAME}/incomplete_downloads:/incomplete_downloads
     expose:
       - 443
     restart: unless-stopped

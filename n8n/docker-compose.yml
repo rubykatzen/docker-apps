@@ -13,10 +13,10 @@ x-shared: &shared
     - QUEUE_HEALTH_CHECK_ACTIVE=true
     - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
     - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
-    - N8N_HOST=${NAME}.${DOMAIN}
+    - N8N_HOST=${APP_NAME}.${DAPPS_DOMAIN}
     - N8N_PROTOCOL=https
     - NODE_ENV=production
-    - WEBHOOK_URL=https://${NAME}.${DOMAIN}/
+    - WEBHOOK_URL=https://${APP_NAME}.${DAPPS_DOMAIN}/
   links:
     - postgres
     - redis
@@ -61,7 +61,7 @@ services:
       - internal
   n8n:
     <<: *shared
-    container_name: ${NAME}
+    container_name: ${APP_NAME}
     ports:
       - "5678:5678"
     networks:
@@ -69,9 +69,9 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
-      - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
-      - "traefik.http.services.${NAME}.loadbalancer.server.port=5678"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=5678"
   n8n-worker:
     <<: *shared
     command: worker

@@ -27,8 +27,8 @@ services:
             - browserless # marked
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
-            - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
+            - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+            - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
         networks:
             - internal
             - traefik

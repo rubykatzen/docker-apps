@@ -1,10 +1,8 @@
 services:
   changedetection:
     image: ghcr.io/dgtlmoon/changedetection.io
-    container_name: changedetection
-    hostname: changedetection
     volumes:
-      - ./data:/datastore
+      - ../../apps-data/${APP_NAME}/datastore:/datastore
     expose:
       - 5000
     restart: unless-stopped
@@ -12,16 +10,15 @@ services:
       - PLAYWRIGHT_DRIVER_URL=ws://sockpuppetbrowser:3000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
-      - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
-      - "traefik.http.services.${NAME}.loadbalancer.server.port=5000"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=5000"
     depends_on:
         sockpuppetbrowser:
             condition: service_started
     networks:
       - internal
       - traefik
-
   # Sockpuppetbrowser is basically chrome wrapped in an API for allowing fast fetching of web-pages.
   # RECOMMENDED FOR FETCHING PAGES WITH CHROME
   sockpuppetbrowser:
@@ -35,7 +32,6 @@ services:
         - MAX_CONCURRENT_CHROME_PROCESSES=10
     networks:
       - internal
-
 networks:
   internal:
   traefik:

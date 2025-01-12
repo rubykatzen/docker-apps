@@ -1,7 +1,6 @@
 services:
   portainer:
-    image: portainer/portainer-ce:2.18.4-alpine
-    container_name: portainer
+    image: portainer/portainer-ce
     command: -H unix:///var/run/docker.sock
     restart: unless-stopped
     security_opt:
@@ -11,7 +10,7 @@ services:
       - 9443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./data/:/data/
+      - ../../apps-data/${APP_NAME}/data:/data
     networks:
       - traefik
     labels:

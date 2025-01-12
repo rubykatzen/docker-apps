@@ -10,7 +10,7 @@ services:
       DATABASE_TYPE: postgresql
       APP_SECRET: ${DAPPS_KEY_HEX_32}
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
     init: true
     restart: unless-stopped

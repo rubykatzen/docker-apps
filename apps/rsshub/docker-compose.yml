@@ -1,4 +1,20 @@
+include:
+  - ../redis.yml
 services:
+  browserless: # marked
+    image: browserless/chrome # marked
+    restart: unless-stopped # marked
+    ulimits: # marked
+      core: # marked
+        hard: 0 # marked
+        soft: 0 # marked
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/pressure" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - internal
   rsshub:
     # two ways to enable puppeteer:
     # * comment out marked lines, then use this image instead: diygod/rsshub:chromium-bundled
@@ -6,8 +22,8 @@ services:
     image: diygod/rsshub
     container_name: rsshub
     restart: unless-stopped
-    ports:
-      - "1200:1200"
+    expose:
+      - 1200
     environment:
       NODE_ENV: production
       CACHE_TYPE: redis
@@ -16,7 +32,7 @@ services:
       ACCESS_KEY: ${RSSHUB_ACCESS_KEY}
       TWITTER_AUTH_TOKEN: ${RSSHUB_TWITTER_AUTH_TOKEN}
       YOUTUBE_KEY: ${RSSHUB_YOUTUBE_KEY}
-      MEDIUM_COOKIE_ineedjet: ${RSSHUB_MEDIUM_COOKIE_ineedjet}
+      MEDIUM_COOKIE_ineedjet: ${RSSHUB_MEDIUM_COOKIE_INEEDJET}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1200/healthz?key=${RSSHUB_ACCESS_KEY}" ]
       interval: 30s
@@ -32,33 +48,6 @@ services:
     networks:
       - internal
       - traefik
-  browserless: # marked
-    image: browserless/chrome # marked
-    restart: unless-stopped # marked
-    ulimits: # marked
-      core: # marked
-        hard: 0 # marked
-        soft: 0 # marked
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/pressure"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - internal
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    volumes:
-      - ./redis:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 5s
-    networks:
-      - internal
 networks:
   internal:
   traefik:

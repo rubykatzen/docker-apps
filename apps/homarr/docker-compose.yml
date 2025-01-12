@@ -1,21 +1,21 @@
 services:
-    homarr:
-        image: ghcr.io/ajnart/homarr
-        restart: unless-stopped
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
-            - ../../apps-data/${APP_NAME}/config:/app/data/configs
-            - ../../apps-data/${APP_NAME}/icons:/app/public/icons
-            - ../../apps-data/${APP_NAME}/data:/data
-        expose:
-            - 7575
-        networks:
-            - traefik
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-            - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
-            - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=7575"
+  homarr:
+    image: ghcr.io/ajnart/homarr
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+      - ../../apps-data/${APP_NAME}/config:/app/data/configs
+      - ../../apps-data/${APP_NAME}/icons:/app/public/icons
+      - ../../apps-data/${APP_NAME}/data:/data
+    expose:
+      - 7575
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=7575"
 networks:
-    traefik:
-        external: true
+  traefik:
+    external: true

@@ -8,12 +8,12 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${DAPPS_TIMEZONE}
-      - WEBUI_PORT=8133
+      - WEBUI_PORT=443
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/media/torrents:/media/torrents
     expose:
-      - 8133
+      - 443
     restart: unless-stopped
     networks:
       - kamal

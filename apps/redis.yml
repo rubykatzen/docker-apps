@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis
+    image: redis:7
     restart: unless-stopped
     volumes:
       - ../apps-data/${APP_NAME}/redis:/data

@@ -3,9 +3,9 @@ x-environment: &environment
     ######################################################## REQUIRED ########################################################
     # The url of your Formbricks instance used in the admin panel
     # Set this to your public-facing URL, e.g., https://example.com
-    WEBAPP_URL: https://${NAME}.${DOMAIN}
+    WEBAPP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
     # Required for next-auth. Should be the same as WEBAPP_URL
-    NEXTAUTH_URL: https://${NAME}.${DOMAIN}
+    NEXTAUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
     # PostgreSQL DB for Formbricks to connect to
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/formbricks?schema=public"
     # NextJS Auth
@@ -141,9 +141,9 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${NAME}.rule=Host(`${NAME}.${DOMAIN}`)"
-      - "traefik.http.routers.${NAME}.tls.certresolver=acmeHttpChallengeResolver"
-      - "traefik.http.services.${NAME}.loadbalancer.server.port=3000"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3000"
 networks:
   internal:
   traefik:

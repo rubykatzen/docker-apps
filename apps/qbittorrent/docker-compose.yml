@@ -1,6 +1,7 @@
 services:
   qbittorrent:
     image: linuxserver/qbittorrent
+    container_name: qbittorrent
     dns:
       - 8.8.8.8
     environment:
@@ -16,3 +17,6 @@ services:
     restart: unless-stopped
     networks:
       - kamal
+networks:
+  kamal:
+    external: true

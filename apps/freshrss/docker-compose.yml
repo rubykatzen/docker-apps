@@ -1,0 +1,26 @@
+services:
+  freshrss:
+    image: freshrss/freshrss
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/var/www/FreshRSS/data
+      - ../../apps-data/${APP_NAME}/extensions:/var/www/FreshRSS/extensions
+    environment:
+      TZ: ${DAPPS_TIMEZONE}
+      CRON_MIN: '3,33'
+      TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16
+    expose:
+      - 80
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=80"
+networks:
+  traefik:
+    external: true

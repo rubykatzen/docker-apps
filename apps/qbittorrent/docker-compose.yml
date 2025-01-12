@@ -11,6 +11,7 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/media/torrents:/media/torrents
+    network_mode: "host"
     ports:
       - "8133:8133"
     restart: unless-stopped

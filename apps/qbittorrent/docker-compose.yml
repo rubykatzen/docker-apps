@@ -11,6 +11,8 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/media/torrents:/media/torrents
-    ports:
-      - "8133:8133"
+    expose:
+      - 8133
     restart: unless-stopped
+    networks:
+      - kamal

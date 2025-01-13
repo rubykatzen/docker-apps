@@ -20,11 +20,8 @@ services:
         {{- if .Report -}}
           {{- with .Report -}}
         {{len .Scanned}} Scanned, {{len .Updated}} Updated, {{len .Failed}} Failed
-              {{- range .Updated}}
+            {{- range .Updated}}
         - {{.Name}} ({{.ImageName}}): {{.CurrentImageID.ShortID}} updated to {{.LatestImageID.ShortID}}
-              {{- end -}}
-              {{- range .Fresh}}
-        - {{.Name}} ({{.ImageName}}): {{.State}}
             {{- end -}}
             {{- range .Skipped}}
         - {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}

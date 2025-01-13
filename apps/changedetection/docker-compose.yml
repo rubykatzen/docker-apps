@@ -14,8 +14,7 @@ services:
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=5000"
     depends_on:
-        sockpuppetbrowser:
-            condition: service_started
+      - sockpuppetbrowser
     networks:
       - internal
       - traefik

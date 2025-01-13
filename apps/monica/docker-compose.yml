@@ -10,10 +10,7 @@ services:
       - APP_KEY=${DAPPS_KEY_HEX_32}
       - APP_ENV=production
       - DB_CONNECTION=pgsql
-      - DB_DATABASE=${APP_NAME}
-      - DB_HOST=postgres
-      - DB_USERNAME=${APP_NAME}
-      - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
+      - DATABASE_URL=postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
     expose:
       - 80
     volumes:

@@ -1,6 +1,5 @@
 services:
   wallos:
-    container_name: wallos
     image: bellamy/wallos
     expose:
       - 80

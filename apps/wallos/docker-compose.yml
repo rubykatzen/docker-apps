@@ -1,0 +1,22 @@
+services:
+  wallos:
+    container_name: wallos
+    image: bellamy/wallos
+    expose:
+      - 8282
+    environment:
+      TZ: ${DAPPS_TIMEZONE}
+    volumes:
+      - '../../apps-data/${APP_NAME}/db:/var/www/html/db'
+      - '../../apps-data/${APP_NAME}/logos:/var/www/html/images/uploads/logos'
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8282"
+networks:
+  traefik:
+    external: true

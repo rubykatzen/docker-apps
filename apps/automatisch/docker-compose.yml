@@ -1,0 +1,59 @@
+include:
+  - ../postgres.yml
+  - ../redis.yml
+services:
+  automatisch:
+    image: automatischio/automatisch
+    expose:
+      - 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+      PROTOCOL: https
+      PORT: 3000
+      APP_ENV: production
+      REDIS_HOST: redis
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: ${APP_NAME}
+      POSTGRES_USERNAME: ${APP_NAME}
+      POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+      WEBHOOK_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+      APP_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+    volumes:
+      - ../../apps-data/${APP_NAME}/storage:/automatisch/storage
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3000"
+    networks:
+      - internal
+      - traefik
+  worker:
+    image: automatischio/automatisch
+    depends_on:
+      - automatisch
+    environment:
+      APP_ENV: production
+      REDIS_HOST: redis
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: ${APP_NAME}
+      POSTGRES_USERNAME: ${APP_NAME}
+      POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+      WEBHOOK_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+      APP_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+      WORKER: true
+    volumes:
+      - ../../apps-data/${APP_NAME}/storage:/automatisch/storage
+    networks:
+      - internal
+networks:
+  internal:
+  traefik:
+    external: true

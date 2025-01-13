@@ -20,7 +20,6 @@ services:
     # * comment out marked lines, then use this image instead: diygod/rsshub:chromium-bundled
     # * (consumes more disk space and memory) leave everything unchanged
     image: diygod/rsshub
-    container_name: rsshub
     restart: unless-stopped
     expose:
       - 1200

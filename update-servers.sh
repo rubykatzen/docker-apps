@@ -5,6 +5,7 @@ do
   echo "============================================="
   echo "update ${server}"
   echo "-->"
+  # ToDo: push .env
   ssh -A "${server}" 'cd dapps; git pull'
   ssh -A "${server}" 'cd dapps; ./update.sh'
   ssh -A "${server}" 'cd dapps; docker image prune -f'

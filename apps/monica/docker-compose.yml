@@ -1,16 +1,15 @@
 include:
-  - ../postgres.yml
+  - ../mysql.yml
 services:
   app:
     image: monica
     restart: unless-stopped
     depends_on:
-      - postgres
+      - mysql
     environment:
       - APP_KEY=${DAPPS_KEY_HEX_32}
       - APP_ENV=production
-      - DB_CONNECTION=pgsql
-      - DATABASE_URL=postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+      - DATABASE_URL=mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql:5432/${APP_NAME}
     expose:
       - 80
     volumes:

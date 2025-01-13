@@ -7,7 +7,7 @@ services:
     depends_on:
       - mysql
     environment:
-      - APP_KEY=base64:${DAPPS_KEY_HEX_32}
+      - APP_KEY=base64:${DAPPS_KEY_HEX_16}
       - APP_ENV=production
       - DB_DATABASE=${APP_NAME}
       - DB_HOST=mysql

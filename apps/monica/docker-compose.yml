@@ -1,19 +1,23 @@
+include:
+  - ../postgres.yml
 services:
   app:
     image: monica
     restart: unless-stopped
     depends_on:
-      - mariadb
+      - postgres
     environment:
-      - APP_KEY=${ENCRYPTION_KEY}
+      - APP_KEY=${DAPPS_KEY_HEX_32}
       - APP_ENV=production
-      - DB_HOST=mariadb
-      - DB_USERNAME=user-monica
-      - DB_PASSWORD=secret-password
+      - DB_CONNECTION=pgsql
+      - DB_DATABASE=${APP_NAME}
+      - DB_HOST=postgres
+      - DB_USERNAME=${APP_NAME}
+      - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
     expose:
       - 80
     volumes:
-      - ./storage:/var/www/html/storage
+      - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
@@ -22,18 +26,6 @@ services:
     networks:
       - internal
       - traefik
-  mariadb:
-    image: mariadb:11
-    restart: unless-stopped
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=true
-      - MYSQL_DATABASE=monica
-      - MYSQL_USER=user-monica
-      - MYSQL_PASSWORD=secret-password
-    volumes:
-      - ./mysql:/var/lib/mysql
-    networks:
-      - internal
 networks:
   internal:
   traefik:

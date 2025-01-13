@@ -9,7 +9,10 @@ services:
     environment:
       - APP_KEY=${DAPPS_KEY_HEX_32}
       - APP_ENV=production
-      - DATABASE_URL=mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql:5432/${APP_NAME}
+      - DB_DATABASE=${APP_NAME}
+      - DB_HOST=mysql
+      - DB_USERNAME=${APP_NAME}
+      - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
     expose:
       - 80
     volumes:

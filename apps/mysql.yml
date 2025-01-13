@@ -1,0 +1,18 @@
+services:
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${APP_NAME}
+      MYSQL_USER: ${APP_NAME}
+      MYSQL_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+    volumes:
+      - ../apps-data/${APP_NAME}/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal

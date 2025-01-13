@@ -1,0 +1,27 @@
+include:
+  - ../mysql.yml
+services:
+  kimai:
+    image: kimai/kimai2:apache
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/opt/kimai/var/data
+      - ../../apps-data/${APP_NAME}/plugins:/opt/kimai/var/plugins
+    expose:
+      - 8001
+    environment:
+      ADMINMAIL: ${ADMIN_MAIL}
+      ADMINPASS: ${ADMIN_DEFAULT_PASS}
+      DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8001"
+    networks:
+      - internal
+      - traefik
+networks:
+  internal:
+  traefik:
+    external: true

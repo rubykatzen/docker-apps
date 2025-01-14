@@ -19,7 +19,6 @@ services:
       WATCHTOWER_NOTIFICATION_TEMPLATE: |
         {{- if .Report -}}
           {{- with .Report -}}
-        {{len .Scanned}} Scanned, {{len .Updated}} Updated, {{len .Failed}} Failed
             {{- range .Updated}}
         - {{.Name}} ({{.ImageName}}): Updated
             {{- end -}}

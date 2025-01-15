@@ -27,7 +27,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=acmeHttpChallengeResolver"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=80"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3000"
 networks:
   internal:
   traefik:

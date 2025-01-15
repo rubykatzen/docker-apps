@@ -1,5 +1,5 @@
 global:
-  checkNewVersion: true
+  checkNewVersion: false
   sendAnonymousUsage: false
 log:
   level: INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -28,7 +28,14 @@ providers:
 certificatesResolvers:
   acmeHttpChallengeResolver:
     acme:
-      email: ykirillov@icloud.com # Use ENV
+      email: {{ env "ACME_EMAIL" }}
       storage: acme.json
       httpChallenge:
         entryPoint: http
+  acmeCloudflareDnsChallengeResolver:
+    acme:
+      email: {{ env "ACME_EMAIL" }}
+      storage: acme.json
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0

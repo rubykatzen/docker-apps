@@ -2,6 +2,9 @@ services:
   traefik:
     image: traefik
     restart: unless-stopped
+    environment:
+      ACME_EMAIL: ${DAPPS_ADMIN_MAIL}
+      CF_DNS_API_TOKEN: ${DAPPS_CLOUDFLARE_DNS_API_TOKEN}
     security_opt:
       - no-new-privileges:true
     ports:

@@ -32,7 +32,7 @@ services:
       AP_TELEMETRY_ENABLED: true
       AP_TEMPLATES_SOURCE_URL: "https://cloud.activepieces.com/api/v1/flow-templates"
     expose:
-      - 80
+      - ${APP_PORT}
     depends_on:
       - postgres
       - redis
@@ -45,7 +45,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=80"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 networks:
   internal:
   traefik:

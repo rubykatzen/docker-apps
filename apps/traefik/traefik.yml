@@ -28,7 +28,7 @@ providers:
 certificatesResolvers:
   acmeHttpChallengeResolver:
     acme:
-      email: {{env "ACME_EMAIL" }}
+      email: `{{env "ACME_EMAIL" }}`
       storage: acme.json
       httpChallenge:
         entryPoint: http

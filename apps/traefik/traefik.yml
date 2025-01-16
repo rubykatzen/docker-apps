@@ -26,12 +26,6 @@ providers:
     network: traefik
     watch: true
 certificatesResolvers:
-  acmeHttpChallengeResolver:
-    acme:
-      email: ykirillov@icloud.com #{{env "ACME_EMAIL" }}
-      storage: acme.json
-      httpChallenge:
-        entryPoint: http
   acmeCloudflareDnsChallengeResolver:
     acme:
       email: ykirillov@icloud.com #{{env "ACME_EMAIL" }}
@@ -39,3 +33,9 @@ certificatesResolvers:
       dnsChallenge:
         provider: cloudflare
         delayBeforeCheck: 0
+#  acmeHttpChallengeResolver:
+#    acme:
+#      email: ykirillov@icloud.com #{{env "ACME_EMAIL" }}
+#      storage: acme.json
+#      httpChallenge:
+#        entryPoint: http

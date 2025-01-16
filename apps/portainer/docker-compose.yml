@@ -6,8 +6,7 @@ services:
     security_opt:
       - no-new-privileges:true
     expose:
-      - 9000
-      - 9443
+      - ${APP_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../../apps-data/${APP_NAME}/data:/data
@@ -17,7 +16,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=9000"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 networks:
   traefik:
     external: true

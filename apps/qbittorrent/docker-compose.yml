@@ -8,12 +8,12 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${DAPPS_TIMEZONE}
-      - WEBUI_PORT=443
+      - WEBUI_PORT=${APP_PORT}
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/downloads:/downloads
     expose:
-      - 443
+      - ${APP_PORT}
     restart: unless-stopped
     networks:
       - kamal

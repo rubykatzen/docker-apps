@@ -22,7 +22,7 @@ services:
     image: diygod/rsshub
     restart: unless-stopped
     expose:
-      - 1200
+      - ${APP_PORT}
     environment:
       NODE_ENV: production
       CACHE_TYPE: redis
@@ -33,7 +33,7 @@ services:
       YOUTUBE_KEY: ${RSSHUB_YOUTUBE_KEY}
       MEDIUM_COOKIE_ineedjet: ${RSSHUB_MEDIUM_COOKIE_INEEDJET}
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:1200/healthz?key=${RSSHUB_ACCESS_KEY}" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}/healthz?key=${RSSHUB_ACCESS_KEY}" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -44,7 +44,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=1200"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
     networks:
       - internal
       - traefik

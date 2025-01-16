@@ -7,8 +7,8 @@ services:
     environment:
       - COLLECTOR_CRON_SCHEDULE='0 */1 * * *'
     expose:
-      - 8080 # webapp
-      - 8086 # influxDB admin
+      - ${APP_PORT} # webapp
+      - "8086" # influxDB admin
     volumes:
       - /run/udev:/run/udev:ro
       - ../../apps-data/${APP_NAME}/config:/opt/scrutiny/config
@@ -20,6 +20,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
     networks:
       - traefik
 networks:

@@ -1,5 +1,5 @@
 services:
-  dsm:
+  virtual-dsm:
     image: vdsm/virtual-dsm
     environment:
       DISK_SIZE: "16G"

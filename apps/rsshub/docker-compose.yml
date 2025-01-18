@@ -24,14 +24,16 @@ services:
     expose:
       - ${APP_PORT}
     environment:
-      NODE_ENV: production
-      CACHE_TYPE: redis
-      REDIS_URL: "redis://redis:6379/"
-      PUPPETEER_WS_ENDPOINT: "ws://browserless:3000" # marked
-      ACCESS_KEY: ${RSSHUB_ACCESS_KEY}
-      TWITTER_AUTH_TOKEN: ${RSSHUB_TWITTER_AUTH_TOKEN}
-      YOUTUBE_KEY: ${RSSHUB_YOUTUBE_KEY}
-      MEDIUM_COOKIE_ineedjet: ${RSSHUB_MEDIUM_COOKIE_INEEDJET}
+      - NODE_ENV=production
+      - CACHE_TYPE=redis
+      - REDIS_URL=redis://redis:6379/
+      - PUPPETEER_WS_ENDPOINT=ws://browserless:3000 # marked
+      - ACCESS_KEY=${RSSHUB_ACCESS_KEY}
+      - TWITTER_AUTH_TOKEN=${RSSHUB_TWITTER_AUTH_TOKEN}
+      - YOUTUBE_KEY=${RSSHUB_YOUTUBE_KEY}
+      - POSTGRES_PASSWORD=postgres
+      - ${RSSHUB_EMAIL_CONFIG}
+      - ${RSSHUB_MEDIUM_CONFIG}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}/healthz?key=${RSSHUB_ACCESS_KEY}" ]
       interval: 30s

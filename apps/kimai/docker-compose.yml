@@ -9,8 +9,8 @@ services:
     expose:
       - ${APP_PORT}
     environment:
-      ADMINMAIL: ${ADMIN_MAIL}
-      ADMINPASS: ${ADMIN_DEFAULT_PASS}
+      ADMINMAIL: ${DAPPS_ADMIN_MAIL}
+      ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
       DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
     restart: unless-stopped
     labels:

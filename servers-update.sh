@@ -8,5 +8,5 @@ do
   # ToDo: push .env
   ssh -A "${server}" 'cd dapps; git pull'
   ssh -A "${server}" 'cd dapps; ./update.sh'
-  ssh -A "${server}" 'cd dapps; docker image prune -f'
+  ssh -A "${server}" 'cd dapps; docker rmi $(docker images -q) -f'
 done

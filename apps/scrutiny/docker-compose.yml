@@ -5,7 +5,9 @@ services:
       - SYS_RAWIO
       - SYS_ADMIN
     environment:
-      - COLLECTOR_CRON_SCHEDULE='0 */1 * * *'
+      COLLECTOR_CRON_SCHEDULE: '0 */3 * * *'
+      SCRUTINY_NOTIFY_URLS: >
+        ${DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL}
     expose:
       - ${APP_PORT} # webapp
       - "8086" # influxDB admin
@@ -14,8 +16,8 @@ services:
       - ../../apps-data/${APP_NAME}/config:/opt/scrutiny/config
       - ../../apps-data/${APP_NAME}/influxdb:/opt/scrutiny/influxdb
     devices:
-      - "/dev/sda"
       - "/dev/nvme0"
+      - "/dev/sda"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"

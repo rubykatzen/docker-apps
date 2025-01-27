@@ -1,6 +1,4 @@
-/traefik/acme.json
 /apps-data/*
 /.env
 /apps.env
 /servers.env
-/runtipi

@@ -13,7 +13,8 @@ services:
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-      - "traefik.http.middlewares.myauth.basicauth.users=${DAPPS_HTPASSWD}"
+      - "traefik.http.routers.${APP_NAME}.middlewares=${APP_NAME}-auth-basic"
+      - "traefik.http.middlewares.${APP_NAME}-auth-basic.basicauth.users=${DAPPS_HTPASSWD}"
 networks:
   traefik:
     external: true

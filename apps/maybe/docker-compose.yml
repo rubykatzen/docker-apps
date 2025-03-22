@@ -8,9 +8,6 @@ services:
       - ../../apps-data/${APP_NAME}/storage:/rails/storage
     command: bundle exec sidekiq
     restart: unless-stopped
-    depends_on:
-      - postgres
-      - redis
     environment:
       SELF_HOSTED: "true"
       RAILS_FORCE_SSL: "false"
@@ -21,6 +18,11 @@ services:
       POSTGRES_USER: ${APP_NAME}
       POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
       REDIS_URL: redis://redis:6379/1
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - internal
   web:
     image: ghcr.io/maybe-finance/maybe:latest
     volumes:

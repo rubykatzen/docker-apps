@@ -1,0 +1,13 @@
+services:
+  sshd:
+    image: testcontainers/sshd:1.2.0
+    volumes:
+      - ~/.ssh/authorized_keys:/root/.ssh/authorized_keys
+    ports:
+      - ${APP_PORT}:22
+    restart: unless-stopped
+    networks:
+      - databases
+networks:
+  databases:
+    external: true

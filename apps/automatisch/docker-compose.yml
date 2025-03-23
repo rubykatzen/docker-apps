@@ -55,5 +55,7 @@ services:
       - internal
 networks:
   internal:
+  databases:
+    external: true
   traefik:
     external: true

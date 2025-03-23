@@ -29,5 +29,7 @@ services:
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 networks:
   internal:
+  databases:
+    external: true
   traefik:
     external: true

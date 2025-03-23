@@ -60,5 +60,7 @@ services:
       - ../../apps-data/${APP_NAME}/data:/home/node/.n8n
 networks:
   internal:
+  databases:
+    external: true
   traefik:
     external: true

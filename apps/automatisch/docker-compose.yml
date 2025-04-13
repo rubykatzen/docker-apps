@@ -7,10 +7,8 @@ services:
     expose:
       - ${APP_PORT}
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - postgres
+      - redis
     environment:
       HOST: ${APP_NAME}.${DAPPS_DOMAIN}
       PROTOCOL: https

@@ -1,15 +1,16 @@
 include:
+  - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
 services:
   infisical:
-    restart: unless-stopped
+    extends:
+      file: ../common.yml
+      service: common
+    image: infisical/infisical:latest-postgres
     depends_on:
       - postgres
       - redis
-    image: infisical/infisical:latest-postgres
-    expose:
-      - ${APP_PORT}
     environment:
       # Keys
       # Required key for platform encryption/decryption ops
@@ -61,18 +62,4 @@ services:
       # Sentry (optional) for monitoring errors
       SENTRY_DSN:
       NODE_ENV: production
-    networks:
-      - internal
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 
-networks:
-  internal:
-  databases:
-    external: true
-  traefik:
-    external: true

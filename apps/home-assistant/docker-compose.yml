@@ -1,0 +1,10 @@
+services:
+  homeassistant:
+    image: "homeassistant/home-assistant"
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host

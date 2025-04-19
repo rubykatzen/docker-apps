@@ -1,5 +1,5 @@
 services:
-  homeassistant:
+  home-assistant:
     image: "homeassistant/home-assistant"
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config

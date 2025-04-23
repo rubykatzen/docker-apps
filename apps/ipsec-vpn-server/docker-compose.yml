@@ -1,0 +1,23 @@
+include:
+  - ../networks.yml
+services:
+  ipsec-vpn-server:
+    image: hwdsl2/ipsec-vpn-server
+    restart: always
+    privileged: true
+    ports:
+      - "500:500/udp"
+      - "4500:4500/udp"
+    environment:
+      - VPN_IPSEC_PSK=${DAPPS_KEY_HEX_16}
+      - VPN_USER=${DAPPS_ADMIN_MAIL}
+      - VPN_PASSWORD=${DAPPS_ADMIN_DEFAULT_PASS}
+    volumes:
+      - ../../apps-data/${APP_NAME}/ipsec.d:/etc/ipsec.d
+      - /lib/modules:/lib/modules:ro
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    networks:
+      - internal
+      - traefik

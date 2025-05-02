@@ -7,6 +7,8 @@ services:
       file: ../common.yml
       service: common
     image: semaphoreui/semaphore
+    depends_on:
+      - postgres
     environment:
       SEMAPHORE_DB_DIALECT: postgres
       SEMAPHORE_DB_HOST: postgres

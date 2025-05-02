@@ -23,6 +23,3 @@ services:
       SEMAPHORE_TELEGRAM_TOKEN: ${DAPPS_TELEGRAM_TELEGRAM_TOKEN}
       SEMAPHORE_TELEGRAM_CHAT: ${DAPPS_TELEGRAM_CHAT}
       ANSIBLE_HOST_KEY_CHECKING: "False"
-    volumes:
-      - ../../apps-data/${APP_NAME}/semaphore-data:/var/lib/semaphore
-      - ../../apps-data/${APP_NAME}/semaphore-config:/etc/semaphore

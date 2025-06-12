@@ -1,0 +1,25 @@
+include:
+  - ../networks.yml
+services:
+  icloudpd:
+    extends:
+      file: ../common.yml
+      service: common
+    image: icloudpd/icloudpd
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data
+      - ../../apps-data/${APP_NAME}/cookies:/cookies
+    command: >
+      icloudpd
+        --username ${ICLOUDPD_USERNAME}
+        --password ${ICLOUDPD_PASSWORD}
+        --password-provider parameter
+        --password-provider webui
+        --mfa-provider webui
+        --directory /data
+        --cookie-directory /cookies
+        --folder-structure none
+        --set-exif-datetime
+        --auto-delete
+        --watch-with-interval 10
+        --album ${ICLOUDPD_ALBUM}

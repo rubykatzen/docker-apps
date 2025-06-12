@@ -22,5 +22,5 @@ services:
         --set-exif-datetime
         --auto-delete
         --watch-with-interval 180
-        --keep-unicode-in-filenames
+        --keep-unicode-in-filenames true
         --album ${ICLOUDPD_ALBUM}

@@ -5,24 +5,12 @@ include:
 x-environment: &environment
   environment:
     # https://www.chatwoot.com/docs/self-hosted/configuration/environment-variables/#rails-production-variables
-    SECRET_KEY_BASE: ${DAPPS_KEY_HEX_64}
-    # Replace it with the URL you are planning to use for your app
-    FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
-    # To use a dedicated URL for help center pages
-    # HELPCENTER_URL=http://0.0.0.0:3000
-    # If the variable is set, all non-authenticated pages would fall back to the default locale.
-    # Whenever a new account is created, the default language will be DEFAULT_LOCALE instead of en
-    # DEFAULT_LOCALE=en
-    # This lets you control new signups on your chatwoot installation
-    # true : default option, allows signups
-    # false : disables all the end points related to sign ups
-    # api_only: disables the UI for signup, but you can create signups via the account apis
-    ENABLE_ACCOUNT_SIGNUP: false
-    # Redis config
-    # specify the configs via single URL or individual variables
-    # ref: https://www.iana.org/assignments/uri-schemes/prov/redis
-    # You can also use the following format for the URL: redis://:password@host:port/db_number
-    REDIS_URL: redis://redis:6379/
+    SECRET_KEY_BASE: ${DAPPS_KEY_HEX_64} # Replace it with the URL you are planning to use for your app
+    FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN} # To use a dedicated URL for help center pages
+    # HELPCENTER_URL=http://0.0.0.0:3000 # If the variable is set, all non-authenticated pages would fall back to the default locale.
+    # DEFAULT_LOCALE=en # Whenever a new account is created, the default language will be DEFAULT_LOCALE instead of en
+    ENABLE_ACCOUNT_SIGNUP: false # true: default option, allows signups, false: disable, api_only: disables the UI, but you can use account apis
+    REDIS_URL: redis://redis:6379/ # You can also use the following format for the URL: redis://:password@host:port/db_number
     INSTALLATION_ENV: docker
     POSTGRES_DB: ${APP_NAME}
     POSTGRES_DATABASE: ${APP_NAME}
@@ -30,22 +18,17 @@ x-environment: &environment
     POSTGRES_USERNAME: ${APP_NAME}
     POSTGRES_HOST: pgvector
     POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-    # The email from which all outgoing emails are sent
-    # could user either `email@yourdomain.com` or `BrandName <email@yourdomain.com>`
-    MAILER_SENDER_EMAIL: Chatwoot <accounts@chatwoot.com>
+    MAILER_SENDER_EMAIL: Chatwoot <accounts@chatwoot.com> # Email from all outgoing emails are sent: `email@yourdomain.com` or `BrandName <email@yourdomain.com>`
     SMTP_DOMAIN: chatwoot.com
     SMTP_ADDRESS:
     SMTP_PORT: 1025
     SMTP_USERNAME:
     SMTP_PASSWORD:
-    # plain,login,cram_md5
-    SMTP_AUTHENTICATION:
+    SMTP_AUTHENTICATION: # plain,login,cram_md5
     SMTP_ENABLE_STARTTLS_AUTO: true
-    # Can be: 'none', 'peer', 'client_once', 'fail_if_no_peer_cert', see http://api.rubyonrails.org/classes/ActionMailer/Base.html
-    SMTP_OPENSSL_VERIFY_MODE: peer
+    SMTP_OPENSSL_VERIFY_MODE: peer # Can be: 'none', 'peer', 'client_once', 'fail_if_no_peer_cert', see http://api.rubyonrails.org/classes/ActionMailer/Base.html
     ## Mail Incoming
-    # This is the domain set for the reply emails when conversation continuity is enabled
-    MAILER_INBOUND_EMAIL_DOMAIN:
+    MAILER_INBOUND_EMAIL_DOMAIN: # This is the domain set for the reply emails when conversation continuity is enabled
     # Set this to the appropriate ingress channel with regards to incoming emails
     # Possible values are:
     # relay for Exim, Postfix, Qmail
@@ -76,23 +59,20 @@ x-environment: &environment
     AWS_ACCESS_KEY_ID:
     AWS_SECRET_ACCESS_KEY:
     AWS_REGION:
-    # Configure this environment variable if you want to use lograge instead of rails logger
-    #LOGRAGE_ENABLED=true
+    #LOGRAGE_ENABLED=true # Configure this environment variable if you want to use lograge instead of rails logger
     ### This environment variables are only required if you are setting up social media channels
-    # Facebook
-    # documentation: https://www.chatwoot.com/docs/facebook-setup
+    # https://www.chatwoot.com/docs/facebook-setup
     FB_VERIFY_TOKEN:
     FB_APP_SECRET:
     FB_APP_ID:
     # https://developers.facebook.com/docs/messenger-platform/instagram/get-started#app-dashboard
     IG_VERIFY_TOKEN:
-    # Twitter
-    # documentation: https://www.chatwoot.com/docs/twitter-app-setup
+    # https://www.chatwoot.com/docs/twitter-app-setup
     TWITTER_APP_ID:
     TWITTER_CONSUMER_KEY:
     TWITTER_CONSUMER_SECRET:
     TWITTER_ENVIRONMENT:
-    #slack integration
+    # Slack integration
     SLACK_CLIENT_ID:
     SLACK_CLIENT_SECRET:
     # Google OAuth

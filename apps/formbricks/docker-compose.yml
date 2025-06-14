@@ -6,8 +6,7 @@ x-environment: &environment
     # The url of your Formbricks instance used in the admin panel
     # Set this to your public-facing URL, e.g., https://example.com
     WEBAPP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
-    # Required for next-auth. Should be the same as WEBAPP_URL
-    NEXTAUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+    NEXTAUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN} # Required for next-auth. Should be the same as WEBAPP_URL
     # PostgreSQL DB for Formbricks to connect to
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/formbricks?schema=public"
     # NextJS Auth

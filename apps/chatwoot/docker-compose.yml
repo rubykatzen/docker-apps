@@ -1,0 +1,127 @@
+include:
+  - ../networks.yml
+  - ../pgvector.yml
+  - ../redis.yml
+x-environment: &environment
+  environment:
+    # https://www.chatwoot.com/docs/self-hosted/configuration/environment-variables/#rails-production-variables
+    SECRET_KEY_BASE: ${DAPPS_KEY_HEX_64}
+    # Replace it with the URL you are planning to use for your app
+    FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+    # To use a dedicated URL for help center pages
+    # HELPCENTER_URL=http://0.0.0.0:3000
+    # If the variable is set, all non-authenticated pages would fall back to the default locale.
+    # Whenever a new account is created, the default language will be DEFAULT_LOCALE instead of en
+    # DEFAULT_LOCALE=en
+    # This lets you control new signups on your chatwoot installation
+    # true : default option, allows signups
+    # false : disables all the end points related to sign ups
+    # api_only: disables the UI for signup, but you can create signups via the account apis
+    ENABLE_ACCOUNT_SIGNUP: false
+    # Redis config
+    # specify the configs via single URL or individual variables
+    # ref: https://www.iana.org/assignments/uri-schemes/prov/redis
+    # You can also use the following format for the URL: redis://:password@host:port/db_number
+    REDIS_URL: redis://redis:6379/
+    INSTALLATION_ENV: docker
+    POSTGRES_DB: ${APP_NAME}
+    POSTGRES_DATABASE: ${APP_NAME}
+    POSTGRES_USER: ${APP_NAME}
+    POSTGRES_USERNAME: ${APP_NAME}
+    POSTGRES_HOST: pgvector
+    POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+    # The email from which all outgoing emails are sent
+    # could user either `email@yourdomain.com` or `BrandName <email@yourdomain.com>`
+    MAILER_SENDER_EMAIL: Chatwoot <accounts@chatwoot.com>
+    SMTP_DOMAIN: chatwoot.com
+    SMTP_ADDRESS:
+    SMTP_PORT: 1025
+    SMTP_USERNAME:
+    SMTP_PASSWORD:
+    # plain,login,cram_md5
+    SMTP_AUTHENTICATION:
+    SMTP_ENABLE_STARTTLS_AUTO: true
+    # Can be: 'none', 'peer', 'client_once', 'fail_if_no_peer_cert', see http://api.rubyonrails.org/classes/ActionMailer/Base.html
+    SMTP_OPENSSL_VERIFY_MODE: peer
+    ## Mail Incoming
+    # This is the domain set for the reply emails when conversation continuity is enabled
+    MAILER_INBOUND_EMAIL_DOMAIN:
+    # Set this to the appropriate ingress channel with regards to incoming emails
+    # Possible values are:
+    # relay for Exim, Postfix, Qmail
+    # mailgun for Mailgun
+    # mandrill for Mandrill
+    # postmark for Postmark
+    # sendgrid for Sendgrid
+    RAILS_INBOUND_EMAIL_SERVICE:
+    # Use one of the following based on the email ingress service
+    # Ref: https://edgeguides.rubyonrails.org/action_mailbox_basics.html
+    # Set this to a password of your choice and use it in the Inbound webhook
+    RAILS_INBOUND_EMAIL_PASSWORD:
+    # Key
+    MAILGUN_INGRESS_SIGNING_KEY:
+    MANDRILL_INGRESS_API_KEY:
+    # Creating Your Inbound Webhook Instructions for Postmark and Sendgrid:
+    # Inbound webhook URL format:
+    #    https://actionmailbox:[YOUR_RAILS_INBOUND_EMAIL_PASSWORD]@[YOUR_CHATWOOT_DOMAIN.COM]/rails/action_mailbox/[RAILS_INBOUND_EMAIL_SERVICE]/inbound_emails
+    # Note: Replace the values inside the brackets; do not include the brackets themselves.
+    # Example: https://actionmailbox:mYRandomPassword3@chatwoot.example.com/rails/action_mailbox/postmark/inbound_emails
+    # For Postmark
+    # Ensure the 'Include raw email content in JSON payload' checkbox is selected in the inbound webhook section.
+    # Storage
+    ACTIVE_STORAGE_SERVICE: local
+    # Amazon S3
+    # documentation: https://www.chatwoot.com/docs/configuring-s3-bucket-as-cloud-storage
+    S3_BUCKET_NAME:
+    AWS_ACCESS_KEY_ID:
+    AWS_SECRET_ACCESS_KEY:
+    AWS_REGION:
+    # Configure this environment variable if you want to use lograge instead of rails logger
+    #LOGRAGE_ENABLED=true
+    ### This environment variables are only required if you are setting up social media channels
+    # Facebook
+    # documentation: https://www.chatwoot.com/docs/facebook-setup
+    FB_VERIFY_TOKEN:
+    FB_APP_SECRET:
+    FB_APP_ID:
+    # https://developers.facebook.com/docs/messenger-platform/instagram/get-started#app-dashboard
+    IG_VERIFY_TOKEN:
+    # Twitter
+    # documentation: https://www.chatwoot.com/docs/twitter-app-setup
+    TWITTER_APP_ID:
+    TWITTER_CONSUMER_KEY:
+    TWITTER_CONSUMER_SECRET:
+    TWITTER_ENVIRONMENT:
+    #slack integration
+    SLACK_CLIENT_ID:
+    SLACK_CLIENT_SECRET:
+    # Google OAuth
+    GOOGLE_OAUTH_CLIENT_ID:
+    GOOGLE_OAUTH_CLIENT_SECRET:
+    GOOGLE_OAUTH_CALLBACK_URL:
+services:
+  rails:
+    extends:
+      file: ../common.yml
+      service: common
+    <<: *environment
+    image: chatwoot/chatwoot:latest
+    depends_on:
+      - pgvector
+      - redis
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    volumes:
+      - ../../apps-data/${APP_NAME}/storage:/app/storage
+  sidekiq:
+    extends:
+      file: ../common-side-service.yml
+      service: common_side_service
+    <<: *environment
+    image: chatwoot/chatwoot:latest
+    depends_on:
+      - pgvector
+      - redis
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    volumes:
+      - ../../apps-data/${APP_NAME}/storage:/app/storage

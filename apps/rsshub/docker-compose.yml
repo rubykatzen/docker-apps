@@ -1,4 +1,5 @@
 include:
+  - ../networks.yml
   - ../redis.yml
 services:
   browserless: # marked
@@ -50,7 +51,3 @@ services:
     networks:
       - internal
       - traefik
-networks:
-  internal:
-  traefik:
-    external: true

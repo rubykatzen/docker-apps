@@ -1,4 +1,5 @@
 include:
+  - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
 services:
@@ -51,9 +52,3 @@ services:
       - ../../apps-data/${APP_NAME}/storage:/automatisch/storage
     networks:
       - internal
-networks:
-  internal:
-  databases:
-    external: true
-  traefik:
-    external: true

@@ -1,3 +1,5 @@
+include:
+  - ../networks.yml
 services:
   sshd:
     image: testcontainers/sshd:1.2.0
@@ -8,6 +10,3 @@ services:
     restart: unless-stopped
     networks:
       - databases
-networks:
-  databases:
-    external: true

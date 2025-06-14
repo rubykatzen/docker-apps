@@ -1,3 +1,5 @@
+include:
+  - ../networks.yml
 services:
   # Sockpuppetbrowser is basically chrome wrapped in an API for allowing fast fetching of web-pages.
   # RECOMMENDED FOR FETCHING PAGES WITH CHROME
@@ -30,7 +32,3 @@ services:
     networks:
       - internal
       - traefik
-networks:
-  internal:
-  traefik:
-    external: true

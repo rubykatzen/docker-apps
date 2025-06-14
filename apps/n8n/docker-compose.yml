@@ -1,4 +1,5 @@
 include:
+  - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
 x-shared: &shared
@@ -58,9 +59,3 @@ services:
     command: [ 'sh', '-c', 'chown -R 1000:1000 /home/node/.n8n' ]
     volumes:
       - ../../apps-data/${APP_NAME}/data:/home/node/.n8n
-networks:
-  internal:
-  databases:
-    external: true
-  traefik:
-    external: true

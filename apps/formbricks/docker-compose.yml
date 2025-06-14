@@ -1,3 +1,5 @@
+include:
+  - ../networks.yml
 x-environment: &environment
   environment:
     ######################################################## REQUIRED ########################################################
@@ -113,7 +115,6 @@ x-environment: &environment
     # (Role Management is an Enterprise feature)
     # DEFAULT_ORGANIZATION_ID:
     # DEFAULT_ORGANIZATION_ROLE: owner
-
 services:
   postgres:
     restart: unless-stopped
@@ -144,7 +145,3 @@ services:
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-networks:
-  internal:
-  traefik:
-    external: true

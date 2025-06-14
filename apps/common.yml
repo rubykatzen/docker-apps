@@ -1,5 +1,7 @@
 services:
   common:
+    env_file:
+      - ./${APP_NAME}/.env
     restart: unless-stopped
     expose:
       - ${APP_PORT}

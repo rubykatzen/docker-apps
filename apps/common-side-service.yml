@@ -1,0 +1,7 @@
+services:
+  common_side_service:
+    env_file:
+      - ./${APP_NAME}/.env
+    restart: unless-stopped
+    networks:
+      - internal

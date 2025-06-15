@@ -18,7 +18,6 @@ setup:
 github:
   client_id: ${CODECOV_GITHUB_CLIENT_ID}
   client_secret: ${CODECOV_GITHUB_CLIENT_SECRET}
-  global_upload_token: ${CODECOV_GITHUB_UPLOAD_TOKEN}
   webhook_secret: ${CODECOV_GITHUB_WEBHOOK_SECRET}
   integration:
     id: ${CODECOV_GITHUB_APP_ID}

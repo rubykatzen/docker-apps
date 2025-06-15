@@ -1,0 +1,13 @@
+services:
+  minio:
+    image: minio/minio
+    command: server /export
+    ports:
+      - "9000"
+    environment:
+      MINIO_ROOT_USER: ${APP_NAME}
+      MINIO_ROOT_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+    volumes:
+      - ../apps-data/${APP_NAME}/minio:/export
+    networks:
+      - internal

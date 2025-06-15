@@ -30,8 +30,8 @@ services:
     host: minio
     port: 9000
     auto_create_bucket: true
-    access_key_id: codecov-default-key-update # ToDO: replace it!
-    secret_access_key: codecov-default-secret-update # ToDO: replace it!
+    access_key_id: ${APP_NAME}
+    secret_access_key: ${DAPPS_DATABASE_PASSWORD}
 # If using external storage. Comment above and uncomment below
 #    host: s3.amazonaws.com or storage.googleapis.com if using GCS
 #    bucket: <bucket-name>

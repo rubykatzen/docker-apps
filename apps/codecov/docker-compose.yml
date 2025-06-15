@@ -3,6 +3,7 @@ include:
   - ../redis.yml
   - ../postgres.yml
   - ../timescale.yml
+  - ../minio.yml
 services:
   gateway:
     image: codecov/self-hosted-gateway:latest-stable
@@ -56,16 +57,4 @@ services:
       - RUN_ENV=ENTERPRISE
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
-      - ../../apps-data/${APP_NAME}/archive-volume:/archive
-  minio: # ToDO: extract to minio.yml
-    image: minio/minio
-    command: server /export
-    ports:
-      - "9000"
-    environment:
-      - MINIO_ROOT_USER=codecov-default-key-update
-      - MINIO_ROOT_PASSWORD=codecov-default-secret-update
-    volumes:
-      - ../../apps-data/${APP_NAME}/archive-volume:/export
-    networks:
-      - internal
+      - ../../apps-data/${APP_NAME}/archive:/archive

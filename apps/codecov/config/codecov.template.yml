@@ -1,33 +1,34 @@
 setup:
   # Replace with the http location of your Codecov
   # https://docs.codecov.io/docs/configuration#section-codecov-url
-  codecov_url: http://localhost:8080
+  codecov_url: https://${APP_NAME}.${DAPPS_DOMAIN}
   #codecov_api_url: <codecov-url> # this defaults to <codecov-url> and is designed to work out of the box like this
   #api_allowed_hosts: [] # this defaults to <codecov-url> and is designed to work out of the box like this
   # Replace with your Codecov Enterprise License key. This is required for the containers to function.
   # https://docs.codecov.io/docs/configuration#section-enterprise-license
   enterprise_license: "F5O0Fu5ASFTPtWXM51BK8YQlq7IM2s+8TBGULrf9Um7wHjfPwI+Z3E4PfF/dPs6Uc5A+MLti+2etHq5dnFEfZgoiIVCLZ8x+0BVmUSWwPS42vJXnf1veY9Bglang4mDIhmfWfp5l6AT6cxmAVFpGrwobiK6OcN9pjWx4iWabazmsOiF9LM++v0WtuHNvhgzRcKmnJPgqahEB7qqF6KQ1hg=="
-  # https://docs.codecov.com/docs/configuration#instance-wide-admins
-  admins:
+  admins: # https://docs.codecov.com/docs/configuration#instance-wide-admins
     - service: github
-      username: "<your-user>"
+      username: ${CODECOV_ADMIN_GITHUB_USERNAME}
   http:
     cookie_secret: "<your-cookie-secret>" # Replace it with a random string
-    cookies_domain: localhost
+    cookies_domain: ${APP_NAME}.${DAPPS_DOMAIN}
   timeseries:
     enabled: true
 github:
-  client_id: "<client-id>"
-  client_secret: "<client-secret>"
-  global_upload_token: "<upload-token>"
+  client_id: ${CODECOV_GITHUB_CLIENT_ID}
+  client_secret: ${CODECOV_GITHUB_CLIENT_SECRET}
+  global_upload_token: ${CODECOV_GITHUB_UPLOAD_TOKEN}
 services:
   redis_url: "redis://redis:6379"
-  database_url: "postgres://postgres:testpassword@postgres:5432/postgres"
-  timeseries_database_url: "postgres://postgres:testpassword@timescale:5432/postgres"
+  database_url: "postgres://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}"
+  timeseries_database_url: "postgres://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@timescale:5432/${APP_NAME}"
   minio:
     host: minio
     port: 9000
     auto_create_bucket: true
+    access_key_id: codecov-default-key # ToDO: replace it!
+    secret_access_key: codecov-default-secret # ToDO: replace it!
 # If using external storage. Comment above and uncomment below
 #    host: s3.amazonaws.com or storage.googleapis.com if using GCS
 #    bucket: <bucket-name>

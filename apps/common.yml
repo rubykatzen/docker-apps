@@ -1,5 +1,5 @@
 services:
-  common:
+  common: # ToDo: rename main | frontend | api ?
     env_file:
       - ./${APP_NAME}/.env
     restart: unless-stopped

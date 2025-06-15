@@ -4,7 +4,7 @@ services:
   2fauth:
     extends:
       file: ../common.yml
-      service: common
+      service: main
     image: 2fauth/2fauth
     volumes:
       - ../../apps-data/${APP_NAME}/2fauth:/2fauth

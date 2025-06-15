@@ -6,7 +6,7 @@ services:
   infisical:
     extends:
       file: ../common.yml
-      service: common
+      service: main
     image: infisical/infisical:latest-postgres
     depends_on:
       - postgres

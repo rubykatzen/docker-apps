@@ -1,7 +1,0 @@
-services:
-  common_side_service: #ToDo: move inside common.yml
-    env_file:
-      - ./${APP_NAME}/.env
-    restart: unless-stopped
-    networks:
-      - internal

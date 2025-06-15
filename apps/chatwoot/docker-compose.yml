@@ -83,7 +83,7 @@ services:
   rails:
     extends:
       file: ../common.yml
-      service: common
+      service: main
     <<: *environment
     image: chatwoot/chatwoot:latest
     depends_on:
@@ -95,8 +95,8 @@ services:
       - ../../apps-data/${APP_NAME}/storage:/app/storage
   sidekiq:
     extends:
-      file: ../common-side-service.yml
-      service: common_side_service
+      file: ../common.yml
+      service: side
     <<: *environment
     image: chatwoot/chatwoot:latest
     depends_on:

@@ -4,7 +4,7 @@ services:
   homer:
     extends:
       file: ../common.yml
-      service: common
+      service: main
     image: b4bz/homer
     volumes:
       - ../../apps-data/${APP_NAME}/assets:/www/assets

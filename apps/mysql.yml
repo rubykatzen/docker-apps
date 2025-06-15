@@ -15,4 +15,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - internal
+      internal:
+      databases:
+        aliases:
+          - ${APP_NAME}-mysql

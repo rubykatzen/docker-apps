@@ -1,0 +1,60 @@
+include:
+  - ../networks.yml
+  - ../redis.yml
+  - ../postgres.yml
+  - ../timescale.yml
+  - ../minio.yml
+services:
+  gateway:
+    image: codecov/self-hosted-gateway:latest-stable
+    extends:
+      file: ../common.yml
+      service: main
+    depends_on:
+      - api
+      - frontend
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+    environment:
+      - CODECOV_GATEWAY_MINIO_ENABLED=true
+  frontend:
+    image: codecov/self-hosted-frontend:latest-stable
+    extends:
+      file: ../common.yml
+      service: side
+    environment:
+      - CODECOV_BASE_HOST=${APP_NAME}.${DAPPS_DOMAIN}
+      - CODECOV_API_HOST=${APP_NAME}.${DAPPS_DOMAIN}
+      - CODECOV_IA_HOST=${APP_NAME}.${DAPPS_DOMAIN}
+      - CODECOV_SCHEME=https
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+    ports:
+      - "8080"
+  api:
+    image: codecov/self-hosted-api:latest-stable
+    extends:
+      file: ../common.yml
+      service: side
+    depends_on:
+      - redis
+      - postgres
+      - timescale
+      - minio
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+  worker:
+    image: codecov/self-hosted-worker:latest-stable
+    extends:
+      file: ../common.yml
+      service: side
+    depends_on:
+      - redis
+      - postgres
+      - timescale
+      - minio
+    environment:
+      - RUN_ENV=ENTERPRISE
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ../../apps-data/${APP_NAME}/archive:/archive

@@ -1,0 +1,20 @@
+services:
+  timescale:
+    image: timescale/timescaledb:latest-pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${APP_NAME}
+      POSTGRES_USER: ${APP_NAME}
+      POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+    volumes:
+      - ../apps-data/${APP_NAME}/timescale:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${APP_NAME}", "-U", "${APP_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      internal:
+      databases:
+        aliases:
+          - ${APP_NAME}-timescaledb

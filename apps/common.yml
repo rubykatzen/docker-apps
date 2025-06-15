@@ -1,5 +1,5 @@
 services:
-  common:
+  main:
     env_file:
       - ./${APP_NAME}/.env
     restart: unless-stopped
@@ -13,3 +13,9 @@ services:
     networks:
       - internal
       - traefik
+  side:
+    env_file:
+      - ./${APP_NAME}/.env
+    restart: unless-stopped
+    networks:
+      - internal

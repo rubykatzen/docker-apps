@@ -5,7 +5,7 @@ services:
   semaphore:
     extends:
       file: ../common.yml
-      service: common
+      service: main
     image: semaphoreui/semaphore
     depends_on:
       - postgres

@@ -28,13 +28,13 @@ providers:
 certificatesResolvers:
   acmeHttpChallengeResolver:
     acme:
-      email: ykirillov@icloud.com #{{env "ACME_EMAIL" }}
+      email: ${DAPPS_ADMIN_MAIL}
       storage: acme.json
       httpChallenge:
         entryPoint: http
   acmeCloudflareDnsChallengeResolver:
     acme:
-      email: ykirillov@icloud.com #{{env "ACME_EMAIL" }}
+      email: ${DAPPS_ADMIN_MAIL}
       storage: acme.json
       dnsChallenge:
         provider: cloudflare

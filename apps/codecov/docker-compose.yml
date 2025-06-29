@@ -3,7 +3,6 @@ include:
   - ../redis.yml
   - ../postgres.yml
   - ../timescale.yml
-  - ../minio.yml
 services:
   gateway:
     image: codecov/self-hosted-gateway:latest-stable
@@ -15,8 +14,6 @@ services:
       - frontend
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
-    environment:
-      - CODECOV_GATEWAY_MINIO_ENABLED=true
   frontend:
     image: codecov/self-hosted-frontend:latest-stable
     extends:
@@ -29,7 +26,7 @@ services:
       - CODECOV_SCHEME=https
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
-    ports:
+    expose:
       - "8080"
   api:
     image: codecov/self-hosted-api:latest-stable
@@ -40,7 +37,6 @@ services:
       - redis
       - postgres
       - timescale
-      - minio
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
   worker:
@@ -52,7 +48,6 @@ services:
       - redis
       - postgres
       - timescale
-      - minio
     environment:
       - RUN_ENV=ENTERPRISE
     volumes:

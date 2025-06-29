@@ -15,6 +15,7 @@ setup:
     cookies_domain: ${APP_NAME}.${DAPPS_DOMAIN}
   timeseries:
     enabled: true
+  guest_access: off
 github:
   client_id: ${CODECOV_GITHUB_CLIENT_ID}
   client_secret: ${CODECOV_GITHUB_CLIENT_SECRET}
@@ -27,17 +28,10 @@ services:
   database_url: "postgres://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}"
   timeseries_database_url: "postgres://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@timescale:5432/${APP_NAME}"
   minio:
-    host: minio
-    port: 9000
-    auto_create_bucket: true
-    access_key_id: ${APP_NAME}
-    secret_access_key: ${DAPPS_DATABASE_PASSWORD}
-# If using external storage. Comment above and uncomment below
-#    host: s3.amazonaws.com or storage.googleapis.com if using GCS
-#    bucket: <bucket-name>
-#    region: <bucket-region>
-#    verify_ssl: true
-#    port: 443
-#    access_key_id: <aws-iam-access-key> # or <gcs-hmac-key> if using GCS
-#    secret_access_key: <aws-iam-secret> # or <gcs-hmac-secret> if using GCS
-#    iam_auth: <boolean, default false> # set to true in AWS to attempt to authenticate via Instance role
+    host: ${DAPPS_S3_HOST}
+    bucket: ${CODECOV_S3_BUCKET}
+    region: auto
+    verify_ssl: true
+    port: 443
+    access_key_id: ${DAPPS_S3_ACCESS_KEY_ID}
+    secret_access_key: ${DAPPS_S3_SECRET_ACCESS_KEY}

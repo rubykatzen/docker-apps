@@ -10,6 +10,7 @@ services:
     depends_on:
       - postgres
     environment:
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: ${DAPPS_KEY_HEX_32}
       SEMAPHORE_DB_DIALECT: postgres
       SEMAPHORE_DB_HOST: postgres
       SEMAPHORE_DB_NAME: ${APP_NAME}

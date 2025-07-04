@@ -19,8 +19,28 @@ jobs:
       - name: Create .env
         uses: SpicyPizza/create-envfile@v2.0
         with:
-          envkey_TAILSCALE_OAUTH_CLIENT_ID: ${{ vars.TAILSCALE_OAUTH_CLIENT_ID }}
-          envkey_DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          envkey_DAPPS_ADMIN_MAIL: ${{ vars.DAPPS_ADMIN_MAIL }}
+          envkey_DAPPS_ADMIN_DEFAULT_PASS: ${{ secrets.DAPPS_ADMIN_DEFAULT_PASS }}
+          envkey_DAPPS_CLOUDFLARE_DNS_API_TOKEN: ${{ secrets.DAPPS_CLOUDFLARE_DNS_API_TOKEN }}
+          envkey_DAPPS_TIMEZONE: ${{ vars.DAPPS_TIMEZONE }}
+          envkey_DAPPS_DAPPS_DATABASE_PASSWORD: ${{ secrets.DAPPS_DATABASE_PASSWORD }}
+          envkey_DAPPS_KEY_HEX_16: ${{ secrets.DAPPS_KEY_HEX_16 }}
+          envkey_DAPPS_KEY_HEX_32: ${{ secrets.DAPPS_KEY_HEX_32 }}
+          envkey_DAPPS_KEY_HEX_64: ${{ secrets.DAPPS_KEY_HEX_64 }}
+          envkey_DAPPS_KEY_BASE64_32: ${{ secrets.DAPPS_KEY_BASE64_32 }}
+          envkey_DAPPS_TELEGRAM_TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TELEGRAM_TOKEN }}
+          envkey_DAPPS_TELEGRAM_CHAT: ${{ vars.DAPPS_TELEGRAM_CHAT }}
+          envkey_DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL: ${{ secrets.DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL }}
+          envkey_DAPPS_HTPASSWD: ${{ secrets.DAPPS_HTPASSWD }}
+          envkey_BESZEL_AGENT_PUBLIC_KEY: ${{ vars.BESZEL_AGENT_PUBLIC_KEY }}
+          envkey_RSSHUB_ACCESS_KEY: ${{ secrets.RSSHUB_ACCESS_KEY }}
+          envkey_RSSHUB_TWITTER_AUTH_TOKEN: ${{ secrets.RSSHUB_TWITTER_AUTH_TOKEN }}
+          envkey_RSSHUB_YOUTUBE_KEY: ${{ secrets.RSSHUB_YOUTUBE_KEY }}
+          envkey_RSSHUB_MEDIUM_CONFIG: ${{ secrets.RSSHUB_MEDIUM_CONFIG }}
+          envkey_RSSHUB_EMAIL_CONFIG: ${{ secrets.RSSHUB_EMAIL_CONFIG }}
+          envkey_ICLOUDPD_USERNAME: ${{ vars.ICLOUDPD_USERNAME }}
+          envkey_ICLOUDPD_PASSWORD: ${{ secrets.ICLOUDPD_PASSWORD }}
+          envkey_ICLOUDPD_ALBUM: ${{ vars.ICLOUDPD_ALBUM }}
           file_name: .env
           fail_on_empty: false
           sort_keys: false

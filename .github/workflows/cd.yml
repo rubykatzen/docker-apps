@@ -32,6 +32,15 @@ jobs:
           envkey_DAPPS_TELEGRAM_CHAT: ${{ vars.DAPPS_TELEGRAM_CHAT }}
           envkey_DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL: ${{ secrets.DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL }}
           envkey_DAPPS_HTPASSWD: ${{ secrets.DAPPS_HTPASSWD }}
+          envkey_DAPPS_SMTP_HOSTNAME: ${{ vars.DAPPS_SMTP_HOSTNAME }}
+          envkey_DAPPS_SMTP_PORT: ${{ vars.DAPPS_SMTP_PORT }}
+          envkey_DAPPS_SMTP_USERNAME: ${{ vars.DAPPS_SMTP_USERNAME }}
+          envkey_DAPPS_SMTP_PASSWORD: ${{ secrets.DAPPS_SMTP_PASSWORD }}
+          envkey_DAPPS_SMTP_FROM: ${{ vars.DAPPS_SMTP_FROM }}
+          envkey_DAPPS_S3_HOST: ${{ vars.DAPPS_S3_HOST }}
+          envkey_DAPPS_S3_REDION: ${{ vars.DAPPS_S3_REDION }}
+          envkey_DAPPS_S3_ACCESS_KEY_ID: ${{ vars.DAPPS_S3_ACCESS_KEY_ID }}
+          envkey_DAPPS_S3_SECRET_ACCESS_KEY: ${{ secrets.DAPPS_S3_SECRET_ACCESS_KEY }}
           envkey_BESZEL_AGENT_PUBLIC_KEY: ${{ vars.BESZEL_AGENT_PUBLIC_KEY }}
           envkey_RSSHUB_ACCESS_KEY: ${{ secrets.RSSHUB_ACCESS_KEY }}
           envkey_RSSHUB_TWITTER_AUTH_TOKEN: ${{ secrets.RSSHUB_TWITTER_AUTH_TOKEN }}
@@ -41,9 +50,14 @@ jobs:
           envkey_ICLOUDPD_USERNAME: ${{ vars.ICLOUDPD_USERNAME }}
           envkey_ICLOUDPD_PASSWORD: ${{ secrets.ICLOUDPD_PASSWORD }}
           envkey_ICLOUDPD_ALBUM: ${{ vars.ICLOUDPD_ALBUM }}
+          envkey_CODECOV_GITHUB_CLIENT_ID: ${{ vars.CODECOV_GITHUB_CLIENT_ID }}
+          envkey_CODECOV_GITHUB_CLIENT_SECRET: ${{ vars.CODECOV_GITHUB_CLIENT_SECRET }}
+          envkey_CODECOV_GITHUB_WEBHOOK_SECRET: ${{ vars.CODECOV_GITHUB_WEBHOOK_SECRET }}
+          envkey_CODECOV_GITHUB_APP_ID: ${{ vars.CODECOV_GITHUB_APP_ID }}
+          envkey_CODECOV_ADMIN_GITHUB_USERNAME: ${{ vars.CODECOV_ADMIN_GITHUB_USERNAME }}
+          envkey_CODECOV_LICENSE: ${{ vars.CODECOV_LICENSE }}
+          envkey_CODECOV_S3_BUCKET: ${{ vars.CODECOV_S3_BUCKET }}
           file_name: .env
-          fail_on_empty: false
-          sort_keys: false
       - name: Upload .env via SSH
         uses: appleboy/scp-action@v1
         with:

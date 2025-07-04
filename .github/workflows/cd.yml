@@ -51,11 +51,11 @@ jobs:
           envkey_ICLOUDPD_PASSWORD: ${{ secrets.ICLOUDPD_PASSWORD }}
           envkey_ICLOUDPD_ALBUM: ${{ vars.ICLOUDPD_ALBUM }}
           envkey_CODECOV_GITHUB_CLIENT_ID: ${{ vars.CODECOV_GITHUB_CLIENT_ID }}
-          envkey_CODECOV_GITHUB_CLIENT_SECRET: ${{ vars.CODECOV_GITHUB_CLIENT_SECRET }}
-          envkey_CODECOV_GITHUB_WEBHOOK_SECRET: ${{ vars.CODECOV_GITHUB_WEBHOOK_SECRET }}
+          envkey_CODECOV_GITHUB_CLIENT_SECRET: ${{ secrets.CODECOV_GITHUB_CLIENT_SECRET }}
+          envkey_CODECOV_GITHUB_WEBHOOK_SECRET: ${{ secrets.CODECOV_GITHUB_WEBHOOK_SECRET }}
           envkey_CODECOV_GITHUB_APP_ID: ${{ vars.CODECOV_GITHUB_APP_ID }}
           envkey_CODECOV_ADMIN_GITHUB_USERNAME: ${{ vars.CODECOV_ADMIN_GITHUB_USERNAME }}
-          envkey_CODECOV_LICENSE: ${{ vars.CODECOV_LICENSE }}
+          envkey_CODECOV_LICENSE: ${{ secrets.CODECOV_LICENSE }}
           envkey_CODECOV_S3_BUCKET: ${{ vars.CODECOV_S3_BUCKET }}
           file_name: .env
       - name: Upload .env via SSH

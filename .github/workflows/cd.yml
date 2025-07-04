@@ -16,6 +16,15 @@ jobs:
           oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
           tags: tag:ci
           use-cache: 'true'
+      - name: Upload .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          envkey_DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          directory: '~/'
+          file_name: .env
+          fail_on_empty: false
+          sort_keys: false
       - name: Git pull deploy
         uses: appleboy/ssh-action@v1.0.0
         with:

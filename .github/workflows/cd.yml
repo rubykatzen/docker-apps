@@ -1,0 +1,38 @@
+name: CD
+on:
+  push:
+    branches: [ 'main' ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+          use-cache: 'true'
+      - name: Git pull deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ vars.DEPLOY_HOST }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          envs: GITHUB_TOKEN
+          script: |
+            cd ${{ vars.DEPLOY_PATH }}
+            
+            git fetch https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git ${{ github.ref_name }}
+            git reset --hard FETCH_HEAD
+            ./restart.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: rubycats-com/jarvis-report-action@main
+        if: success() || failure()
+        with:
+          report-to: ${{ vars.JARVIS_TELEGRAM_REPORT_TO }}
+          token: ${{ secrets.JARVIS_TELEGRAM_TOKEN }}

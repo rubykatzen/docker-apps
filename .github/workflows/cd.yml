@@ -66,7 +66,7 @@ jobs:
           key:  ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           source: ".env"
           target: ${{ vars.DEPLOY_PATH }}
-      - name: Git pull deploy
+      - name: Git pull deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ vars.DEPLOY_HOST }}

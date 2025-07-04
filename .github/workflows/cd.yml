@@ -34,5 +34,5 @@ jobs:
       - uses: rubycats-com/jarvis-report-action@main
         if: success() || failure()
         with:
-          report-to: ${{ vars.JARVIS_TELEGRAM_REPORT_TO }}
-          token: ${{ secrets.JARVIS_TELEGRAM_TOKEN }}
+          report-to: ${{ vars.DAPPS_TELEGRAM_CHAT }}
+          token: ${{ secrets.DAPPS_TELEGRAM_TELEGRAM_TOKEN }}

@@ -2,6 +2,8 @@ name: CD
 on:
   push:
     branches: [ 'main' ]
+concurrency:
+  group: ci-deploy
 jobs:
   deploy:
     runs-on: ubuntu-latest

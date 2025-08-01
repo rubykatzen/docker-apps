@@ -6,6 +6,7 @@ services:
     environment:
       VERSION: "11"
       CPU_CORES: "2"
+      RAM_SIZE: "8G"
       DISK_SIZE: "64G"
       USERNAME: "admin"
       PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}

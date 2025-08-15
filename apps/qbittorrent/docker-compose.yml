@@ -5,10 +5,10 @@ services:
     dns:
       - 8.8.8.8
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${DAPPS_TIMEZONE}
-      - WEBUI_PORT=${APP_PORT}
+      PUID: 1000
+      PGID: 1000
+      TZ: ${DAPPS_TIMEZONE}
+      WEBUI_PORT: ${APP_PORT}
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/downloads:/downloads

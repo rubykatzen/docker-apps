@@ -1,5 +1,10 @@
+include:
+  - ../networks.yml
 services:
   grocy:
+    extends:
+      file: ../common.yml
+      service: main
     image: lscr.io/linuxserver/grocy:latest
     restart: unless-stopped
     environment:

@@ -1,0 +1,17 @@
+include:
+  - ../networks.yml
+services:
+  audiobookshelf:
+    extends:
+      file: ../common.yml
+      service: main
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    restart: unless-stopped
+    environment:
+      TZ: ${DAPPS_TIMEZONE}
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ../../apps-data/${APP_NAME}/audiobooks:/audiobooks
+      - ../../apps-data/${APP_NAME}/podcasts:/podcasts
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ../../apps-data/${APP_NAME}/metadata:/metadata

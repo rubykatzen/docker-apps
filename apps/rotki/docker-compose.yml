@@ -1,0 +1,16 @@
+include:
+  - ../networks.yml
+services:
+  rotki:
+    extends:
+      file: ../common.yml
+      service: main
+    image: rotki/rotki:latest
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+    expose:
+      - ${APP_PORT}
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data
+      - ../../apps-data/${APP_NAME}/logs:/logs

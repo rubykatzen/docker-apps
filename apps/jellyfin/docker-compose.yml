@@ -1,0 +1,15 @@
+include:
+  - ../networks.yml
+services:
+  jellyfin:
+    extends:
+      file: ../common.yml
+      service: main
+    image: jellyfin/jellyfin
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ../../apps-data/${APP_NAME}/cache:/cache
+      - ../../apps-data/${APP_NAME}/media:/media
+    environment:
+      - TZ=${DAPPS_TIMEZONE}
+      - JELLYFIN_PublishedServerUrl=https://${APP_NAME}.${DAPPS_DOMAIN}

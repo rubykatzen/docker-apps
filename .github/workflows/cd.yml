@@ -59,6 +59,8 @@ jobs:
           envkey_CODECOV_ADMIN_GITHUB_USERNAME: ${{ vars.CODECOV_ADMIN_GITHUB_USERNAME }}
           envkey_CODECOV_LICENSE: ${{ secrets.CODECOV_LICENSE }}
           envkey_CODECOV_S3_BUCKET: ${{ vars.CODECOV_S3_BUCKET }}
+          envkey_JELLYFIN_SHOWS_PATH: ${{ vars.JELLYFIN_SHOWS_PATH }}
+          envkey_JELLYFIN_VIDEO_PATH: ${{ vars.JELLYFIN_VIDEO_PATH }}
           file_name: .env
       - name: Upload .env via SSH
         uses: appleboy/scp-action@v1

@@ -1,0 +1,12 @@
+include:
+  - ../networks.yml
+services:
+  sonarr:
+    extends:
+      file: ../common.yml
+      service: main
+    image: ghcr.io/hotio/prowlarr
+    environment:
+      TZ: ${DAPPS_TIMEZONE}
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config

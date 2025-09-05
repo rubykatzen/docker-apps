@@ -1,3 +1,5 @@
+include:
+  - ../networks.yml
 services:
   amnezia-wg-easy:
     extends:

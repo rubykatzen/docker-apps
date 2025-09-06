@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
 services:
-  amnezia-wg-easy:
+  wg-easy:
     extends:
       file: ../common.yml
       service: main

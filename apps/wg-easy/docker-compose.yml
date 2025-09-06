@@ -19,7 +19,6 @@ services:
       WG_ALLOWED_IPS: "0.0.0.0/0, ::/0"
       WG_PERSISTENT_KEEPALIVE: 25
       WG_MTU: 1420
-      DICEBEAR_TYPE: bottts
       USE_GRAVATAR: true
     ports:
       - "51820:51820/udp"

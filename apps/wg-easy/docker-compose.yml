@@ -5,7 +5,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/w0rng/amnezia-wg-easy
+    image: ghcr.io/wg-easy/wg-easy
     volumes:
       - ../../apps-data/${APP_NAME}/wireguard:/etc/wireguard
     environment:
@@ -13,8 +13,8 @@ services:
       LANGUAGE: en
       PORT: 80
       PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
-      WG_PORT: 51821
-      WG_DEFAULT_ADDRESS: "10.36.0.x"
+      WG_PORT: 51820
+      WG_DEFAULT_ADDRESS: "10.35.0.x"
       WG_DEFAULT_DNS: "1.1.1.1"
       WG_ALLOWED_IPS: "0.0.0.0/0, ::/0"
       WG_PERSISTENT_KEEPALIVE: 25
@@ -22,7 +22,7 @@ services:
       DICEBEAR_TYPE: avataaars
       USE_GRAVATAR: true
     ports:
-      - "51821:51821/udp"
+      - "51820:51820/udp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE

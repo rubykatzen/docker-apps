@@ -1,9 +1,11 @@
+include:
+  - ../networks.yml
 services:
   qbittorrent:
+    extends:
+      file: ../common.yml
+      service: main
     image: linuxserver/qbittorrent
-    container_name: qbittorrent
-    dns:
-      - 8.8.8.8
     environment:
       PUID: 1000
       PGID: 1000
@@ -12,11 +14,4 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/downloads:/downloads
-    expose:
-      - ${APP_PORT}
     restart: unless-stopped
-    networks:
-      - kamal
-networks:
-  kamal:
-    external: true

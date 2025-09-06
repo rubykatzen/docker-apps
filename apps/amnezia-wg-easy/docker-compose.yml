@@ -11,7 +11,7 @@ services:
     environment:
       WG_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
       LANGUAGE: en
-      PORT: 51821
+      PORT: 80
       PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
       WG_PORT: 51820
       WG_DEFAULT_ADDRESS: "10.8.0.x"

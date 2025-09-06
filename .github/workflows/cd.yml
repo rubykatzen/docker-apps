@@ -23,7 +23,6 @@ jobs:
         with:
           envkey_DAPPS_ADMIN_MAIL: ${{ vars.DAPPS_ADMIN_MAIL }}
           envkey_DAPPS_ADMIN_DEFAULT_PASS: ${{ secrets.DAPPS_ADMIN_DEFAULT_PASS }}
-          envkey_DAPPS_ADMIN_BCRYPT_PASSWORD_HASH: ${{ secrets.DAPPS_ADMIN_BCRYPT_PASSWORD_HASH }}
           envkey_DAPPS_CLOUDFLARE_DNS_API_TOKEN: ${{ secrets.DAPPS_CLOUDFLARE_DNS_API_TOKEN }}
           envkey_DAPPS_TIMEZONE: ${{ vars.DAPPS_TIMEZONE }}
           envkey_DAPPS_DATABASE_PASSWORD: ${{ secrets.DAPPS_DATABASE_PASSWORD }}
@@ -62,6 +61,7 @@ jobs:
           envkey_CODECOV_S3_BUCKET: ${{ vars.CODECOV_S3_BUCKET }}
           envkey_JELLYFIN_SHOWS_PATH: ${{ vars.JELLYFIN_SHOWS_PATH }}
           envkey_JELLYFIN_VIDEO_PATH: ${{ vars.JELLYFIN_VIDEO_PATH }}
+          envkey_WG_EASY_PASSWORD_HASH: ${{ secrets.WG_EASY_PASSWORD_HASH }}
           file_name: .env
       - name: Upload .env via SSH
         uses: appleboy/scp-action@v1

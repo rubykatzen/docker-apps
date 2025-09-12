@@ -9,7 +9,7 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/wireguard:/etc/wireguard
     environment:
-      WG_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+      WG_HOST: ${DAPPS_HOST}
       LANGUAGE: en
       PORT: 80
       PASSWORD_HASH: ${WG_EASY_PASSWORD_HASH}

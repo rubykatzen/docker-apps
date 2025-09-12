@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
 services:
-  sonarr:
+  prowlarr:
     extends:
       file: ../common.yml
       service: main

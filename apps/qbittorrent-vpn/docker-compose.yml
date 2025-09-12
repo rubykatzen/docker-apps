@@ -17,6 +17,9 @@ services:
       - LAN_NETWORK=172.16.0.0/12
       - NAME_SERVERS=1.1.1.1,8.8.8.8
       - WEBUI_PORT=${APP_PORT}
+      - UMASK=002
+      - PUID=1000
+      - PGID=1000
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/downloads:/downloads

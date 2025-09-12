@@ -1,0 +1,20 @@
+include:
+  - ../networks.yml
+services:
+  arch-qbittorrentvpn:
+    extends:
+      file: ../common.yml
+      service: main
+    image: binhex/arch-qbittorrentvpn
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_PROV=custom
+      - VPN_CLIENT=wireguard
+      - LAN_NETWORK=172.16.0.0/12
+      - NAME_SERVERS=1.1.1.1,8.8.8.8
+      - WEBUI_PORT=${APP_PORT}
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ../../apps-data/${APP_NAME}/downloads:/downloads

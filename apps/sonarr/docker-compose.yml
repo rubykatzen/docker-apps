@@ -10,4 +10,5 @@ services:
       TZ: ${DAPPS_TIMEZONE}
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
-      - ../../apps-data/${APP_NAME}/data:/data
+      - ${QBITTORRENT_DOWNLOADS_PATH}:/downloads
+      - ${JELLYFIN_SHOWS_PATH}:/shows

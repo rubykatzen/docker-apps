@@ -6,12 +6,12 @@ services:
       file: ../common.yml
       service: main
     image: jellyfin/jellyfin
+    environment:
+      - TZ=${DAPPS_TIMEZONE}
+      - JELLYFIN_PublishedServerUrl=https://${APP_NAME}.${DAPPS_DOMAIN}
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/cache:/cache
       - ../../apps-data/${APP_NAME}/media:/media
       - ${JELLYFIN_SHOWS_PATH}:/shows
       - ${JELLYFIN_VIDEO_PATH}:/video
-    environment:
-      - TZ=${DAPPS_TIMEZONE}
-      - JELLYFIN_PublishedServerUrl=https://${APP_NAME}.${DAPPS_DOMAIN}

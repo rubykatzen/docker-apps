@@ -6,6 +6,10 @@ services:
       file: ../common.yml
       service: main
     image: binhex/arch-qbittorrentvpn
+    privileged: true
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=1
     environment:
       - VPN_ENABLED=yes
       - VPN_PROV=custom
@@ -13,10 +17,6 @@ services:
       - LAN_NETWORK=172.16.0.0/12
       - NAME_SERVERS=1.1.1.1,8.8.8.8
       - WEBUI_PORT=${APP_PORT}
-    privileged: true
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-      - net.ipv6.conf.all.disable_ipv6=1
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/downloads:/downloads

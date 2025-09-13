@@ -1,0 +1,16 @@
+include:
+  - ../networks.yml
+services:
+  whisparr:
+    extends:
+      file: ../common.yml
+      service: main
+    image: hotio/whisparr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${DAPPS_TIMEZONE}
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ${QBITTORRENT_DOWNLOADS_PATH}:/downloads
+      - ${JELLYFIN_ADULT_PATH}:/Adult

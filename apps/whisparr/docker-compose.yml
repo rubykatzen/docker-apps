@@ -5,7 +5,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/hotio/whisparr
+    image: ghcr.io/hotio/whisparr:v3
     environment:
       PUID: 1000
       PGID: 1000

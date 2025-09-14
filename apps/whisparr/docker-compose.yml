@@ -13,4 +13,4 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ${QBITTORRENT_DOWNLOADS_PATH}:/downloads
-      - ${JELLYFIN_ADULT_PATH}:/Adult
+      - ${JELLYFIN_ADULT_PATH}:/adult

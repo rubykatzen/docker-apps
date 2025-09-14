@@ -1,0 +1,11 @@
+include:
+  - ../networks.yml
+services:
+  flaresolverr:
+    extends:
+      file: ../common.yml
+      service: main
+    image: ghcr.io/hotio/flaresolverr
+    environment:
+      LOG_LEVEL: info
+      TZ: ${DAPPS_TIMEZONE}

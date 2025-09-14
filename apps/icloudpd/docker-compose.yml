@@ -11,9 +11,8 @@ services:
       - ../../apps-data/${APP_NAME}/cookies:/cookies
     command: >
       icloudpd
-        --username ${ICLOUDPD_USERNAME}
-        --password ${ICLOUDPD_PASSWORD}
-        --password-provider parameter
+        --username "${ICLOUDPD_USERNAME}"
+        --password-provider webui
         --mfa-provider webui
         --directory /data
         --cookie-directory /cookies
@@ -22,4 +21,4 @@ services:
         --auto-delete
         --watch-with-interval 180
         --keep-unicode-in-filenames
-        --album ${ICLOUDPD_ALBUM}
+        --album "${ICLOUDPD_ALBUM}"

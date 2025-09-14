@@ -5,7 +5,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/hotio/flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr
     environment:
       LOG_LEVEL: info
       TZ: ${DAPPS_TIMEZONE}

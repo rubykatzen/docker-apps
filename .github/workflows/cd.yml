@@ -66,6 +66,7 @@ jobs:
           envkey_WG_EASY_PASSWORD_HASH: ${{ secrets.WG_EASY_PASSWORD_HASH }}
           envkey_ICLOUDPD_DATA_PATH: ${{ vars.ICLOUDPD_DATA_PATH }}
           envkey_AUDIOBOOKSHELF_AUDIOBOOKS_PATH: ${{ vars.AUDIOBOOKSHELF_AUDIOBOOKS_PATH }}
+          envkey_METUBE_DOWNLOADS_PATH: ${{ vars.METUBE_DOWNLOADS_PATH }}
           file_name: .env
       - name: Upload .env via SSH
         uses: appleboy/scp-action@v1

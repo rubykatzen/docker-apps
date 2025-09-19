@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     expose:
       - ${APP_PORT}
-    volumes:
-      - ../../apps-data/${APP_NAME}/downloads:/downloads
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
@@ -15,3 +13,5 @@ services:
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
     networks:
       - traefik
+    volumes:
+      - ../../apps-data/${APP_NAME}/downloads:/downloads

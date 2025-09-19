@@ -6,9 +6,6 @@ services:
       file: ../common.yml
       service: main
     image: icloudpd/icloudpd
-    volumes:
-      - ../../apps-data/${APP_NAME}/data:/data
-      - ../../apps-data/${APP_NAME}/cookies:/cookies
     command: >
       icloudpd
         --username "${ICLOUDPD_USERNAME}"
@@ -22,3 +19,6 @@ services:
         --watch-with-interval 180
         --keep-unicode-in-filenames
         --album "${ICLOUDPD_ALBUM}"
+    volumes:
+      - ../../apps-data/${APP_NAME}/cookies:/cookies
+      - ${ICLOUDPD_DATA_PATH}/data:/data

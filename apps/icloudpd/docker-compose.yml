@@ -21,4 +21,4 @@ services:
         --album "${ICLOUDPD_ALBUM}"
     volumes:
       - ../../apps-data/${APP_NAME}/cookies:/cookies
-      - ${ICLOUDPD_DATA_PATH}/data:/data
+      - ${ICLOUDPD_DATA_PATH}:/data

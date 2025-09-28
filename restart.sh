@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./down.sh
-./up.sh
+./down.sh "$@"
+./up.sh "$@"

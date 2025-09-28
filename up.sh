@@ -4,7 +4,14 @@ set -a
 source .env
 source apps.env
 set +a
-for app in "${DAPPS[@]}"
+
+if [ $# -gt 0 ]; then
+  apps=("$@")
+else
+  apps=("${DAPPS[@]}")
+fi
+
+for app in "${apps[@]}"
 do
   echo "Starting: ${app}"
 

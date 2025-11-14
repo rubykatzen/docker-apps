@@ -27,7 +27,7 @@ services:
           elif command -v node >/dev/null 2>&1; then
             node -e "const http=require('http'); const req=http.get('http://127.0.0.1:${APP_PORT}', res=>{process.exit(res.statusCode<400?0:1)}); req.on('error',()=>process.exit(1));"
           elif command -v php >/dev/null 2>&1; then
-            php -r '$h=@get_headers("http://127.0.0.1:${APP_PORT}"); if($h===false) exit(1); if(preg_match("/^HTTP\/\S+ (\d{3})/", $h[0], $m) && (int)$m[1] < 400) exit(0); exit(1);'
+            php -r '$$h=@get_headers("http://127.0.0.1:${APP_PORT}"); if($$h===false) exit(1); if(preg_match("/^HTTP\/\S+ (\d{3})/", $$h[0], $$m) && (int)$$m[1] < 400) exit(0); exit(1);'
           elif command -v nc >/dev/null 2>&1; then
             nc -z 127.0.0.1 ${APP_PORT}
           else

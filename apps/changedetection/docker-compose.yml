@@ -1,34 +1,10 @@
 include:
   - ../networks.yml
 services:
-  # Sockpuppetbrowser is basically chrome wrapped in an API for allowing fast fetching of web-pages.
-  # RECOMMENDED FOR FETCHING PAGES WITH CHROME
-  sockpuppetbrowser:
-    image: dgtlmoon/sockpuppetbrowser
-    restart: unless-stopped
-    environment:
-      - SCREEN_WIDTH=1920
-      - SCREEN_HEIGHT=1024
-      - SCREEN_DEPTH=16
-      - MAX_CONCURRENT_CHROME_PROCESSES=10
-    networks:
-      - internal
   changedetection:
     image: ghcr.io/dgtlmoon/changedetection.io
+    extends:
+      file: ../common.yml
+      service: main
     volumes:
       - ../../apps-data/${APP_NAME}/datastore:/datastore
-    expose:
-      - ${APP_PORT}
-    restart: unless-stopped
-    environment:
-      - PLAYWRIGHT_DRIVER_URL=ws://sockpuppetbrowser:3000
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-    depends_on:
-      - sockpuppetbrowser
-    networks:
-      - internal
-      - traefik

@@ -25,7 +25,11 @@ services:
       - postgres
       - redis
     healthcheck:
-      test: ["CMD", "ps", "aux | grep '[s]idekiq'"]
+      test: ["CMD-SHELL","ps | grep '[s]idekiq' >/dev/null || exit 1"]
+      start_period: 30s
+      interval: 30s
+      timeout: 5s
+      retries: 5
   web:
     image: ghcr.io/we-promise/sure:latest
     extends:

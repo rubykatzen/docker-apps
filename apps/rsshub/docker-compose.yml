@@ -11,6 +11,7 @@ services:
         soft: 0 # marked
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000/pressure" ]
+      start_period: 30s
       interval: 30s
       timeout: 5s
       retries: 5
@@ -37,6 +38,7 @@ services:
       - ${RSSHUB_MEDIUM_CONFIG}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}/healthz?key=${RSSHUB_ACCESS_KEY}" ]
+      start_period: 30s
       interval: 30s
       timeout: 5s
       retries: 5

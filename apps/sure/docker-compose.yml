@@ -5,10 +5,12 @@ include:
 services:
   worker:
     image: ghcr.io/we-promise/sure:latest
+    extends:
+      file: ../common.yml
+      service: side
     volumes:
       - ../../apps-data/${APP_NAME}/storage:/rails/storage
     command: bundle exec sidekiq
-    restart: unless-stopped
     environment:
       SELF_HOSTED: "true"
       RAILS_FORCE_SSL: "false"
@@ -22,15 +24,15 @@ services:
     depends_on:
       - postgres
       - redis
-    networks:
-      - internal
+    healthcheck:
+      test: ["CMD", "ps", "aux | grep '[s]idekiq'"]
   web:
     image: ghcr.io/we-promise/sure:latest
+    extends:
+      file: ../common.yml
+      service: main
     volumes:
       - ../../apps-data/${APP_NAME}/storage:/rails/storage
-    expose:
-      - ${APP_PORT}
-    restart: unless-stopped
     environment:
       SELF_HOSTED: "true"
       RAILS_FORCE_SSL: "false"
@@ -44,11 +46,3 @@ services:
     depends_on:
       - postgres
       - redis
-    networks:
-      - internal
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"

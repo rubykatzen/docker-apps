@@ -2,8 +2,8 @@ x-healthcheck: &healthcheck
   test:
     - CMD-SHELL
     - |
-      if [ -n "$HEALTHCHECK_CMD" ]; then
-        eval "$HEALTHCHECK_CMD"
+      if [ -n "$$HEALTHCHECK_CMD" ]; then
+        eval "$$HEALTHCHECK_CMD"
       elif command -v curl >/dev/null 2>&1; then
         curl -fsS "http://127.0.0.1:${APP_PORT}" >/dev/null
       elif command -v wget >/dev/null 2>&1; then

@@ -17,7 +17,7 @@ services:
       MB_DB_HOST: postgres
     healthcheck:
       test: curl --fail -I http://localhost:${APP_PORT}/api/health || exit 1
-      interval: 15s
+      interval: 30s
       timeout: 5s
       retries: 5
     networks:

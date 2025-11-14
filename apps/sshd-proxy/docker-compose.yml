@@ -10,3 +10,8 @@ services:
     restart: unless-stopped
     networks:
       - databases
+    healthcheck:
+      test: ["CMD-SHELL","nc -z 127.0.0.1 22 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5

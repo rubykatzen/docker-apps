@@ -12,8 +12,8 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000/pressure" ]
       interval: 30s
-      timeout: 10s
-      retries: 3
+      timeout: 5s
+      retries: 5
     networks:
       - internal
   rsshub:
@@ -38,8 +38,8 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}/healthz?key=${RSSHUB_ACCESS_KEY}" ]
       interval: 30s
-      timeout: 10s
-      retries: 3
+      timeout: 5s
+      retries: 5
     depends_on:
       - redis
       - browserless # marked

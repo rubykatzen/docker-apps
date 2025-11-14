@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:${APP_PORT}/api/heartbeat"]
-      interval: 5s
+      interval: 30s
       timeout: 5s
       retries: 5
     networks:

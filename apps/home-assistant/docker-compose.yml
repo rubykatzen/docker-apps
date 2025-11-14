@@ -9,4 +9,5 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
     privileged: true
+    networks: []
     network_mode: host

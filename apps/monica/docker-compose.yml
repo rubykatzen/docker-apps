@@ -4,7 +4,9 @@ include:
 services:
   app:
     image: monica
-    restart: unless-stopped
+    extends:
+      file: ../common.yml
+      service: main
     depends_on:
       - mysql
     environment:
@@ -14,15 +16,5 @@ services:
       - DB_HOST=mysql
       - DB_USERNAME=${APP_NAME}
       - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
-    expose:
-      - ${APP_PORT}
     volumes:
       - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-    networks:
-      - internal
-      - traefik

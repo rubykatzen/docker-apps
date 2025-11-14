@@ -1,6 +1,7 @@
 include:
   - ../networks.yml
   - ../pgvector.yml
+  - ../redis.yml
 services:
   formbricks:
     image: ghcr.io/formbricks/formbricks
@@ -55,12 +56,12 @@ services:
       # Set the below to set a custom Upload Directory
       # UPLOADS_DIR:
       # Set S3 Storage configuration (required for the file upload in serverless environments like Vercel)
-      # S3_ACCESS_KEY:
-      # S3_SECRET_KEY:
-      # S3_REGION:
-      # S3_BUCKET_NAME:
+      S3_ACCESS_KEY: ${DAPPS_S3_ACCESS_KEY_ID}
+      S3_SECRET_KEY: ${DAPPS_S3_SECRET_ACCESS_KEY}
+      S3_REGION: auto
+      S3_BUCKET_NAME: ${CODECOV_S3_BUCKET}
       # Set a third party S3 compatible storage service endpoint like StorJ leave empty if you use Amazon S3
-      # S3_ENDPOINT_URL=
+      S3_ENDPOINT_URL: ${DAPPS_S3_HOST}
       # Force path style for S3 compatible storage (0 for disabled, 1 for enabled)
       S3_FORCE_PATH_STYLE: 0
       ############################################# OPTIONAL (OAUTH CONFIGURATION) #############################################
@@ -111,7 +112,7 @@ services:
       # Set the below to send OpenTelemetry data for tracing
       # OPENTELEMETRY_LISTENER_URL: http://localhost:4318/v1/traces
       # Set the below to use Redis for Next Caching (default is In-Memory from Next Cache)
-      # REDIS_URL:
+      REDIS_URL: redis://redis:6379/1
       # Set the below to use for Rate Limiting (default us In-Memory LRU Cache)
       # REDIS_HTTP_URL:
       ############################################# OPTIONAL (OTHER) #############################################
@@ -122,5 +123,4 @@ services:
       # DEFAULT_ORGANIZATION_ROLE: owner
     depends_on:
       - pgvector
-    volumes:
-      - ../../apps-data/${APP_NAME}/uploads:/home/nextjs/apps/web/uploads
+      - redis

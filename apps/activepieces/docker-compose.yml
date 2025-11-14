@@ -5,7 +5,9 @@ include:
 services:
   activepieces:
     image: ghcr.io/activepieces/activepieces
-    restart: unless-stopped
+    extends:
+      file: ../common.yml
+      service: main
     ## Enable the following line if you already use AP_EXECUTION_MODE with SANDBOXED or old activepieces, checking the breaking change documentation for more info.
     ## privileged: true
     environment:
@@ -32,18 +34,8 @@ services:
       AP_FLOW_TIMEOUT_SECONDS: 600
       AP_TELEMETRY_ENABLED: true
       AP_TEMPLATES_SOURCE_URL: "https://cloud.activepieces.com/api/v1/flow-templates"
-    expose:
-      - ${APP_PORT}
     depends_on:
       - postgres
       - redis
     volumes:
       - ../../apps-data/${APP_NAME}/cache:/usr/src/app/cache
-    networks:
-      - internal
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"

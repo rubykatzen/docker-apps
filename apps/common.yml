@@ -1,49 +1,59 @@
+x-healthcheck: &healthcheck
+  test:
+    - CMD-SHELL
+    - |
+      if [ -n "$HEALTHCHECK_CMD" ]; then
+        eval "$HEALTHCHECK_CMD"
+      elif command -v curl >/dev/null 2>&1; then
+        curl -fsS "http://127.0.0.1:${APP_PORT}" >/dev/null
+      elif command -v wget >/dev/null 2>&1; then
+        wget -q --spider "http://127.0.0.1:${APP_PORT}"
+      elif command -v python >/dev/null 2>&1; then
+        python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:${APP_PORT}').status < 400 else 1)"
+      elif command -v ruby >/dev/null 2>&1; then
+        ruby -e "require 'net/http'; exit(Net::HTTP.get_response(URI('http://127.0.0.1:${APP_PORT}')).code.to_i < 400 ? 0 : 1)"
+      elif command -v node >/dev/null 2>&1; then
+        node -e "const http=require('http'); const req=http.get('http://127.0.0.1:${APP_PORT}', res=>{process.exit(res.statusCode<400?0:1)}); req.on('error',()=>process.exit(1));"
+      elif command -v php >/dev/null 2>&1; then
+        php -r '$$h=@get_headers("http://127.0.0.1:${APP_PORT}"); if($$h===false) exit(1); if(preg_match("/^HTTP\/\S+ (\d{3})/", $$h[0], $$m) && (int)$$m[1] < 400) exit(0); exit(1);'
+      elif command -v nc >/dev/null 2>&1; then
+        nc -z 127.0.0.1 ${APP_PORT}
+      else
+        echo 'no suitable tool for healthcheck, unhealthy by default' >&2
+        exit 1
+      fi
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 60s
+x-labels: &labels
+  - "traefik.enable=true"
+  - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+  - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
+  - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
+x-env-file: &env-file
+  - ./${APP_NAME}/.env
+x-expose: &expose
+  - ${APP_PORT}
+x-restart: &restart unless-stopped
+
 services:
   main:
-    env_file:
-      - ./${APP_NAME}/.env
-    restart: unless-stopped
-    expose:
-      - ${APP_PORT}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - |
-          if [ -n "$HEALTHCHECK_CMD" ]; then
-            eval "$HEALTHCHECK_CMD"
-          elif command -v curl >/dev/null 2>&1; then
-            curl -fsS "http://127.0.0.1:${APP_PORT}" >/dev/null
-          elif command -v wget >/dev/null 2>&1; then
-            wget -q --spider "http://127.0.0.1:${APP_PORT}"
-          elif command -v python >/dev/null 2>&1; then
-            python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:${APP_PORT}').status < 400 else 1)"
-          elif command -v ruby >/dev/null 2>&1; then
-            ruby -e "require 'net/http'; exit(Net::HTTP.get_response(URI('http://127.0.0.1:${APP_PORT}')).code.to_i < 400 ? 0 : 1)"
-          elif command -v node >/dev/null 2>&1; then
-            node -e "const http=require('http'); const req=http.get('http://127.0.0.1:${APP_PORT}', res=>{process.exit(res.statusCode<400?0:1)}); req.on('error',()=>process.exit(1));"
-          elif command -v php >/dev/null 2>&1; then
-            php -r '$$h=@get_headers("http://127.0.0.1:${APP_PORT}"); if($$h===false) exit(1); if(preg_match("/^HTTP\/\S+ (\d{3})/", $$h[0], $$m) && (int)$$m[1] < 400) exit(0); exit(1);'
-          elif command -v nc >/dev/null 2>&1; then
-            nc -z 127.0.0.1 ${APP_PORT}
-          else
-            echo 'no suitable tool for healthcheck, unhealthy by default' >&2
-            exit 1
-          fi
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+    env_file: *env-file
+    restart: *restart
+    expose: *expose
+    labels: *labels
+    healthcheck: *healthcheck
     networks:
       - internal
       - traefik
+  host:
+    env_file: *env-file
+    restart: *restart
+    healthcheck: *healthcheck
+    network_mode: host
   side:
-    env_file:
-      - ./${APP_NAME}/.env
-    restart: unless-stopped
+    env_file: *env-file
+    restart: *restart
     networks:
       - internal

@@ -1,10 +1,12 @@
 services:
   home-assistant:
     image: "homeassistant/home-assistant"
+    extends:
+      file: ../common.yml
+      service: main
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
-    restart: unless-stopped
     privileged: true
     network_mode: host

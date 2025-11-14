@@ -11,7 +11,7 @@ services:
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://127.0.0.1:${APP_PORT}" ]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:${APP_PORT} || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5

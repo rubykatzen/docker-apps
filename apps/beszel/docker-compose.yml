@@ -5,6 +5,6 @@ services:
     image: 'henrygd/beszel'
     extends:
       file: ../common.yml
-      service: host
+      service: main
     volumes:
       - ../../apps-data/${APP_NAME}/beszel_data:/beszel_data

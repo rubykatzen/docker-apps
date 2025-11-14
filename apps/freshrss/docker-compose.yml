@@ -3,7 +3,9 @@ include:
 services:
   freshrss:
     image: freshrss/freshrss
-    restart: unless-stopped
+    extends:
+      file: ../common.yml
+      service: main
     logging:
       options:
         max-size: 10m
@@ -14,12 +16,3 @@ services:
       TZ: ${DAPPS_TIMEZONE}
       CRON_MIN: '3,33'
       TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16
-    expose:
-      - ${APP_PORT}
-    networks:
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"

@@ -10,6 +10,12 @@ services:
       - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:${APP_PORT}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     networks:
       - internal
       - traefik

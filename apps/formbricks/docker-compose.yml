@@ -14,7 +14,7 @@ services:
       WEBAPP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
       NEXTAUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN} # Required for next-auth. Should be the same as WEBAPP_URL
       # PostgreSQL DB for Formbricks to connect to
-      DATABASE_URL: "postgresql://pgvector:pgvector@pgvector:5432/formbricks?schema=public"
+      DATABASE_URL: "postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@pgvector:5432/${APP_NAME}?schema=public"
       # NextJS Auth
       # @see: https://next-auth.js.org/configuration/options#nextauth_secret
       # You can use: `openssl rand -hex 32` to generate one

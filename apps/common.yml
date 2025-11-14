@@ -11,11 +11,27 @@ services:
       - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
       - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:${APP_PORT} || exit 1"]
+      test:
+        - CMD-SHELL
+        - |
+          if [ -n "$HEALTHCHECK_CMD" ]; then
+            eval "$HEALTHCHECK_CMD"
+          elif command -v curl >/dev/null 2>&1; then
+            curl -fsS "http://127.0.0.1:${APP_PORT}" >/dev/null
+          elif command -v wget >/dev/null 2>&1; then
+            wget -q --spider "http://127.0.0.1:${APP_PORT}"
+          elif command -v python >/dev/null 2>&1; then
+            python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:${APP_PORT}').status < 400 else 1)"
+          elif command -v nc >/dev/null 2>&1; then
+            nc -z 127.0.0.1 ${APP_PORT}
+          else
+            echo 'no suitable tool for healthcheck, unhealthy by default' >&2
+            exit 1
+          fi
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 60s
     networks:
       - internal
       - traefik

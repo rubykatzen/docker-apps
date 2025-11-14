@@ -3,11 +3,10 @@ services:
     image: "homeassistant/home-assistant"
     extends:
       file: ../common.yml
-      service: main
+      service: host
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
     privileged: true
-    networks: []
-    network_mode: host
+

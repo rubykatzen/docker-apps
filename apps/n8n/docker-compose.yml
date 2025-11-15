@@ -24,17 +24,18 @@ x-volumes: &volumes
   - ../../apps-data/${APP_NAME}/files:/files
 services:
   n8n:
+    image: *image
     extends:
       file: ../common.yml
       service: main
     environment: *environment
     volumes: *volumes
-    image: *image
     depends_on:
       - initContainer
       - redis
       - postgres
   n8n-worker:
+    image: *image
     extends:
       file: ../common.yml
       service: side

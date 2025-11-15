@@ -2,60 +2,50 @@ include:
   - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
-x-shared: &shared
-  restart: unless-stopped
-  image: n8nio/n8n
-  environment:
-    DB_TYPE: postgresdb
-    DB_POSTGRESDB_HOST: postgres
-    DB_POSTGRESDB_PORT: 5432
-    DB_POSTGRESDB_DATABASE: ${APP_NAME}
-    DB_POSTGRESDB_USER: ${APP_NAME}
-    DB_POSTGRESDB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-    EXECUTIONS_MODE: queue
-    QUEUE_BULL_REDIS_HOST: redis
-    QUEUE_HEALTH_CHECK_ACTIVE: true
-    N8N_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
-    GENERIC_TIMEZONE: ${DAPPS_TIMEZONE}
-    N8N_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
-    N8N_PROTOCOL: https
-    NODE_ENV: production
-    WEBHOOK_URL: https://${APP_NAME}.${DAPPS_DOMAIN}/
-  links:
-    - postgres
-    - redis
-  volumes:
-    - ../../apps-data/${APP_NAME}/data:/home/node/.n8n
-    - ../../apps-data/${APP_NAME}/files:/files
-  depends_on:
-    initContainer:
-      condition: service_completed_successfully
-    redis:
-      condition: service_healthy
-    postgres:
-      condition: service_healthy
+x-image: &image n8nio/n8n
+x-environment: &environment
+  DB_TYPE: postgresdb
+  DB_POSTGRESDB_HOST: postgres
+  DB_POSTGRESDB_PORT: 5432
+  DB_POSTGRESDB_DATABASE: ${APP_NAME}
+  DB_POSTGRESDB_USER: ${APP_NAME}
+  DB_POSTGRESDB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  EXECUTIONS_MODE: queue
+  QUEUE_BULL_REDIS_HOST: redis
+  QUEUE_HEALTH_CHECK_ACTIVE: true
+  N8N_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+  GENERIC_TIMEZONE: ${DAPPS_TIMEZONE}
+  N8N_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+  N8N_PROTOCOL: https
+  NODE_ENV: production
+  WEBHOOK_URL: https://${APP_NAME}.${DAPPS_DOMAIN}/
+x-volumes: &volumes
+  - ../../apps-data/${APP_NAME}/data:/home/node/.n8n
+  - ../../apps-data/${APP_NAME}/files:/files
 services:
   n8n:
-    <<: *shared
-    expose:
-      - ${APP_PORT}
-    networks:
-      - internal
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes: *volumes
+    image: *image
+    depends_on:
+      - initContainer
+      - redis
+      - postgres
   n8n-worker:
-    <<: *shared
+    extends:
+      file: ../common.yml
+      service: side
+    environment: *environment
+    volumes: *volumes
     command: worker
     depends_on:
       - n8n
-    networks:
-      - internal
+      - redis
+      - postgres
   initContainer:
     image: busybox
     command: [ 'sh', '-c', 'chown -R 1000:1000 /home/node/.n8n' ]
-    volumes:
-      - ../../apps-data/${APP_NAME}/data:/home/node/.n8n
+    volumes: *volumes

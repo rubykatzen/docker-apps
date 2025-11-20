@@ -1,7 +1,6 @@
 include:
   - ../networks.yml
   - ../postgres.yml
-
 services:
   airbroke:
     image: ghcr.io/icoretech/airbroke:latest

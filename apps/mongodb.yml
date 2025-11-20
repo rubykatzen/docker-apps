@@ -1,0 +1,22 @@
+services:
+  mongodb:
+    image: bitnami/mongodb:latest
+    restart: unless-stopped
+    environment:
+      MONGODB_ROOT_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      MONGODB_USERNAME: ${APP_NAME}
+      MONGODB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      MONGODB_DATABASE: ${APP_NAME}
+    volumes:
+      - ../apps-data/${APP_NAME}/mongodb:/bitnami/mongodb
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      start_period: 30s
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    networks:
+      internal:
+      databases:
+        aliases:
+          - ${APP_NAME}-mongodb

@@ -1,0 +1,39 @@
+include:
+  - ../networks.yml
+  - ../mongodb.yml
+x-environment: &environment
+  - COUNTLY_PLUGINS=mobile,web,desktop,plugins,density,locale,browser,sources,views,logger,systemlogs,populator,reports,crashes,push,star-rating,slipping-away-users,compare,server-stats,dbviewer,times-of-day,compliance-hub,alerts,onboarding,consolidate,remote-config,hooks,dashboards,sdk,data-manager
+  - COUNTLY_CONFIG__MONGODB=mongodb://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mongodb/${APP_NAME}?authSource=${APP_NAME}&maxPoolSize=500
+  - COUNTLY_CONFIG_API_API_WORKERS=4
+  - COUNTLY_CONFIG__FILESTORAGE="gridfs"
+  - NODE_OPTIONS="--max-old-space-size=2048"
+  - COUNTLY_CONFIG_HOSTNAME=${APP_NAME}.${DAPPS_DOMAIN}
+services:
+  countly-api:
+    image: "countly/api:latest"
+    extends:
+      file: ../common.yml
+      service: side
+    environment: *environment
+    depends_on:
+      - mongodb
+  countly-frontend:
+    image: "countly/frontend:latest"
+    extends:
+      file: ../common.yml
+      service: side
+    environment: *environment
+    depends_on:
+      - mongodb
+  nginx:
+    image: "bitnami/nginx"
+    extends:
+      file: ../common.yml
+      service: main
+    volumes:
+      - ./config/nginx.server.conf:/opt/bitnami/nginx/conf/server_blocks/countly.conf:ro
+    depends_on:
+      - countly-api
+      - countly-frontend
+    healthcheck:
+      disable: true

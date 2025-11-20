@@ -141,7 +141,7 @@ docker network create traefik
 3. Create `docker-compose.yml`:
    - Include `../networks.yml` for network definitions
    - Extend `../common.yml` service definitions (usually `main`)
-   - Include `../postgres.yml` and/or `../redis.yml` if needed
+   - Include `../postgres.yml` and/or `../redis.yml`, `../mongo.yml` if needed
    - Reference data path: `../../apps-data/${APP_NAME}/`
 4. Add app name to `DAPPS` array in `apps.env`
 5. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
@@ -170,7 +170,6 @@ GitHub Actions workflow (`.github/workflows/cd.yml`) automatically deploys on pu
 
 ## Notable App Configurations
 
-- **n8n**: Uses worker mode with Redis queue (`n8n` + `n8n-worker` services)
 - **traefik**: Entry point, must be started first, uses external network
 - Apps with databases include postgres.yml and create app-specific database named `${APP_NAME}`
 - Config templates use `envsubst` - variables must be shell-compatible (`${VAR}` syntax)

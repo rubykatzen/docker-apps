@@ -11,6 +11,5 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/podcasts:/podcasts
-      - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/metadata:/metadata
       - ${AUDIOBOOKSHELF_AUDIOBOOKS_PATH}:/audiobooks

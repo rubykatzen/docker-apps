@@ -1,13 +1,14 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
 services:
   wallos:
     extends:
       file: ../common.yml
       service: main
     image: bellamy/wallos
-    environment:
-      TZ: ${DAPPS_TIMEZONE}
+    environment: *environment
     volumes:
       - "../../apps-data/${APP_NAME}/db:/var/www/html/db"
       - "../../apps-data/${APP_NAME}/logos:/var/www/html/images/uploads/logos"

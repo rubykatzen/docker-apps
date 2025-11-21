@@ -1,14 +1,15 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  PUID: 1000
+  PGID: 1000
+  TZ: ${DAPPS_TIMEZONE}
 services:
   grocy:
     extends:
       file: ../common.yml
       service: main
     image: lscr.io/linuxserver/grocy:latest
-    environment:
-      PUID: 1000
-      PGID: 1000
-      TZ: ${DAPPS_TIMEZONE}
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config

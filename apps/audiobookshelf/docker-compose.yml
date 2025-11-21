@@ -1,13 +1,14 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
 services:
   audiobookshelf:
     extends:
       file: ../common.yml
       service: main
     image: ghcr.io/advplyr/audiobookshelf:latest
-    environment:
-      TZ: ${DAPPS_TIMEZONE}
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/podcasts:/podcasts

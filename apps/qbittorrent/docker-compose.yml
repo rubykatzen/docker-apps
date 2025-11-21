@@ -1,16 +1,17 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  PUID: 1000
+  PGID: 1000
+  TZ: ${DAPPS_TIMEZONE}
+  WEBUI_PORT: ${APP_PORT}
 services:
   qbittorrent:
     extends:
       file: ../common.yml
       service: main
     image: linuxserver/qbittorrent
-    environment:
-      PUID: 1000
-      PGID: 1000
-      TZ: ${DAPPS_TIMEZONE}
-      WEBUI_PORT: ${APP_PORT}
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/downloads:/downloads

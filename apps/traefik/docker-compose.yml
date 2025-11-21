@@ -1,9 +1,10 @@
+x-environment: &environment
+  CF_DNS_API_TOKEN: ${DAPPS_CLOUDFLARE_DNS_API_TOKEN}
 services:
   traefik:
     image: traefik
     restart: unless-stopped
-    environment:
-      CF_DNS_API_TOKEN: ${DAPPS_CLOUDFLARE_DNS_API_TOKEN}
+    environment: *environment
     security_opt:
       - no-new-privileges:true
     ports:
@@ -15,7 +16,7 @@ services:
       - ../../apps-data/${APP_NAME}/config/traefik.yml:/traefik.yml:ro
       - ../../apps-data/${APP_NAME}/acme.json:/acme.json
     healthcheck:
-      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
       start_period: 30s
       interval: 30s
       timeout: 5s

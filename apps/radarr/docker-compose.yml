@@ -1,15 +1,16 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  PUID: 1000
+  PGID: 1000
+  TZ: ${DAPPS_TIMEZONE}
 services:
   radarr:
     extends:
       file: ../common.yml
       service: main
     image: ghcr.io/hotio/radarr
-    environment:
-      PUID: 1000
-      PGID: 1000
-      TZ: ${DAPPS_TIMEZONE}
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ${QBITTORRENT_DOWNLOADS_PATH}:/downloads

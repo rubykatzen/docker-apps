@@ -1,6 +1,16 @@
 include:
   - ../networks.yml
   - ../postgres.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
+  DB_TYPE: postgres
+  DB_HOST: postgres
+  DB_PORT: ${APP_NAME}
+  DB_USER: ${APP_NAME}
+  DB_PASS: ${DAPPS_DATABASE_PASSWORD}
+  DB_NAME: ${APP_NAME}
+  DB_LOG_QUERIES: "false"
+  DB_USE_SSL: "false"
 services:
   jellyseerr:
     extends:
@@ -9,16 +19,7 @@ services:
     image: fallenbagel/jellyseerr:latest
     depends_on:
       - postgres
-    environment:
-      TZ: ${DAPPS_TIMEZONE}
-      DB_TYPE: postgres
-      DB_HOST: postgres
-      DB_PORT: ${APP_NAME}
-      DB_USER: ${APP_NAME}
-      DB_PASS: ${DAPPS_DATABASE_PASSWORD}
-      DB_NAME: ${APP_NAME}
-      DB_LOG_QUERIES: 'false'
-      DB_USE_SSL: 'false'
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/app/config
     healthcheck:

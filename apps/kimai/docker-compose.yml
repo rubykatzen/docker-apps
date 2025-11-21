@@ -3,22 +3,14 @@ include:
   - ../mysql.yml
 services:
   kimai:
+    extends:
+      file: ../common.yml
+      service: main
     image: kimai/kimai2:apache
     volumes:
       - ../../apps-data/${APP_NAME}/data:/opt/kimai/var/data
       - ../../apps-data/${APP_NAME}/plugins:/opt/kimai/var/plugins
-    expose:
-      - ${APP_PORT}
     environment:
       ADMINMAIL: ${DAPPS_ADMIN_MAIL}
       ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
       DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-    networks:
-      - internal
-      - traefik

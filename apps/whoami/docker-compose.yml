@@ -2,14 +2,7 @@ include:
   - ../networks.yml
 services:
   whoami:
+    extends:
+      file: ../common.yml
+      service: main
     image: traefik/whoami
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
-    expose:
-      - ${APP_PORT}
-    networks:
-      - traefik

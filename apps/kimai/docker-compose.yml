@@ -1,6 +1,10 @@
 include:
   - ../networks.yml
   - ../mysql.yml
+x-environment: &environment
+  ADMINMAIL: ${DAPPS_ADMIN_MAIL}
+  ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
+  DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
 services:
   kimai:
     extends:
@@ -10,7 +14,4 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/data:/opt/kimai/var/data
       - ../../apps-data/${APP_NAME}/plugins:/opt/kimai/var/plugins
-    environment:
-      ADMINMAIL: ${DAPPS_ADMIN_MAIL}
-      ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
-      DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
+    environment: *environment

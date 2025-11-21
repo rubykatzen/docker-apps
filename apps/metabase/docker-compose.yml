@@ -1,6 +1,13 @@
 include:
   - ../networks.yml
   - ../postgres.yml
+x-environment: &environment
+  MB_DB_TYPE: postgres
+  MB_DB_DBNAME: ${APP_NAME}
+  MB_DB_PORT: 5432
+  MB_DB_USER: ${APP_NAME}
+  MB_DB_PASS: ${DAPPS_DATABASE_PASSWORD}
+  MB_DB_HOST: postgres
 services:
   metabase:
     extends:
@@ -9,13 +16,7 @@ services:
     image: metabase/metabase
     volumes:
       - /dev/urandom:/dev/random:ro
-    environment:
-      MB_DB_TYPE: postgres
-      MB_DB_DBNAME: ${APP_NAME}
-      MB_DB_PORT: 5432
-      MB_DB_USER: ${APP_NAME}
-      MB_DB_PASS: ${DAPPS_DATABASE_PASSWORD}
-      MB_DB_HOST: postgres
+    environment: *environment
     healthcheck:
       test: curl --fail -I http://localhost:${APP_PORT}/api/health || exit 1
       start_period: 30s

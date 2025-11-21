@@ -1,20 +1,21 @@
 include:
   - ../networks.yml
   - ../postgres.yml
+x-environment: &environment
+  DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}?connection_limit=8
+  DIRECT_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  AUTH_SECRET: ${DAPPS_KEY_HEX_64}
+  AUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NEXT_SERVER_ACTIONS_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+  AIRBROKE_CORS_ORIGINS: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NODE_ENV: production
+  HOSTNAME: 0.0.0.0
 services:
   airbroke:
     image: ghcr.io/icoretech/airbroke:latest
     extends:
       file: ../common.yml
       service: main
-    environment:
-      DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}?connection_limit=8
-      DIRECT_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
-      AUTH_SECRET: ${DAPPS_KEY_HEX_64}
-      AUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
-      NEXT_SERVER_ACTIONS_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
-      AIRBROKE_CORS_ORIGINS: https://${APP_NAME}.${DAPPS_DOMAIN}
-      NODE_ENV: production
-      HOSTNAME: 0.0.0.0
+    environment: *environment
     depends_on:
       - postgres

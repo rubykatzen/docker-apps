@@ -1,8 +1,9 @@
+x-environment: &environment
+  DISK_SIZE: "16G"
 services:
   virtual-dsm:
     image: vdsm/virtual-dsm
-    environment:
-      DISK_SIZE: "16G"
+    environment: *environment
     devices:
       - /dev/kvm
       - /dev/net/tun

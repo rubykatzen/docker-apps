@@ -1,11 +1,12 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  LOG_LEVEL: info
+  TZ: ${DAPPS_TIMEZONE}
 services:
   flaresolverr:
     extends:
       file: ../common.yml
       service: main
     image: ghcr.io/flaresolverr/flaresolverr
-    environment:
-      LOG_LEVEL: info
-      TZ: ${DAPPS_TIMEZONE}
+    environment: *environment

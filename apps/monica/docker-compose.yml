@@ -1,6 +1,13 @@
 include:
   - ../networks.yml
   - ../mysql.yml
+x-environment: &environment
+  - APP_KEY=${DAPPS_KEY_BASE64_32}
+  - APP_ENV=production
+  - DB_DATABASE=${APP_NAME}
+  - DB_HOST=mysql
+  - DB_USERNAME=${APP_NAME}
+  - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
 services:
   app:
     image: monica
@@ -9,12 +16,6 @@ services:
       service: main
     depends_on:
       - mysql
-    environment:
-      - APP_KEY=${DAPPS_KEY_BASE64_32}
-      - APP_ENV=production
-      - DB_DATABASE=${APP_NAME}
-      - DB_HOST=mysql
-      - DB_USERNAME=${APP_NAME}
-      - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage

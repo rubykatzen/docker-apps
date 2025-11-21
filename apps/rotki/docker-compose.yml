@@ -1,13 +1,14 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
 services:
   rotki:
     extends:
       file: ../common.yml
       service: main
     image: rotki/rotki:latest
-    environment:
-      TZ: ${DAPPS_TIMEZONE}
+    environment: *environment
     expose:
       - ${APP_PORT}
     volumes:

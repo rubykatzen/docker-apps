@@ -2,6 +2,17 @@ include:
   - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
+x-environment: &environment
+  - REGISTRATION=False
+  - URLS=https://${APP_NAME}.${DAPPS_DOMAIN}
+  - TZ=${DAPPS_TIMEZONE}
+  - SECRET=${DAPPS_KEY_HEX_64}
+  - REDIS_URL=redis://redis:6379
+  - DB_HOST=postgres
+  - DB_NAME=${APP_NAME}
+  - DB_USER=${APP_NAME}
+  - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
+  - DB_PORT=5432
 services:
   yamtrack:
     image: ghcr.io/fuzzygrim/yamtrack
@@ -11,14 +22,4 @@ services:
     depends_on:
       - postgres
       - redis
-    environment:
-      - REGISTRATION=False
-      - URLS=https://${APP_NAME}.${DAPPS_DOMAIN}
-      - TZ=${DAPPS_TIMEZONE}
-      - SECRET=${DAPPS_KEY_HEX_64}
-      - REDIS_URL=redis://redis:6379
-      - DB_HOST=postgres
-      - DB_NAME=${APP_NAME}
-      - DB_USER=${APP_NAME}
-      - DB_PASSWORD=${DAPPS_DATABASE_PASSWORD}
-      - DB_PORT=5432
+    environment: *environment

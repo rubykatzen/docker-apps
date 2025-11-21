@@ -1,16 +1,17 @@
 include:
   - ../networks.yml
   - ../postgres.yml
+x-environment: &environment
+  DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  DATABASE_TYPE: postgresql
+  APP_SECRET: ${DAPPS_KEY_HEX_32}
 services:
   umami:
     extends:
       file: ../common.yml
       service: main
     image: ghcr.io/umami-software/umami:postgresql-latest
-    environment:
-      DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
-      DATABASE_TYPE: postgresql
-      APP_SECRET: ${DAPPS_KEY_HEX_32}
+    environment: *environment
     depends_on:
       - postgres
     init: true

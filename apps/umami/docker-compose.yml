@@ -3,9 +3,10 @@ include:
   - ../postgres.yml
 services:
   umami:
+    extends:
+      file: ../common.yml
+      service: main
     image: ghcr.io/umami-software/umami:postgresql-latest
-    expose:
-      - ${APP_PORT}
     environment:
       DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
       DATABASE_TYPE: postgresql
@@ -13,18 +14,9 @@ services:
     depends_on:
       - postgres
     init: true
-    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:${APP_PORT}/api/heartbeat"]
       start_period: 30s
       interval: 30s
       timeout: 5s
       retries: 5
-    networks:
-      - internal
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"

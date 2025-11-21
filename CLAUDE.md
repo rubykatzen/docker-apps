@@ -150,15 +150,25 @@ Example minimal app structure:
 ```yaml
 include:
   - ../networks.yml
+x-environment: &environment
+  SOME_VAR: ${SOME_VALUE}
+  ANOTHER_VAR: value
 services:
   myapp:
     extends:
       file: ../common.yml
       service: main
     image: myapp:latest
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data
 ```
+
+**IMPORTANT: Always use x-environment anchor pattern for environment variables:**
+- Declare environment variables once using `x-environment: &environment` at the top of the file
+- Reference them in services using `environment: *environment`
+- This ensures consistency, reduces duplication, and makes maintenance easier
+- Even for single-service apps, use this pattern for consistency across the codebase
 
 ## CI/CD
 

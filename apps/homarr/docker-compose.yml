@@ -2,19 +2,12 @@ include:
   - ../networks.yml
 services:
   homarr:
+    extends:
+      file: ../common.yml
+      service: main
     image: ghcr.io/ajnart/homarr
-    restart: unless-stopped
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+      - /var/run/docker.sock:/var/run/docker.sock
       - ../../apps-data/${APP_NAME}/config:/app/data/configs
       - ../../apps-data/${APP_NAME}/icons:/app/public/icons
       - ../../apps-data/${APP_NAME}/data:/data
-    expose:
-      - ${APP_PORT}
-    networks:
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"

@@ -1,7 +1,7 @@
 name: CD
 on:
   push:
-    branches: [ 'main' ]
+    branches: ["main"]
 concurrency:
   group: ci-deploy
 jobs:
@@ -17,7 +17,7 @@ jobs:
           oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
           tags: tag:ci
-          use-cache: 'true'
+          use-cache: "true"
       - name: Create .env
         uses: SpicyPizza/create-envfile@v2.0
         with:
@@ -40,7 +40,7 @@ jobs:
           envkey_DAPPS_SMTP_PASSWORD: ${{ secrets.DAPPS_SMTP_PASSWORD }}
           envkey_DAPPS_SMTP_FROM: ${{ vars.DAPPS_SMTP_FROM }}
           envkey_DAPPS_S3_HOST: ${{ vars.DAPPS_S3_HOST }}
-          envkey_DAPPS_S3_REDION: ${{ vars.DAPPS_S3_REDION }}
+          envkey_DAPPS_S3_REGION: ${{ vars.DAPPS_S3_REGION }}
           envkey_DAPPS_S3_ACCESS_KEY_ID: ${{ vars.DAPPS_S3_ACCESS_KEY_ID }}
           envkey_DAPPS_S3_SECRET_ACCESS_KEY: ${{ secrets.DAPPS_S3_SECRET_ACCESS_KEY }}
           envkey_BESZEL_AGENT_PUBLIC_KEY: ${{ vars.BESZEL_AGENT_PUBLIC_KEY }}
@@ -73,7 +73,7 @@ jobs:
         with:
           host: ${{ vars.DEPLOY_HOST }}
           username: root
-          key:  ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           source: ".env"
           target: ${{ vars.DEPLOY_PATH }}
       - name: Git pull deploy via SSH
@@ -85,7 +85,7 @@ jobs:
           envs: GITHUB_TOKEN
           script: |
             cd ${{ vars.DEPLOY_PATH }}
-            
+
             git fetch https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git ${{ github.ref_name }}
             git reset --hard FETCH_HEAD
             ./restart.sh

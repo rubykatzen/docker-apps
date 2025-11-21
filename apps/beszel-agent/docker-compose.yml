@@ -1,6 +1,9 @@
+x-environment: &environment
+  PORT: ${APP_PORT}
+  KEY: ${BESZEL_AGENT_PUBLIC_KEY}
 services:
   beszel-agent:
-    image: 'henrygd/beszel-agent'
+    image: "henrygd/beszel-agent"
     extends:
       file: ../common.yml
       service: host
@@ -8,11 +11,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # monitor other disks / partitions by mounting a folder in /extra-filesystems
       # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
-    environment:
-      PORT: ${APP_PORT}
-      KEY: ${BESZEL_AGENT_PUBLIC_KEY}
+    environment: *environment
     healthcheck:
-      test: ['CMD', '/agent', 'health']
+      test: ["CMD", "/agent", "health"]
       start_period: 30s
       interval: 30s
       timeout: 5s

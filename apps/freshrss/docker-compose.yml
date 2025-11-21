@@ -1,5 +1,9 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
+  CRON_MIN: "3,33"
+  TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16
 services:
   freshrss:
     image: freshrss/freshrss
@@ -12,7 +16,4 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/data:/var/www/FreshRSS/data
       - ../../apps-data/${APP_NAME}/extensions:/var/www/FreshRSS/extensions
-    environment:
-      TZ: ${DAPPS_TIMEZONE}
-      CRON_MIN: '3,33'
-      TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16
+    environment: *environment

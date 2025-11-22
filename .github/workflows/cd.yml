@@ -47,8 +47,6 @@ jobs:
           envkey_RSSHUB_ACCESS_KEY: ${{ secrets.RSSHUB_ACCESS_KEY }}
           envkey_RSSHUB_TWITTER_AUTH_TOKEN: ${{ secrets.RSSHUB_TWITTER_AUTH_TOKEN }}
           envkey_RSSHUB_YOUTUBE_KEY: ${{ secrets.RSSHUB_YOUTUBE_KEY }}
-          envkey_RSSHUB_MEDIUM_CONFIG: ${{ secrets.RSSHUB_MEDIUM_CONFIG }}
-          envkey_RSSHUB_EMAIL_CONFIG: ${{ secrets.RSSHUB_EMAIL_CONFIG }}
           envkey_ICLOUDPD_USERNAME: ${{ vars.ICLOUDPD_USERNAME }}
           envkey_ICLOUDPD_PASSWORD: ${{ secrets.ICLOUDPD_PASSWORD }}
           envkey_ICLOUDPD_ALBUM: ${{ vars.ICLOUDPD_ALBUM }}

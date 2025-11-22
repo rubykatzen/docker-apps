@@ -1,5 +1,17 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  WG_HOST: ${DAPPS_HOST}
+  LANGUAGE: en
+  PORT: 80
+  PASSWORD_HASH: ${WG_EASY_PASSWORD_HASH}
+  WG_PORT: 51820
+  WG_DEFAULT_ADDRESS: "10.35.0.x"
+  WG_DEFAULT_DNS: "1.1.1.1"
+  WG_ALLOWED_IPS: "0.0.0.0/0, ::/0"
+  WG_PERSISTENT_KEEPALIVE: 20
+  WG_MTU: 1420
+  USE_GRAVATAR: true
 services:
   wg-easy:
     extends:
@@ -8,18 +20,7 @@ services:
     image: ghcr.io/wg-easy/wg-easy
     volumes:
       - ../../apps-data/${APP_NAME}/wireguard:/etc/wireguard
-    environment:
-      WG_HOST: ${DAPPS_HOST}
-      LANGUAGE: en
-      PORT: 80
-      PASSWORD_HASH: ${WG_EASY_PASSWORD_HASH}
-      WG_PORT: 51820
-      WG_DEFAULT_ADDRESS: "10.35.0.x"
-      WG_DEFAULT_DNS: "1.1.1.1"
-      WG_ALLOWED_IPS: "0.0.0.0/0, ::/0"
-      WG_PERSISTENT_KEEPALIVE: 20
-      WG_MTU: 1420
-      USE_GRAVATAR: true
+    environment: *environment
     ports:
       - "51820:51820/udp"
     cap_add:

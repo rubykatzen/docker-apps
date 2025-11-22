@@ -1,5 +1,9 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  COLLECTOR_CRON_SCHEDULE: "0 */3 * * *"
+  SCRUTINY_NOTIFY_URLS: >
+    ${DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL}
 services:
   scrutiny:
     image: ghcr.io/analogj/scrutiny:master-omnibus
@@ -9,10 +13,7 @@ services:
     cap_add:
       - SYS_RAWIO
       - SYS_ADMIN
-    environment:
-      COLLECTOR_CRON_SCHEDULE: '0 */3 * * *'
-      SCRUTINY_NOTIFY_URLS: >
-        ${DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL}
+    environment: *environment
     volumes:
       - /run/udev:/run/udev:ro
       - ../../apps-data/${APP_NAME}/config:/opt/scrutiny/config

@@ -1,17 +1,18 @@
+x-environment: &environment
+  VERSION: "11"
+  CPU_CORES: "4"
+  RAM_SIZE: "8G"
+  DISK_SIZE: "64G"
+  GPU: "Y"
+  USERNAME: "admin"
+  PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
+  LANGUAGE: "Russian"
 services:
   windows:
     image: dockurr/windows
     restart: unless-stopped
     stop_grace_period: 4m
-    environment:
-      VERSION: "11"
-      CPU_CORES: "4"
-      RAM_SIZE: "8G"
-      DISK_SIZE: "64G"
-      GPU: "Y"
-      USERNAME: "admin"
-      PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
-      LANGUAGE: "Russian"
+    environment: *environment
     devices:
       - /dev/kvm
       - /dev/net/tun

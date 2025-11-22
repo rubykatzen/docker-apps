@@ -2,6 +2,21 @@ include:
   - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
+x-environment: &environment
+  APP_ENV: production
+  REDIS_HOST: redis
+  POSTGRES_HOST: postgres
+  POSTGRES_DATABASE: ${APP_NAME}
+  POSTGRES_USERNAME: ${APP_NAME}
+  POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+  WEBHOOK_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+  APP_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+  HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+  PROTOCOL: https
+  PORT: ${APP_PORT}
+x-volumes: &volumes
+  - ../../apps-data/${APP_NAME}/storage:/automatisch/storage
 services:
   automatisch:
     image: automatischio/automatisch
@@ -11,21 +26,8 @@ services:
     depends_on:
       - postgres
       - redis
-    environment:
-      HOST: ${APP_NAME}.${DAPPS_DOMAIN}
-      PROTOCOL: https
-      PORT: ${APP_PORT}
-      APP_ENV: production
-      REDIS_HOST: redis
-      POSTGRES_HOST: postgres
-      POSTGRES_DATABASE: ${APP_NAME}
-      POSTGRES_USERNAME: ${APP_NAME}
-      POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-      ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
-      WEBHOOK_SECRET_KEY: ${DAPPS_KEY_HEX_32}
-      APP_SECRET_KEY: ${DAPPS_KEY_HEX_32}
-    volumes:
-      - ../../apps-data/${APP_NAME}/storage:/automatisch/storage
+    environment: *environment
+    volumes: *volumes
   worker:
     image: automatischio/automatisch
     depends_on:
@@ -33,17 +35,8 @@ services:
       - redis
       - automatisch
     environment:
-      APP_ENV: production
-      REDIS_HOST: redis
-      POSTGRES_HOST: postgres
-      POSTGRES_DATABASE: ${APP_NAME}
-      POSTGRES_USERNAME: ${APP_NAME}
-      POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-      ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
-      WEBHOOK_SECRET_KEY: ${DAPPS_KEY_HEX_32}
-      APP_SECRET_KEY: ${DAPPS_KEY_HEX_32}
+      <<: *environment
       WORKER: true
-    volumes:
-      - ../../apps-data/${APP_NAME}/storage:/automatisch/storage
+    volumes: *volumes
     networks:
       - internal

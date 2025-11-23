@@ -3,6 +3,14 @@ include:
   - ../redis.yml
   - ../postgres.yml
   - ../timescale.yml
+x-environment: &environment
+  CODECOV_BASE_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+  CODECOV_API_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+  CODECOV_IA_HOST: ${APP_NAME}.${DAPPS_DOMAIN}
+  CODECOV_SCHEME: https
+  RUN_ENV: ENTERPRISE
+x-volumes: &volumes
+  - ../../apps-data/${APP_NAME}/config:/config
 services:
   gateway:
     image: codecov/self-hosted-gateway:latest-stable
@@ -12,20 +20,14 @@ services:
     depends_on:
       - api
       - frontend
-    volumes:
-      - ../../apps-data/${APP_NAME}/config:/config
+    volumes: *volumes
   frontend:
     image: codecov/self-hosted-frontend:latest-stable
     extends:
       file: ../common.yml
       service: side
-    environment:
-      - CODECOV_BASE_HOST=${APP_NAME}.${DAPPS_DOMAIN}
-      - CODECOV_API_HOST=${APP_NAME}.${DAPPS_DOMAIN}
-      - CODECOV_IA_HOST=${APP_NAME}.${DAPPS_DOMAIN}
-      - CODECOV_SCHEME=https
-    volumes:
-      - ../../apps-data/${APP_NAME}/config:/config
+    environment: *environment
+    volumes: *volumes
     expose:
       - "8080"
   api:
@@ -37,8 +39,7 @@ services:
       - redis
       - postgres
       - timescale
-    volumes:
-      - ../../apps-data/${APP_NAME}/config:/config
+    volumes: *volumes
   worker:
     image: codecov/self-hosted-worker:latest-stable
     extends:
@@ -48,8 +49,7 @@ services:
       - redis
       - postgres
       - timescale
-    environment:
-      - RUN_ENV=ENTERPRISE
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
       - ../../apps-data/${APP_NAME}/archive:/archive

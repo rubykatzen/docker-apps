@@ -1,46 +1,46 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  - APP_NAME=2FAuth
-  - APP_ENV=local
-  - APP_TIMEZONE=UTC
-  - APP_DEBUG=false
-  - SITE_OWNER=${DAPPS_ADMIN_MAIL}
-  - APP_KEY=${DAPPS_KEY_HEX_16}
-  - APP_URL=https://${APP_NAME}.${DAPPS_DOMAIN}
-  - IS_DEMO_APP=false
-  - LOG_CHANNEL=daily
-  - LOG_LEVEL=error
-  - DB_DATABASE="/2fauth/database.sqlite"
-  - CACHE_DRIVER=file
-  - SESSION_DRIVER=file
-  - MAIL_MAILER=smtp
-  - MAIL_HOST=${DAPPS_SMTP_HOSTNAME}
-  - MAIL_PORT=${DAPPS_SMTP_PORT}
-  - MAIL_USERNAME=${DAPPS_SMTP_USERNAME}
-  - MAIL_PASSWORD=${DAPPS_SMTP_PASSWORD}
-  - MAIL_ENCRYPTION=true
-  - MAIL_FROM_NAME=${APP_NAME}
-  - MAIL_FROM_ADDRESS=${DAPPS_SMTP_FROM}
-  - MAIL_VERIFY_SSL_PEER=false
-  - THROTTLE_API=60
-  - LOGIN_THROTTLE=5
-  - AUTHENTICATION_GUARD=web-guard
-  - AUTHENTICATION_LOG_RETENTION=60
-  - WEBAUTHN_NAME=2FAuth
-  - BROADCAST_DRIVER=log
-  - QUEUE_DRIVER=sync
-  - SESSION_LIFETIME=120
-  - REDIS_HOST=127.0.0.1
-  - REDIS_PASSWORD=null
-  - REDIS_PORT=6379
-  - MIX_ENV=local
+  APP_NAME: 2FAuth
+  APP_ENV: local
+  APP_TIMEZONE: UTC
+  APP_DEBUG: false
+  SITE_OWNER: ${DAPPS_ADMIN_MAIL}
+  APP_KEY: ${DAPPS_KEY_HEX_16}
+  APP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  IS_DEMO_APP: false
+  LOG_CHANNEL: daily
+  LOG_LEVEL: error
+  DB_DATABASE: /2fauth/database.sqlite
+  CACHE_DRIVER: file
+  SESSION_DRIVER: file
+  MAIL_MAILER: smtp
+  MAIL_HOST: ${DAPPS_SMTP_HOSTNAME}
+  MAIL_PORT: ${DAPPS_SMTP_PORT}
+  MAIL_USERNAME: ${DAPPS_SMTP_USERNAME}
+  MAIL_PASSWORD: ${DAPPS_SMTP_PASSWORD}
+  MAIL_ENCRYPTION: true
+  MAIL_FROM_NAME: ${APP_NAME}
+  MAIL_FROM_ADDRESS: ${DAPPS_SMTP_FROM}
+  MAIL_VERIFY_SSL_PEER: false
+  THROTTLE_API: 60
+  LOGIN_THROTTLE: 5
+  AUTHENTICATION_GUARD: web-guard
+  AUTHENTICATION_LOG_RETENTION: 60
+  WEBAUTHN_NAME: 2FAuth
+  BROADCAST_DRIVER: log
+  QUEUE_DRIVER: sync
+  SESSION_LIFETIME: 120
+  REDIS_HOST: 127.0.0.1
+  REDIS_PASSWORD: null
+  REDIS_PORT: 6379
+  MIX_ENV: local
 services:
   2fauth:
+    image: 2fauth/2fauth
     extends:
       file: ../common.yml
       service: main
-    image: 2fauth/2fauth
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/2fauth:/2fauth
-    environment: *environment

@@ -6,10 +6,10 @@ x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
 services:
   bazarr:
+    image: ghcr.io/hotio/bazarr
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/hotio/bazarr
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config

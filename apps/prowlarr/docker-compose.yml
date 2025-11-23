@@ -4,10 +4,10 @@ x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
 services:
   prowlarr:
+    image: ghcr.io/hotio/prowlarr
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/hotio/prowlarr
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config

@@ -6,10 +6,10 @@ x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
 services:
   radarr:
+    image: ghcr.io/hotio/radarr
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/hotio/radarr
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config

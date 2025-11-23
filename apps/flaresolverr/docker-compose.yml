@@ -5,8 +5,8 @@ x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
 services:
   flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/flaresolverr/flaresolverr
     environment: *environment

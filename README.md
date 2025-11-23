@@ -49,7 +49,7 @@ DAPPS_DOMAIN=example.com
 
 # SSL/TLS Configuration
 DAPPS_CERTIFICATE_RESOLVER=letsencrypt  # or cloudflare
-DAPPS_CLOUDFLARE_API_TOKEN=your_token   # if using Cloudflare
+DAPPS_CLOUDFLARE_DNS_API_TOKEN=your_token   # if using Cloudflare
 
 # Database
 DAPPS_DATABASE_PASSWORD=your_secure_password
@@ -222,7 +222,7 @@ docker compose --env-file ./apps/portainer/.env --env-file .env \
 ```bash
 DAPPS_DOMAIN                 # Base domain (required)
 DAPPS_CERTIFICATE_RESOLVER   # letsencrypt or cloudflare
-DAPPS_CLOUDFLARE_API_TOKEN   # If using Cloudflare DNS
+DAPPS_CLOUDFLARE_DNS_API_TOKEN   # If using Cloudflare DNS
 DAPPS_DATABASE_PASSWORD      # PostgreSQL/MySQL password
 DAPPS_KEY_HEX_16             # 16-byte hex key for apps
 DAPPS_KEY_HEX_32             # 32-byte hex key for apps
@@ -332,7 +332,7 @@ ls -la apps-data/traefik/acme.json
 chmod 600 apps-data/traefik/acme.json
 
 # For Cloudflare issues, verify API token is set in .env
-grep DAPPS_CLOUDFLARE_API_TOKEN .env
+grep DAPPS_CLOUDFLARE_DNS_API_TOKEN .env
 ```
 
 ### Application Not Accessible

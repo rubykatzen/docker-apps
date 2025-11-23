@@ -3,9 +3,9 @@ include:
   - ../postgres.yml
   - ../redis.yml
 x-environment: &environment
-  SELF_HOSTED: "true"
-  RAILS_FORCE_SSL: "false"
-  RAILS_ASSUME_SSL: "false"
+  SELF_HOSTED: true
+  RAILS_FORCE_SSL: false
+  RAILS_ASSUME_SSL: false
   SECRET_KEY_BASE: ${DAPPS_KEY_HEX_64}
   DB_HOST: postgres
   POSTGRES_DB: ${APP_NAME}

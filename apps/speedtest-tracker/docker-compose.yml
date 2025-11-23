@@ -6,7 +6,7 @@ x-environment: &environment
   APP_KEY: ${DAPPS_KEY_HEX_16}
   DB_CONNECTION: sqlite
   SPEEDTEST_SCHEDULE: "*/10 * * * *"
-  SPEEDTEST_SERVERS: "60747"
+  SPEEDTEST_SERVERS: 60747
 services:
   speedtest-tracker:
     image: lscr.io/linuxserver/speedtest-tracker

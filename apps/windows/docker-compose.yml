@@ -1,6 +1,6 @@
 x-environment: &environment
-  VERSION: "11"
-  CPU_CORES: "4"
+  VERSION: 11
+  CPU_CORES: 4
   RAM_SIZE: "8G"
   DISK_SIZE: "64G"
   GPU: "Y"

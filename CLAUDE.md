@@ -197,13 +197,13 @@ services:
 ```yaml
 services:
   app:
-    # 1. EXTENDS (always first if used)
+    # 1. IMAGE (required)
+    image: organization/image:tag
+    
+    # 2. EXTENDS (if used)
     extends:
       file: ../common.yml
       service: main  # main | host | side
-    
-    # 2. IMAGE (required)
-    image: organization/image:tag
     
     # 3. COMMAND (if overriding)
     command: ["start", "--config", "/config.yml"]
@@ -230,12 +230,10 @@ services:
       - internal
       - databases
     
-    # 9. DEPENDS_ON (order: postgres → redis → mongo → others)
+    # 9. DEPENDS_ON (order: postgres → redis → mongo → others, simple list without condition)
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
     
     # 10. EXTRA_HOSTS (if host access needed)
     extra_hosts:
@@ -245,12 +243,47 @@ services:
 ### Key ordering principles:
 1. **Include order**: networks.yml → postgres.yml → redis.yml → mongo.yml
 2. **X-environment is mandatory** - even for a single variable
-3. **Extends always first** - shows inheritance immediately
+3. **Image before extends** - declare what image is used, then extend common config
 4. **Environment via anchor** - always use `x-environment: &environment` pattern
 5. **Networks order**: traefik → internal → databases
-6. **Depends_on order**: postgres → redis → mongo → app services
-7. **Volumes order**: data directories → config directories → template files (with :ro)
-8. **Paths use ${APP_NAME}** - for reusability across apps
+6. **Depends_on as simple list** - use array format without `condition:`, healthchecks are in common.yml
+7. **Depends_on order**: postgres → redis → mongo → app services
+8. **Volumes order**: data directories → config directories → template files (with :ro)
+9. **Paths use ${APP_NAME}** - for reusability across apps
+
+### YAML formatting rules:
+1. **No quotes unless necessary** - avoid quotes around strings when YAML doesn't require them
+2. **Double quotes when needed** - use double quotes `"` (not single) when quotes are required
+3. **Omit :latest tag** - `image: traefik` instead of `image: traefik:latest`
+4. **Variables always in quotes** - `"${APP_NAME}"` for shell variable interpolation
+5. **Arrays use bracket notation** - `command: ["start", "--config"]` for commands
+6. **Booleans without quotes** - `true` and `false`, not `"true"` or `"false"`
+7. **No unnecessary blank lines** - only one blank line between major sections (include → x-environment → services)
+8. **No trailing spaces** - remove all trailing whitespace
+
+Example:
+```yaml
+include:
+  - ../networks.yml
+  - ../postgres.yml
+x-environment: &environment
+  DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  ENABLE_FEATURE: true
+  PORT: 8080
+services:
+  app:
+    image: organization/app:1.0
+    extends:
+      file: ../common.yml
+      service: main
+    command: ["worker", "--concurrency", "10"]
+    user: "${UID}:${GID}"
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data
+    networks:
+      - traefik
+```
 
 ## CI/CD
 

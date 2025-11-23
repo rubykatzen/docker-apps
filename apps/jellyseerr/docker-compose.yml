@@ -9,8 +9,8 @@ x-environment: &environment
   DB_USER: ${APP_NAME}
   DB_PASS: ${DAPPS_DATABASE_PASSWORD}
   DB_NAME: ${APP_NAME}
-  DB_LOG_QUERIES: "false"
-  DB_USE_SSL: "false"
+  DB_LOG_QUERIES: false
+  DB_USE_SSL: false
 services:
   jellyseerr:
     extends:

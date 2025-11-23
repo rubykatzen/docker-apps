@@ -6,7 +6,7 @@ x-environment: &environment
   CREATE_SUPERUSER: ${DAPPS_ADMIN_MAIL}:${DAPPS_ADMIN_MAIL}
   PORT: 8000
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
-  BEHIND_HTTPS_PROXY: "true"
+  BEHIND_HTTPS_PROXY: true
   BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
 services:
   bugsink:

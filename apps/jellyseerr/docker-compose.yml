@@ -16,7 +16,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr
     depends_on:
       - postgres
     environment: *environment

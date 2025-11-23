@@ -14,7 +14,7 @@ x-environment: &environment
   REDIS_URL: redis://redis:6379/1
 services:
   worker:
-    image: ghcr.io/we-promise/sure:latest
+    image: ghcr.io/we-promise/sure
     extends:
       file: ../common.yml
       service: side
@@ -32,7 +32,7 @@ services:
       timeout: 5s
       retries: 5
   web:
-    image: ghcr.io/we-promise/sure:latest
+    image: ghcr.io/we-promise/sure
     extends:
       file: ../common.yml
       service: main

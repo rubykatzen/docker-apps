@@ -9,7 +9,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: lscr.io/linuxserver/grocy:latest
+    image: lscr.io/linuxserver/grocy
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config

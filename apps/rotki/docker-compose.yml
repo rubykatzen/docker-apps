@@ -7,7 +7,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: rotki/rotki:latest
+    image: rotki/rotki
     environment: *environment
     expose:
       - ${APP_PORT}

@@ -12,7 +12,7 @@ x-environment: &environment
   HOSTNAME: 0.0.0.0
 services:
   airbroke:
-    image: ghcr.io/icoretech/airbroke:latest
+    image: ghcr.io/icoretech/airbroke
     extends:
       file: ../common.yml
       service: main

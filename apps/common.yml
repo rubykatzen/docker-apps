@@ -34,6 +34,10 @@ x-labels: &labels
 x-env-file: &env-file
   - ./${APP_NAME}/.env
 x-restart: &restart unless-stopped
+x-logging: &logging
+  options:
+    max-size: 10m
+
 
 services:
   main:
@@ -46,13 +50,16 @@ services:
     networks:
       - internal
       - traefik
+    logging: *logging
   host:
     env_file: *env-file
     restart: *restart
     healthcheck: *healthcheck
     network_mode: host
+    logging: *logging
   side:
     env_file: *env-file
     restart: *restart
     networks:
       - internal
+    logging: *logging

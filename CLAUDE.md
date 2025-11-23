@@ -170,6 +170,88 @@ services:
 - This ensures consistency, reduces duplication, and makes maintenance easier
 - Even for single-service apps, use this pattern for consistency across the codebase
 
+## Docker Compose Field Ordering Rules
+
+To maintain consistency across all applications, follow these strict field ordering rules:
+
+### File-level field order:
+```yaml
+# 1. INCLUDE DIRECTIVES (always first)
+include:
+  - ../networks.yml      # Always first
+  - ../postgres.yml      # If PostgreSQL needed
+  - ../redis.yml         # If Redis needed
+  - ../mongo.yml         # If MongoDB needed
+
+# 2. X-ENVIRONMENT (mandatory, even for single variable)
+x-environment: &environment
+  VAR1: ${VALUE1}
+  DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+
+# 3. SERVICES
+services:
+  # ... service definitions
+```
+
+### Service-level field order:
+```yaml
+services:
+  app:
+    # 1. EXTENDS (always first if used)
+    extends:
+      file: ../common.yml
+      service: main  # main | host | side
+    
+    # 2. IMAGE (required)
+    image: organization/image:tag
+    
+    # 3. COMMAND (if overriding)
+    command: ["start", "--config", "/config.yml"]
+    
+    # 4. USER (if required)
+    user: "${UID}:${GID}"
+    
+    # 5. ENVIRONMENT (mandatory, via anchor)
+    environment: *environment
+    
+    # 6. PORTS (only for profile: host)
+    ports:
+      - "${APP_PORT}:8080"
+    
+    # 7. VOLUMES (order: data → configs → templates)
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ./config/app.template.yml:/app/config.yml:ro
+    
+    # 8. NETWORKS (order: traefik → internal → databases)
+    networks:
+      - traefik
+      - internal
+      - databases
+    
+    # 9. DEPENDS_ON (order: postgres → redis → mongo → others)
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    
+    # 10. EXTRA_HOSTS (if host access needed)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+```
+
+### Key ordering principles:
+1. **Include order**: networks.yml → postgres.yml → redis.yml → mongo.yml
+2. **X-environment is mandatory** - even for a single variable
+3. **Extends always first** - shows inheritance immediately
+4. **Environment via anchor** - always use `x-environment: &environment` pattern
+5. **Networks order**: traefik → internal → databases
+6. **Depends_on order**: postgres → redis → mongo → app services
+7. **Volumes order**: data directories → config directories → template files (with :ro)
+8. **Paths use ${APP_NAME}** - for reusability across apps
+
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/cd.yml`) automatically deploys on push to main:

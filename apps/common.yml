@@ -33,15 +33,14 @@ x-labels: &labels
   - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 x-env-file: &env-file
   - ./${APP_NAME}/.env
-x-expose: &expose
-  - ${APP_PORT}
 x-restart: &restart unless-stopped
 
 services:
   main:
     env_file: *env-file
     restart: *restart
-    expose: *expose
+    expose:
+      - ${APP_PORT}
     labels: *labels
     healthcheck: *healthcheck
     networks:

@@ -183,7 +183,7 @@ include:
   - ../redis.yml         # If Redis needed
   - ../mongo.yml         # If MongoDB needed
 
-# 2. X-ENVIRONMENT (mandatory, even for single variable)
+# 2. X-ENVIRONMENT (only if environment variables exist)
 x-environment: &environment
   VAR1: ${VALUE1}
   DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
@@ -242,7 +242,7 @@ services:
 
 ### Key ordering principles:
 1. **Include order**: networks.yml → postgres.yml → redis.yml → mongo.yml
-2. **X-environment is mandatory** - even for a single variable
+2. **X-environment only if needed** - create only when environment variables exist, skip if service has no environment
 3. **Image before extends** - declare what image is used, then extend common config
 4. **Environment via anchor** - always use `x-environment: &environment` pattern
 5. **Networks order**: traefik → internal → databases

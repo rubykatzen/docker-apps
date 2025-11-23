@@ -2,10 +2,10 @@ include:
   - ../networks.yml
 services:
   homarr:
+    image: ghcr.io/ajnart/homarr
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/ajnart/homarr
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../../apps-data/${APP_NAME}/config:/app/data/configs

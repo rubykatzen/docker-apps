@@ -7,10 +7,10 @@ x-environment: &environment
   APP_SECRET: ${DAPPS_KEY_HEX_32}
 services:
   umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
     extends:
       file: ../common.yml
       service: main
-    image: ghcr.io/umami-software/umami:postgresql-latest
     environment: *environment
     depends_on:
       - postgres

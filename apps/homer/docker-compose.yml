@@ -2,12 +2,12 @@ include:
   - ../networks.yml
 services:
   homer:
+    image: b4bz/homer
     extends:
       file: ../common.yml
       service: main
-    image: b4bz/homer
     volumes:
       - ../../apps-data/${APP_NAME}/assets:/www/assets
     labels:
-      - "traefik.http.routers.${APP_NAME}.middlewares=${APP_NAME}-auth-basic"
-      - "traefik.http.middlewares.${APP_NAME}-auth-basic.basicauth.users=${DAPPS_HTPASSWD}"
+      - traefik.http.routers.${APP_NAME}.middlewares=${APP_NAME}-auth-basic
+      - traefik.http.middlewares.${APP_NAME}-auth-basic.basicauth.users=${DAPPS_HTPASSWD}

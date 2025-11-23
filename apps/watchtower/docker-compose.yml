@@ -1,6 +1,6 @@
 x-environment: &environment
   WATCHTOWER_NOTIFICATION_REPORT: true
-  WATCHTOWER_NOTIFICATIONS_LEVEL: "warn"
+  WATCHTOWER_NOTIFICATIONS_LEVEL: warn
   WATCHTOWER_SCHEDULE: "30 30 23 * * *"
   TZ: ${DAPPS_TIMEZONE}
   WATCHTOWER_CLEANUP: true
@@ -28,7 +28,7 @@ x-environment: &environment
 services:
   watchtower:
     image: containrrr/watchtower
-    restart: unless-stopped
+    environment: *environment
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    environment: *environment
+    restart: unless-stopped

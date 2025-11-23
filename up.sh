@@ -48,3 +48,6 @@ do
   docker compose --env-file ./apps/"${app}"/.env --env-file .env -f ./apps/"${app}"/docker-compose.yml pull
   docker compose --env-file ./apps/"${app}"/.env --env-file .env -f ./apps/"${app}"/docker-compose.yml up -d --remove-orphans
 done
+
+docker container prune -f
+docker image prune -a -f

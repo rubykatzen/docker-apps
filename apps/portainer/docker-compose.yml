@@ -2,13 +2,13 @@ include:
   - ../networks.yml
 services:
   portainer:
+    image: portainer/portainer-ce
     extends:
       file: ../common.yml
       service: main
-    image: portainer/portainer-ce
     command: -H unix:///var/run/docker.sock
-    security_opt:
-      - no-new-privileges:true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../../apps-data/${APP_NAME}/data:/data
+    security_opt:
+      - no-new-privileges:true

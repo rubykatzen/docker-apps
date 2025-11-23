@@ -12,16 +12,16 @@ x-environment: &environment
   SEMAPHORE_ADMIN_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
   SEMAPHORE_ADMIN_NAME: admin
   SEMAPHORE_ADMIN_EMAIL: ${DAPPS_ADMIN_MAIL}
-  SEMAPHORE_TELEGRAM_ALERT: "True"
+  SEMAPHORE_TELEGRAM_ALERT: true
   SEMAPHORE_TELEGRAM_TOKEN: ${DAPPS_TELEGRAM_TELEGRAM_TOKEN}
   SEMAPHORE_TELEGRAM_CHAT: ${DAPPS_TELEGRAM_CHAT}
-  ANSIBLE_HOST_KEY_CHECKING: "False"
+  ANSIBLE_HOST_KEY_CHECKING: false
 services:
   semaphore:
+    image: semaphoreui/semaphore
     extends:
       file: ../common.yml
       service: main
-    image: semaphoreui/semaphore
+    environment: *environment
     depends_on:
       - postgres
-    environment: *environment

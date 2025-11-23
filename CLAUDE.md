@@ -260,6 +260,7 @@ services:
 6. **Booleans without quotes** - `true` and `false`, not `"true"` or `"false"`
 7. **No unnecessary blank lines** - only one blank line between major sections (include → x-environment → services)
 8. **No trailing spaces** - remove all trailing whitespace
+9. **Restart policy** - if used, always `restart: unless-stopped` (not `always`)
 
 Example:
 ```yaml

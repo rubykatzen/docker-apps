@@ -188,7 +188,15 @@ x-environment: &environment
   VAR1: ${VALUE1}
   DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
 
-# 3. SERVICES
+# 3. X-IMAGE (if multiple services use the same image)
+x-image: &image
+  organization/app:1.0
+
+# 4. X-VOLUMES (if multiple services share volumes)
+x-volumes: &volumes
+  - ../../apps-data/${APP_NAME}/data:/data
+
+# 5. SERVICES
 services:
   # ... service definitions
 ```
@@ -224,11 +232,7 @@ services:
       - ../../apps-data/${APP_NAME}/config:/config
       - ./config/app.template.yml:/app/config.yml:ro
     
-    # 8. NETWORKS (order: traefik → internal → databases)
-    networks:
-      - traefik
-      - internal
-      - databases
+    # 8. NETWORKS (inherited from extends, omit this section)
     
     # 9. DEPENDS_ON (order: postgres → redis → mongo → others, simple list without condition)
     depends_on:
@@ -243,13 +247,15 @@ services:
 ### Key ordering principles:
 1. **Include order**: networks.yml → postgres.yml → redis.yml → mongo.yml
 2. **X-environment only if needed** - create only when environment variables exist, skip if service has no environment
-3. **Image before extends** - declare what image is used, then extend common config
-4. **Environment via anchor** - always use `x-environment: &environment` pattern
-5. **Networks order**: traefik → internal → databases
-6. **Depends_on as simple list** - use array format without `condition:`, healthchecks are in common.yml
-7. **Depends_on order**: postgres → redis → mongo → app services
-8. **Volumes order**: data directories → config directories → template files (with :ro)
-9. **Paths use ${APP_NAME}** - for reusability across apps
+3. **X-image for shared images** - if multiple services use the same image, use `x-image: &image`
+4. **X-volumes for shared volumes** - if multiple services share volumes, use `x-volumes: &volumes`
+5. **Image before extends** - declare what image is used, then extend common config
+6. **Environment via anchor** - always use `x-environment: &environment` pattern
+7. **Networks from extends** - `main` profile includes `traefik` and `internal`, never add `databases` (it's only for DB admin tools)
+8. **Depends_on as simple list** - use array format without `condition:`, healthchecks are in common.yml
+9. **Depends_on order**: postgres → redis → mongo → app services
+10. **Volumes order**: data directories → config directories → template files (with :ro)
+11. **Paths use ${APP_NAME}** - for reusability across apps
 
 ### YAML formatting rules:
 1. **No quotes unless necessary** - avoid quotes around strings when YAML doesn't require them
@@ -261,6 +267,7 @@ services:
 7. **No unnecessary blank lines** - only one blank line between major sections (include → x-environment → services)
 8. **No trailing spaces** - remove all trailing whitespace
 9. **Restart policy** - if used, always `restart: unless-stopped` (not `always`)
+10. **Volume paths consistency** - use matching folder names: `../../apps-data/${APP_NAME}/data:/data`, not `../../apps-data/${APP_NAME}/app-data:/data`
 
 Example:
 ```yaml

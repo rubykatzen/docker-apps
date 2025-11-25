@@ -192,6 +192,10 @@ x-environment: &environment
   VAR1: ${VALUE1}
   DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
 
+# 3. X-IMAGE (if multiple services use the same image)
+x-image: &image
+  organization/app:1.0
+
 # 4. X-VOLUMES (if multiple services share volumes)
 x-volumes: &volumes
   - ../../apps-data/${APP_NAME}/data:/data

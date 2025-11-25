@@ -183,14 +183,14 @@ include:
   - ../redis.yml         # If Redis needed
   - ../mongo.yml         # If MongoDB needed
 
-# 2. X-ENVIRONMENT (only if environment variables exist)
+# 2. X-IMAGE (if multiple services use the same image)
+x-image: &image
+  organization/app:1.0
+
+# 3. X-ENVIRONMENT (only if environment variables exist)
 x-environment: &environment
   VAR1: ${VALUE1}
   DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
-
-# 3. X-IMAGE (if multiple services use the same image)
-x-image: &image
-  organization/app:1.0
 
 # 4. X-VOLUMES (if multiple services share volumes)
 x-volumes: &volumes
@@ -246,9 +246,9 @@ services:
 
 ### Key ordering principles:
 1. **Include order**: networks.yml → postgres.yml → redis.yml → mongo.yml
-2. **X-environment only if needed** - create only when environment variables exist, skip if service has no environment
+2. **X-fields order**: x-image → x-environment → x-volumes (only if needed)
 3. **X-image for shared images** - if multiple services use the same image, use `x-image: &image`
-4. **X-volumes for shared volumes** - if multiple services share volumes, use `x-volumes: &volumes`
+4. **X-volumes for shared volumes** - if 2+ volumes repeat across services, extract them to `x-volumes: &volumes` and merge with unique ones
 5. **Image before extends** - declare what image is used, then extend common config
 6. **Environment via anchor** - always use `x-environment: &environment` pattern
 7. **Networks from extends** - `main` profile includes `traefik` and `internal`, never add `databases` (it's only for DB admin tools)

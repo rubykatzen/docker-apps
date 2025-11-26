@@ -2,7 +2,7 @@ include:
   - ../networks.yml
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma
+    image: louislam/uptime-kuma:2
     extends:
       file: ../common.yml
       service: main

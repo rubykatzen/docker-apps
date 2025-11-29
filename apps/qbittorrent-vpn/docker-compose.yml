@@ -8,8 +8,8 @@ x-environment: &environment
   NAME_SERVERS: 1.1.1.1,8.8.8.8
   WEBUI_PORT: ${APP_PORT}
   UMASK: 002
-  PUID: 1000
-  PGID: 1000
+  PUID: ${DAPPS_UID}
+  PGID: ${DAPPS_GID}
 services:
   arch-qbittorrentvpn:
     image: binhex/arch-qbittorrentvpn

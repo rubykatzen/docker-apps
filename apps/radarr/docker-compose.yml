@@ -1,8 +1,8 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  PUID: 1000
-  PGID: 1000
+  PUID: ${DAPPS_UID}
+  PGID: ${DAPPS_GID}
   TZ: ${DAPPS_TIMEZONE}
 services:
   radarr:

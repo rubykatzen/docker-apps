@@ -1,8 +1,8 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  PUID: 1000
-  PGID: 1000
+  PUID: ${DAPPS_UID}
+  PGID: ${DAPPS_GID}
   APP_KEY: ${DAPPS_KEY_HEX_16}
   DB_CONNECTION: sqlite
   SPEEDTEST_SCHEDULE: "*/10 * * * *"

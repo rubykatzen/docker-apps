@@ -1,0 +1,29 @@
+include:
+  - ../networks.yml
+  - ../redis.yml
+
+x-environment: &environment
+  SITE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  REDIS_URL: redis://redis:6379/0
+  CSRF_TRUSTED_ORIGINS: https://${APP_NAME}.${DAPPS_DOMAIN}
+  DEFAULT_TARGET_LANGUAGE: Russian
+  SECRET_KEY: ${DAPPS_KEY_HEX_32}
+  PORT: 8000
+  DEBUG: 0
+  DEMO: 0
+  USER_MANAGEMENT: 0
+  LOG_LEVEL: ERROR
+  TIME_ZONE: ${DAPPS_TIMEZONE}
+  default_max_posts: 20
+
+services:
+  rssbox:
+    image: versun/rssbox
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/app/data
+    depends_on:
+      - redis

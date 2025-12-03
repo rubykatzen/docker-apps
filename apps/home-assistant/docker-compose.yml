@@ -9,4 +9,3 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
     privileged: true
-

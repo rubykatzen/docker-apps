@@ -8,6 +8,3 @@ services:
       service: main
     volumes:
       - ../../apps-data/${APP_NAME}/assets:/www/assets
-    labels:
-      - traefik.http.routers.${APP_NAME}.middlewares=${APP_NAME}-auth-basic
-      - traefik.http.middlewares.${APP_NAME}-auth-basic.basicauth.users=${DAPPS_HTPASSWD}

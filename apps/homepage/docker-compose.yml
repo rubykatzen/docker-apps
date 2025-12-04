@@ -1,11 +1,13 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  HOMEPAGE_ALLOWED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN}
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage:latest
-    container_name: homepage
-    ports:
-      - 3000:3000
+    image: ghcr.io/gethomepage/homepage
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
     volumes:
-      - /path/to/config:/app/config # Make sure your local config directory exists
-      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
-    environment:
-      HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      - ../../apps-data/${APP_NAME}/config:/app/config

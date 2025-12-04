@@ -2,6 +2,7 @@ include:
   - ../networks.yml
 x-environment: &environment
   HOMEPAGE_ALLOWED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN}
+  COINMARKETCAP_TOKEN: ${COINMARKETCAP_TOKEN}
 services:
   homepage:
     image: ghcr.io/gethomepage/homepage

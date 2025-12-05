@@ -1,12 +1,21 @@
 services:
   clickhouse:
-    image: clickhouse/clickhouse-server
+    image: clickhouse/clickhouse-server:24
     restart: unless-stopped
+    environment:
+      CLICKHOUSE_DB: ${APP_NAME}
+      CLICKHOUSE_USER: ${APP_NAME}
+      CLICKHOUSE_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     volumes:
       - ../apps-data/${APP_NAME}/clickhouse/data:/var/lib/clickhouse
       - ../apps-data/${APP_NAME}/clickhouse/logs:/var/log/clickhouse-server
     healthcheck:
-      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
+      test:
+        [
+          "CMD-SHELL",
+          "clickhouse-client --user=${APP_NAME} --password=${DAPPS_DATABASE_PASSWORD} --query 'SELECT 1'",
+        ]
       start_period: 30s
       interval: 30s
       timeout: 5s
@@ -16,4 +25,4 @@ services:
         soft: 262144
         hard: 262144
     networks:
-      internal:
+      - internal

@@ -28,7 +28,7 @@ services:
       - /bin/sh
       - -c
       - |
-        cat > /etc/clickhouse-server/config.d/custom.xml << 'EOF'
+        cat > /etc/clickhouse-server/config.d/custom.xml << EOF
         <clickhouse>
           <logger>
             <level>warning</level>
@@ -47,6 +47,16 @@ services:
           <macros>
             <cluster>${APP_NAME}</cluster>
           </macros>
+          <remote_servers>
+            <${APP_NAME}>
+              <shard>
+                <replica>
+                  <host>clickhouse</host>
+                  <port>9000</port>
+                </replica>
+              </shard>
+            </${APP_NAME}>
+          </remote_servers>
         </clickhouse>
         EOF
         /entrypoint.sh

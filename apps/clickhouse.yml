@@ -24,5 +24,27 @@ services:
       nofile:
         soft: 262144
         hard: 262144
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cat > /etc/clickhouse-server/config.d/macros.xml << EOF
+        <clickhouse>
+          <macros>
+            <cluster>${APP_NAME}</cluster>
+          </macros>
+          <remote_servers>
+            <${APP_NAME}>
+              <shard>
+                <replica>
+                  <host>clickhouse</host>
+                  <port>9000</port>
+                </replica>
+              </shard>
+            </${APP_NAME}>
+          </remote_servers>
+        </clickhouse>
+        EOF
+        /entrypoint.sh
     networks:
       - internal

@@ -1,11 +1,14 @@
 include:
   - ../networks.yml
+x-environment: &environment
+  HOSTNAME: 0.0.0.0
 services:
   outline-admin:
     image: amro045/outline-admin
     extends:
       file: ../common.yml
       service: main
+    environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/app/data
       - ../../apps-data/${APP_NAME}/logs:/app/logs

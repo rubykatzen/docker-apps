@@ -50,6 +50,7 @@ services:
           <remote_servers>
             <${APP_NAME}>
               <shard>
+                <internal_replication>false</internal_replication>
                 <replica>
                   <host>clickhouse</host>
                   <port>9000</port>
@@ -57,6 +58,12 @@ services:
               </shard>
             </${APP_NAME}>
           </remote_servers>
+          <zookeeper>
+            <node>
+              <host>localhost</host>
+              <port>2181</port>
+            </node>
+          </zookeeper>
         </clickhouse>
         EOF
         /entrypoint.sh

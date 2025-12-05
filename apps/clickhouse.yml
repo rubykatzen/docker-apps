@@ -28,21 +28,25 @@ services:
       - /bin/sh
       - -c
       - |
-        cat > /etc/clickhouse-server/config.d/macros.xml << EOF
+        cat > /etc/clickhouse-server/config.d/custom.xml << 'EOF'
         <clickhouse>
+          <logger>
+            <level>warning</level>
+            <console>true</console>
+          </logger>
+          <keep_alive_timeout>10</keep_alive_timeout>
+          <query_thread_log remove="remove"/>
+          <query_log remove="remove"/>
+          <text_log remove="remove"/>
+          <trace_log remove="remove"/>
+          <metric_log remove="remove"/>
+          <asynchronous_metric_log remove="remove"/>
+          <session_log remove="remove"/>
+          <part_log remove="remove"/>
+          <listen_host>0.0.0.0</listen_host>
           <macros>
-            <cluster>${APP_NAME}</cluster>
+            <cluster>openpanel_cluster</cluster>
           </macros>
-          <remote_servers>
-            <${APP_NAME}>
-              <shard>
-                <replica>
-                  <host>clickhouse</host>
-                  <port>9000</port>
-                </replica>
-              </shard>
-            </${APP_NAME}>
-          </remote_servers>
         </clickhouse>
         EOF
         /entrypoint.sh

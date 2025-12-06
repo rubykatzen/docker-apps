@@ -1,6 +1,6 @@
 services:
   clickhouse:
-    image: clickhouse/clickhouse-server:24
+    image: clickhouse/clickhouse-server:24.3-alpine
     restart: unless-stopped
     volumes:
       - ../apps-data/${APP_NAME}/clickhouse/data:/var/lib/clickhouse

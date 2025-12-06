@@ -11,7 +11,7 @@ x-environment: &environment
   ALLOW_REGISTRATION: false
   ALLOW_INVITATION: true
   REDIS_URL: redis://redis:6379
-  CLICKHOUSE_URL: http://clickhouse:8123/default
+  CLICKHOUSE_URL: http://clickhouse:8123/${APP_NAME}
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   DATABASE_URL_DIRECT: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   NEXT_PUBLIC_DASHBOARD_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
@@ -24,7 +24,11 @@ services:
       file: ../common.yml
       service: api
     command:
-      ["sh", "-c","echo 'Running migrations...' && CI=true pnpm -r run migrate:deploy && pnpm start"]
+      [
+        "sh",
+        "-c",
+        "echo 'Running migrations...' && CI=true pnpm -r run migrate:deploy && pnpm start",
+      ]
     environment: *environment
     depends_on:
       - postgres

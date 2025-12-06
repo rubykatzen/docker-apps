@@ -18,7 +18,7 @@ x-environment: &environment
   COOKIE_SECRET: ${DAPPS_KEY_HEX_64}
 services:
   clickhouse:
-    image: clickhouse/clickhouse-server:24.3.2-alpine
+    image: clickhouse/clickhouse-server:24-alpine
     extends:
       file: ../common.yml
       service: side
@@ -36,7 +36,7 @@ services:
     image: lindesvard/openpanel-api
     extends:
       file: ../common.yml
-      service: side
+      service: api
     command:
       [
         "sh",
@@ -48,15 +48,6 @@ services:
       - postgres
       - redis
       - clickhouse
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}-api.${DAPPS_DOMAIN}`)
-      - traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}
-      - traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=3000
-      - traefik.http.routers.${APP_NAME}-api.priority=100
-    networks:
-      - internal
-      - traefik
   openpanel-dashboard:
     image: lindesvard/openpanel-dashboard
     extends:

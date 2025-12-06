@@ -43,7 +43,6 @@ x-logging: &logging
   options:
     max-size: 10m
 
-
 services:
   main:
     env_file: *env-file
@@ -60,7 +59,7 @@ services:
     env_file: *env-file
     restart: *restart
     expose:
-      - ${API_PORT}
+      - ${APP_PORT}
     labels: *labels-api
     healthcheck: *healthcheck
     networks:

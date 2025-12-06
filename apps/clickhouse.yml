@@ -2,20 +2,11 @@ services:
   clickhouse:
     image: clickhouse/clickhouse-server:24
     restart: unless-stopped
-    environment:
-      CLICKHOUSE_DB: ${APP_NAME}
-      CLICKHOUSE_USER: ${APP_NAME}
-      CLICKHOUSE_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     volumes:
       - ../apps-data/${APP_NAME}/clickhouse/data:/var/lib/clickhouse
       - ../apps-data/${APP_NAME}/clickhouse/logs:/var/log/clickhouse-server
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "clickhouse-client --user=${APP_NAME} --password=${DAPPS_DATABASE_PASSWORD} --query 'SELECT 1'",
-        ]
+      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
       start_period: 30s
       interval: 30s
       timeout: 5s
@@ -28,7 +19,7 @@ services:
       - /bin/sh
       - -c
       - |
-        cat > /etc/clickhouse-server/config.d/custom.xml << EOF
+        cat > /etc/clickhouse-server/config.d/custom.xml << 'EOF'
         <clickhouse>
           <logger>
             <level>warning</level>
@@ -45,25 +36,18 @@ services:
           <part_log remove="remove"/>
           <listen_host>0.0.0.0</listen_host>
           <macros>
-            <cluster>${APP_NAME}</cluster>
+            <cluster>openpanel_cluster</cluster>
           </macros>
-          <remote_servers>
-            <${APP_NAME}>
-              <shard>
-                <internal_replication>false</internal_replication>
-                <replica>
-                  <host>clickhouse</host>
-                  <port>9000</port>
-                </replica>
-              </shard>
-            </${APP_NAME}>
-          </remote_servers>
-          <zookeeper>
-            <node>
-              <host>localhost</host>
-              <port>2181</port>
-            </node>
-          </zookeeper>
+        </clickhouse>
+        EOF
+        cat > /etc/clickhouse-server/users.d/custom-users.xml << 'EOF'
+        <clickhouse>
+          <profiles>
+            <default>
+              <log_queries>0</log_queries>
+              <log_query_threads>0</log_query_threads>
+            </default>
+          </profiles>
         </clickhouse>
         EOF
         /entrypoint.sh

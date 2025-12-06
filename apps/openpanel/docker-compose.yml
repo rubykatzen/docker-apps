@@ -2,6 +2,7 @@ include:
   - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
+  - ../clickhouse.yml
 x-environment: &environment
   NODE_ENV: production
   NEXT_PUBLIC_SELF_HOSTED: true
@@ -17,32 +18,13 @@ x-environment: &environment
   NEXT_PUBLIC_API_URL: https://${APP_NAME}-api.${DAPPS_DOMAIN}
   COOKIE_SECRET: ${DAPPS_KEY_HEX_64}
 services:
-  clickhouse:
-    image: clickhouse/clickhouse-server:24-alpine
-    extends:
-      file: ../common.yml
-      service: side
-    volumes:
-      - ../../apps-data/${APP_NAME}/clickhouse/data:/var/lib/clickhouse
-      - ../../apps-data/${APP_NAME}/clickhouse/logs:/var/log/clickhouse-server
-      - ./clickhouse/clickhouse-config.xml:/etc/clickhouse-server/config.d/op-config.xml:ro
-      - ./clickhouse/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/op-user-config.xml:ro
-      - ./clickhouse/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
   openpanel-api:
     image: lindesvard/openpanel-api
     extends:
       file: ../common.yml
       service: api
     command:
-      [
-        "sh",
-        "-c",
-        "echo 'Running migrations...' && CI=true pnpm -r run migrate:deploy && pnpm start",
-      ]
+      ["sh", "-c","echo 'Running migrations...' && CI=true pnpm -r run migrate:deploy && pnpm start"]
     environment: *environment
     depends_on:
       - postgres

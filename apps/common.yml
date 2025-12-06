@@ -33,8 +33,10 @@ x-labels: &labels
   - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 x-labels-api: &labels-api
   - traefik.enable=true
-  - traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}-api.${DAPPS_DOMAIN}`)
+  - traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`) && PathPrefix(`/api`)
   - traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}
+  - traefik.http.middlewares.${APP_NAME}-api-strip.stripprefix.prefixes=/api
+  - traefik.http.routers.${APP_NAME}-api.middlewares=${APP_NAME}-api-strip
   - traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=3000
 x-env-file: &env-file
   - ./${APP_NAME}/.env

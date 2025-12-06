@@ -15,7 +15,7 @@ x-environment: &environment
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   DATABASE_URL_DIRECT: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   NEXT_PUBLIC_DASHBOARD_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
-  NEXT_PUBLIC_API_URL: https://${APP_NAME}-api.${DAPPS_DOMAIN}
+  NEXT_PUBLIC_API_URL: https://${APP_NAME}.${DAPPS_DOMAIN}/api
   COOKIE_SECRET: ${DAPPS_KEY_HEX_64}
 services:
   openpanel-api:

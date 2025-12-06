@@ -10,7 +10,7 @@ x-environment: &environment
   ALLOW_REGISTRATION: false
   ALLOW_INVITATION: true
   REDIS_URL: redis://redis:6379
-  CLICKHOUSE_URL: http://clickhouse:8123/openpanel
+  CLICKHOUSE_URL: http://clickhouse:8123/${APP_NAME}
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   DATABASE_URL_DIRECT: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   NEXT_PUBLIC_DASHBOARD_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
@@ -32,7 +32,7 @@ services:
       nofile:
         soft: 262144
         hard: 262144
-  openpanel2-api:
+  openpanel-api:
     image: lindesvard/openpanel-api
     extends:
       file: ../common.yml
@@ -48,7 +48,7 @@ services:
       - postgres
       - redis
       - clickhouse
-  openpanel2-dashboard:
+  openpanel-dashboard:
     image: lindesvard/openpanel-dashboard
     extends:
       file: ../common.yml
@@ -57,8 +57,8 @@ services:
     depends_on:
       - postgres
       - redis
-      - openpanel2-api
-  openpanel2-worker:
+      - openpanel-api
+  openpanel-worker:
     image: lindesvard/openpanel-worker
     extends:
       file: ../common.yml
@@ -67,4 +67,4 @@ services:
     depends_on:
       - postgres
       - redis
-      - openpanel2-api
+      - openpanel-api

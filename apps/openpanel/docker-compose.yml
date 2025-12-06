@@ -10,11 +10,11 @@ x-environment: &environment
   ALLOW_REGISTRATION: false
   ALLOW_INVITATION: true
   REDIS_URL: redis://redis:6379
-  CLICKHOUSE_URL: http://clickhouse:8123/${APP_NAME}
+  CLICKHOUSE_URL: http://clickhouse:8123/default
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   DATABASE_URL_DIRECT: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   NEXT_PUBLIC_DASHBOARD_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
-  NEXT_PUBLIC_API_URL: https://${APP_NAME}.${DAPPS_DOMAIN}/api
+  NEXT_PUBLIC_API_URL: https://${APP_NAME}-api.${DAPPS_DOMAIN}
   COOKIE_SECRET: ${DAPPS_KEY_HEX_64}
 services:
   clickhouse:
@@ -48,6 +48,15 @@ services:
       - postgres
       - redis
       - clickhouse
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}-api.${DAPPS_DOMAIN}`)
+      - traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}
+      - traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=3000
+      - traefik.http.routers.${APP_NAME}-api.priority=100
+    networks:
+      - internal
+      - traefik
   openpanel-dashboard:
     image: lindesvard/openpanel-dashboard
     extends:

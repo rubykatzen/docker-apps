@@ -1,14 +1,14 @@
 include:
   - ../networks.yml
   - ../postgres.yml
-
 x-environment: &environment
+  UNLEASH_DEFAULT_ADMIN_USERNAME: admin
+  UNLEASH_DEFAULT_ADMIN_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
   DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   DATABASE_SSL: "false"
   LOG_LEVEL: warn
   INIT_FRONTEND_API_TOKENS: ${DAPPS_KEY_HEX_16}
   INIT_BACKEND_API_TOKENS: ${DAPPS_KEY_HEX_32}
-
 services:
   web:
     image: unleashorg/unleash-server

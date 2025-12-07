@@ -1,7 +1,6 @@
 include:
   - ../networks.yml
   - ../redis.yml
-
 x-environment: &environment
   SITE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
   REDIS_URL: redis://redis:6379/0
@@ -15,7 +14,6 @@ x-environment: &environment
   LOG_LEVEL: ERROR
   TIME_ZONE: ${DAPPS_TIMEZONE}
   default_max_posts: 20
-
 services:
   rssbox:
     image: versun/rssbox

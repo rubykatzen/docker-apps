@@ -48,5 +48,5 @@ services:
       - postgres
   initContainer:
     image: busybox
-    command: [ 'sh', '-c', 'chown -R 1000:1000 /home/node/.n8n' ]
+    command: ["sh", "-c", "chown -R 1000:1000 /home/node/.n8n"]
     volumes: *volumes

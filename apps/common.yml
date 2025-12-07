@@ -44,7 +44,6 @@ x-restart: &restart unless-stopped
 x-logging: &logging
   options:
     max-size: 10m
-
 services:
   main:
     env_file: *env-file

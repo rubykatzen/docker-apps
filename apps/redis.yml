@@ -5,7 +5,7 @@ services:
     volumes:
       - ../apps-data/${APP_NAME}/redis:/data
     healthcheck:
-      test: [ 'CMD', 'redis-cli', 'ping' ]
+      test: ["CMD", "redis-cli", "ping"]
       start_period: 30s
       interval: 30s
       timeout: 5s

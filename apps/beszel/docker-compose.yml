@@ -2,14 +2,14 @@ include:
   - ../networks.yml
 services:
   beszel:
-    image: 'henrygd/beszel'
+    image: "henrygd/beszel"
     extends:
       file: ../common.yml
       service: main
     volumes:
       - ../../apps-data/${APP_NAME}/beszel_data:/beszel_data
     healthcheck:
-      test: ['CMD', '/beszel', 'health', '--url', 'http://localhost:8090']
+      test: ["CMD", "/beszel", "health", "--url", "http://localhost:8090"]
       start_period: 30s
       interval: 30s
       timeout: 5s

@@ -268,7 +268,7 @@ services:
 4. **Variables always in quotes** - `"${APP_NAME}"` for shell variable interpolation
 5. **Arrays use bracket notation** - `command: ["start", "--config"]` for commands
 6. **Booleans without quotes** - `true` and `false`, not `"true"` or `"false"`
-7. **No unnecessary blank lines** - only one blank line between major sections (include → x-environment → services)
+7. **No empty lines in .yml files** - remove all blank lines, keep file compact without any empty line breaks
 8. **No trailing spaces** - remove all trailing whitespace
 9. **Restart policy** - if used, always `restart: unless-stopped` (not `always`)
 10. **Volume paths consistency** - use matching folder names: `../../apps-data/${APP_NAME}/data:/data`, not `../../apps-data/${APP_NAME}/app-data:/data`

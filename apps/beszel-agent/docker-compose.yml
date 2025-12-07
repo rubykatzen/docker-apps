@@ -3,7 +3,7 @@ x-environment: &environment
   KEY: ${BESZEL_AGENT_PUBLIC_KEY}
 services:
   beszel-agent:
-    image: "henrygd/beszel-agent"
+    image: "henrygd/beszel-agent:alpine"
     extends:
       file: ../common.yml
       service: host

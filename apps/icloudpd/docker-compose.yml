@@ -2,10 +2,10 @@ include:
   - ../networks.yml
 services:
   icloudpd:
+    image: icloudpd/icloudpd
     extends:
       file: ../common.yml
       service: main
-    image: icloudpd/icloudpd
     command: >
       icloudpd
         --username "${ICLOUDPD_USERNAME}"

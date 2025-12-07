@@ -266,7 +266,7 @@ services:
 2. **Double quotes when needed** - use double quotes `"` (not single) when quotes are required
 3. **Omit :latest tag** - `image: traefik` instead of `image: traefik:latest`
 4. **Variables always in quotes** - `"${APP_NAME}"` for shell variable interpolation
-5. **Arrays use bracket notation** - `command: ["start", "--config"]` for commands
+5. **Arrays use bracket notation** - `command: ["start", "--config"]` for commands (always single line)
 6. **Booleans without quotes** - `true` and `false`, not `"true"` or `"false"`
 7. **No empty lines in .yml files** - remove all blank lines, keep file compact without any empty line breaks
 8. **No trailing spaces** - remove all trailing whitespace

@@ -13,6 +13,8 @@ x-environment: &environment
   DB_USER: ${APP_NAME}
   DB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
   DB_PORT: 5432
+  TRAKT_API: ${YAMTRACK_TRAKT_CLIENT_ID}
+  TRAKT_API_SECRET: ${YAMTRACK_TRAKT_CLIENT_SECRET}
 services:
   yamtrack:
     image: ghcr.io/fuzzygrim/yamtrack

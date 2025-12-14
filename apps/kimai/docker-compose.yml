@@ -5,7 +5,8 @@ x-environment: &environment
   ADMINMAIL: ${DAPPS_ADMIN_MAIL}
   ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
   DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
-  APP_BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}/
+  APP_BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  TRUSTED_PROXIES: "traefik"
 services:
   kimai:
     extends:

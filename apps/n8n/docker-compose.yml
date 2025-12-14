@@ -2,7 +2,7 @@ include:
   - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
-x-image: &image n8nio/n8n:2
+x-image: &image n8nio/n8n:2.0.2
 x-environment: &environment
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: postgres

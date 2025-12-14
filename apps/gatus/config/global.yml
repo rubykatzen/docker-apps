@@ -6,7 +6,7 @@ alerting:
     token: ${TELEGRAM_TOKEN}
     id: ${TELEGRAM_ID}
     default-alert:
-      description: "[🔴] Down: "
+      description: "[[🔴]] Service down"
       send-on-resolved: true
       failure-threshold: 1
       success-threshold: 1

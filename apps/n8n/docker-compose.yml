@@ -2,7 +2,7 @@ include:
   - ../networks.yml
   - ../postgres.yml
   - ../redis.yml
-x-image: &image n8nio/n8n
+x-image: &image n8nio/n8n:2
 x-environment: &environment
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: postgres
@@ -19,6 +19,7 @@ x-environment: &environment
   N8N_PROTOCOL: https
   NODE_ENV: production
   WEBHOOK_URL: https://${APP_NAME}.${DAPPS_DOMAIN}/
+  OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS: true
 x-volumes: &volumes
   - ../../apps-data/${APP_NAME}/data:/home/node/.n8n
   - ../../apps-data/${APP_NAME}/files:/files
@@ -46,7 +47,3 @@ services:
       - n8n
       - redis
       - postgres
-  initContainer:
-    image: busybox
-    command: ["sh", "-c", "chown -R 1000:1000 /home/node/.n8n"]
-    volumes: *volumes

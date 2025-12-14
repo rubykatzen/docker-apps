@@ -2,7 +2,9 @@ include:
   - ../networks.yml
   - ../postgres.yml
 x-environment: &environment
-  GATUS_CONFIG_PATH: /config
+  GATUS_CONFIG_PATH: >
+   - /config/global.yml
+   - /config/endpoints.yml
   TZ: ${DAPPS_TIMEZONE}
   POSTGRES_USER: ${APP_NAME}
   POSTGRES_DB: ${APP_NAME}

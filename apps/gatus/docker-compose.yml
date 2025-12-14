@@ -1,0 +1,25 @@
+include:
+  - ../networks.yml
+  - ../postgres.yml
+x-environment: &environment
+  GATUS_CONFIG_PATH: /config
+  TZ: ${DAPPS_TIMEZONE}
+  POSTGRES_USER: ${APP_NAME}
+  POSTGRES_DB: ${APP_NAME}
+  POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  TELEGRAM_TOKEN: ${DAPPS_TELEGRAM_TELEGRAM_TOKEN}
+  TELEGRAM_ID: ${DAPPS_TELEGRAM_CHAT}
+services:
+  gatus:
+    image: twinproduction/gatus
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/config
+      - ./config/global.yml:/config/global.yml
+    depends_on:
+      - postgres
+    healthcheck:
+      disable: true

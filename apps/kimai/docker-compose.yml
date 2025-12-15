@@ -8,7 +8,7 @@ x-environment: &environment
   PUID: ${DAPPS_UID}
   PGID: ${DAPPS_GID}
   TZ: ${DAPPS_TIMEZONE}
-  TRUSTED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN}
+  TRUSTED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN}|localhost|127.0.0.1
   TRUSTED_PROXIES: 172.16.0.0/12,10.0.0.0/8
 services:
   kimai:

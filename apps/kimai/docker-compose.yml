@@ -14,6 +14,6 @@ services:
       service: main
     image: kimai/kimai2:apache
     volumes:
-      - data:/opt/kimai/var/data
-      - plugins:/opt/kimai/var/plugins
+      - ../../apps-data/${APP_NAME}/data:/opt/kimai/var/data
+      - ../../apps-data/${APP_NAME}/plugins:/opt/kimai/var/plugins
     environment: *environment

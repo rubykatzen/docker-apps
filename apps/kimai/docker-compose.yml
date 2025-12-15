@@ -19,3 +19,5 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
     environment: *environment
+    healthcheck:
+      disable: true

@@ -310,3 +310,13 @@ GitHub Actions workflow (`.github/workflows/cd.yml`) automatically deploys on pu
 - **traefik**: Entry point, must be started first, uses external network
 - Apps with databases include postgres.yml and create app-specific database named `${APP_NAME}`
 - Config templates use `envsubst` - variables must be shell-compatible (`${VAR}` syntax)
+
+## Important: Template Files vs Generated Files
+
+**CRITICAL**: When updating application configurations, always edit the `.template.*` files in `apps/{app}/config/`, NOT the generated files in `apps-data/{app}/config/`.
+
+- Template files are located in: `apps/{app}/config/*.template.*`
+- Generated files are created in: `apps-data/{app}/config/`
+- The `up.sh` script automatically processes templates using `envsubst` and outputs to `apps-data/`
+- Editing generated files directly will result in lost changes on next restart
+- Always modify templates, then run `./restart.sh {app}` to regenerate

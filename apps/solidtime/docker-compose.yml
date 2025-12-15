@@ -36,6 +36,7 @@ x-environment: &environment
   SUPER_ADMINS: ${DAPPS_ADMIN_MAIL}
   GOTENBERG_URL: http://gotenberg:3000
 x-volumes: &volumes
+  - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage
   - ../../apps-data/${APP_NAME}/app:/var/www/html/storage/app
 services:
   app:

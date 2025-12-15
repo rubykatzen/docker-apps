@@ -3,6 +3,7 @@ include:
   - ../postgres.yml
   - ../gotenberg.yml
 x-image: &image solidtime/solidtime
+x-user: &user "${DAPPS_UID}:${DAPPS_GID}"
 x-environment: &environment
   APP_NAME: solidtime
   VITE_APP_NAME: solidtime
@@ -42,6 +43,7 @@ services:
     extends:
       file: ../common.yml
       service: main
+    user: *user
     environment:
       <<: *environment
       CONTAINER_MODE: http
@@ -55,6 +57,7 @@ services:
     extends:
       file: ../common.yml
       service: side
+    user: *user
     environment:
       <<: *environment
       CONTAINER_MODE: scheduler
@@ -72,6 +75,7 @@ services:
     extends:
       file: ../common.yml
       service: side
+    user: *user
     environment:
       <<: *environment
       CONTAINER_MODE: worker

@@ -1,94 +1,91 @@
+include:
+  - ../networks.yml
+  - ../postgres.yml
+  - ../gotenberg.yml
+x-image: &image solidtime/solidtime
+x-user: &user "${DAPPS_UID}:${DAPPS_GID}"
+x-environment: &environment
+  APP_NAME: solidtime
+  VITE_APP_NAME: solidtime
+  APP_ENV: production
+  APP_DEBUG: false
+  APP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  APP_FORCE_HTTPS: true
+  TRUSTED_PROXIES: 172.16.0.0/12,10.0.0.0/8
+  APP_KEY: ${DAPPS_KEY_BASE64_32}
+  LOG_CHANNEL: stderr_daily
+  LOG_LEVEL: info
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_SSLMODE: prefer
+  DB_DATABASE: ${APP_NAME}
+  DB_USERNAME: ${APP_NAME}
+  DB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  MAIL_MAILER: smtp
+  MAIL_HOST: ${DAPPS_SMTP_HOSTNAME}
+  MAIL_PORT: ${DAPPS_SMTP_PORT}
+  MAIL_ENCRYPTION: tls
+  MAIL_FROM_ADDRESS: ${DAPPS_SMTP_FROM}
+  MAIL_FROM_NAME: solidtime
+  MAIL_USERNAME: ${DAPPS_SMTP_USERNAME}
+  MAIL_PASSWORD: ${DAPPS_SMTP_PASSWORD}
+  QUEUE_CONNECTION: database
+  FILESYSTEM_DISK: local
+  PUBLIC_FILESYSTEM_DISK: public
+  GOTENBERG_URL: http://gotenberg:3000
+x-volumes: &volumes
+  - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage
+  - ../../apps-data/${APP_NAME}/logs:/var/www/html/storage/logs
 services:
   app:
-    restart: always
-    image: "solidtime/solidtime:${SOLIDTIME_IMAGE_TAG:-latest}"
-    user: "1000:1000"
-    ports:
-      - '${FORWARD_APP_PORT:-8000}:8000'
-    networks:
-      - internal
-    volumes:
-      - "app-storage:/var/www/html/storage"
-      - "./logs:/var/www/html/storage/logs"
-      - "./app-storage:/var/www/html/storage/app"
+    image: *image
+    extends:
+      file: ../common.yml
+      service: main
+    user: *user
     environment:
+      <<: *environment
       CONTAINER_MODE: http
-    healthcheck:
-      test: [ "CMD", "curl", "--fail", "http://localhost:8000/health-check/up" ]
-    env_file:
-      - laravel.env
+    volumes: *volumes
     depends_on:
-      - database
+      - postgres
+      - gotenberg
   scheduler:
-    restart: always
-    image: "solidtime/solidtime:${SOLIDTIME_IMAGE_TAG:-latest}"
-    user: "1000:1000"
-    networks:
-      - internal
-    volumes:
-      - "app-storage:/var/www/html/storage"
-      - "./logs:/var/www/html/storage/logs"
-      - "./app-storage:/var/www/html/storage/app"
+    image: *image
+    extends:
+      file: ../common.yml
+      service: side
+    user: *user
     environment:
+      <<: *environment
       CONTAINER_MODE: scheduler
+    volumes: *volumes
     healthcheck:
-      test: [ "CMD", "healthcheck" ]
-    env_file:
-      - laravel.env
-    depends_on:
-      - database
-  queue:
-    restart: always
-    image: "solidtime/solidtime:${SOLIDTIME_IMAGE_TAG:-latest}"
-    user: "1000:1000"
-    networks:
-      - internal
-    volumes:
-      - "app-storage:/var/www/html/storage"
-      - "./logs:/var/www/html/storage/logs"
-      - "./app-storage:/var/www/html/storage/app"
-    environment:
-      CONTAINER_MODE: worker
-      WORKER_COMMAND: "php /var/www/html/artisan queue:work"
-    healthcheck:
-      test: [ "CMD", "healthcheck" ]
-    env_file:
-      - laravel.env
-    depends_on:
-      - database
-  database:
-    restart: always
-    image: 'postgres:15'
-#    ports:
-#      - '${FORWARD_DB_PORT:-5432}:5432'
-    environment:
-      PGPASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-    volumes:
-      - 'database-storage:/var/lib/postgresql/data'
-    networks:
-      - internal
-    healthcheck:
-      test:
-        - CMD
-        - pg_isready
-        - '-q'
-        - '-d'
-        - '${DB_DATABASE}'
-        - '-U'
-        - '${DB_USERNAME}'
-      retries: 3
+      test: ["CMD", "healthcheck"]
+      start_period: 30s
+      interval: 30s
       timeout: 5s
-  gotenberg:
-    image: gotenberg/gotenberg:8
-    networks:
-      - internal
+      retries: 5
+    depends_on:
+      - postgres
+  queue:
+    image: *image
+    extends:
+      file: ../common.yml
+      service: side
+    user: *user
+    environment:
+      <<: *environment
+      CONTAINER_MODE: worker
+      WORKER_COMMAND: php /var/www/html/artisan queue:work
+    volumes: *volumes
     healthcheck:
-      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:3000/health" ]
-networks:
-  internal:
-volumes:
-  database-storage:
-  app-storage:
+      test: ["CMD", "healthcheck"]
+      start_period: 30s
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - postgres
+      - gotenberg

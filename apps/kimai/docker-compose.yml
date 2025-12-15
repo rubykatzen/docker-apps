@@ -5,17 +5,15 @@ x-environment: &environment
   ADMINMAIL: ${DAPPS_ADMIN_MAIL}
   ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
   DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
-  APP_BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
-  TRUSTED_PROXIES: "127.0.0.1,172.18.0.0/16,172.25.0.0/16"
-  SYMFONY_TRUSTED_PROXIES: "127.0.0.1,172.18.0.0/16,172.25.0.0/16"
-  SYMFONY_TRUSTED_HEADERS: "x-forwarded-for,x-forwarded-host,x-forwarded-proto,x-forwarded-port"
+  PUID: ${DAPPS_UID}
+  PGID: ${DAPPS_GID}
+  TZ: ${DAPPS_TIMEZONE}
 services:
   kimai:
     extends:
       file: ../common.yml
       service: main
-    image: kimai/kimai2:apache
+    image: lscr.io/linuxserver/kimai
     volumes:
-      - ../../apps-data/${APP_NAME}/data:/opt/kimai/var/data
-      - ../../apps-data/${APP_NAME}/plugins:/opt/kimai/var/plugins
+      - ../../apps-data/${APP_NAME}/config:/config
     environment: *environment

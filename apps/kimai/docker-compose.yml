@@ -5,9 +5,6 @@ x-environment: &environment
   ADMINMAIL: ${DAPPS_ADMIN_MAIL}
   ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
   DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
-  PUID: ${DAPPS_UID}
-  PGID: ${DAPPS_GID}
-  TZ: ${DAPPS_TIMEZONE}
   TRUSTED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN}|localhost|127.0.0.1
   TRUSTED_PROXIES: 172.16.0.0/12,10.0.0.0/8
 services:
@@ -15,7 +12,8 @@ services:
     extends:
       file: ../common.yml
       service: main
-    image: lscr.io/linuxserver/kimai
+    image: kimai/kimai2:apache
     volumes:
-      - ../../apps-data/${APP_NAME}/config:/config
+      - data:/opt/kimai/var/data
+      - plugins:/opt/kimai/var/plugins
     environment: *environment

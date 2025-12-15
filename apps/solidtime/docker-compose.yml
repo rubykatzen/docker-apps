@@ -3,7 +3,6 @@ include:
   - ../postgres.yml
   - ../gotenberg.yml
 x-image: &image solidtime/solidtime
-x-user: &user "${DAPPS_UID}:${DAPPS_GID}"
 x-environment: &environment
   APP_NAME: solidtime
   VITE_APP_NAME: solidtime
@@ -37,15 +36,12 @@ x-environment: &environment
   GOTENBERG_URL: http://gotenberg:3000
 x-volumes: &volumes
   - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage
-  - ../../apps-data/${APP_NAME}/logs:/var/www/html/storage/logs
-  - ../../apps-data/${APP_NAME}/app:/var/www/html/storage/app
 services:
   app:
     image: *image
     extends:
       file: ../common.yml
       service: main
-    user: *user
     environment:
       <<: *environment
       CONTAINER_MODE: http
@@ -59,7 +55,6 @@ services:
     extends:
       file: ../common.yml
       service: side
-    user: *user
     environment:
       <<: *environment
       CONTAINER_MODE: scheduler
@@ -77,7 +72,6 @@ services:
     extends:
       file: ../common.yml
       service: side
-    user: *user
     environment:
       <<: *environment
       CONTAINER_MODE: worker

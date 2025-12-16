@@ -8,7 +8,7 @@ alerting:
     title: ""
     default-alert:
       send-on-resolved: true
-      failure-threshold: 1
+      failure-threshold: 2
       success-threshold: 1
 ui: 
   dashboard-subheading: ""

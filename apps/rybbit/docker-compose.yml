@@ -1,25 +1,4 @@
 services:
-  caddy:
-    profiles: ["with-webserver"]
-    image: caddy:2.10.0
-    container_name: caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp" # Needed for HTTP/3
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile # Mount Caddy config file
-      - caddy_data:/data # Mount persistent data volume for certs etc.
-      - caddy_config:/config # Mount persistent config volume
-    environment:
-      # Pass domain name for use in Caddyfile
-      # Email is configured via Caddyfile global options
-      - DOMAIN_NAME=${DOMAIN_NAME}
-    depends_on:
-      - backend
-      - client
-
   clickhouse:
     container_name: clickhouse
     image: clickhouse/clickhouse-server:25.4.2
@@ -68,13 +47,13 @@ services:
       - "5432:5432"
 
   backend:
-    image: ghcr.io/rybbit-io/rybbit-backend:${IMAGE_TAG:-latest}
+    image: ghcr.io/rybbit-io/rybbit-backend
     container_name: backend
     build:
       context: .
       dockerfile: server/Dockerfile
     ports:
-      - "${HOST_BACKEND_PORT:-127.0.0.1:3001:3001}"
+      - 3001
     environment:
       - NODE_ENV=production
       - CLICKHOUSE_HOST=http://clickhouse:8123
@@ -104,7 +83,7 @@ services:
     restart: unless-stopped
 
   client:
-    image: ghcr.io/rybbit-io/rybbit-client:${IMAGE_TAG:-latest}
+    image: ghcr.io/rybbit-io/rybbit-client
     container_name: client
     build:
       context: .
@@ -113,7 +92,7 @@ services:
         NEXT_PUBLIC_BACKEND_URL: ${BASE_URL}
         NEXT_PUBLIC_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
     ports:
-      - "${HOST_CLIENT_PORT:-127.0.0.1:3002:3002}"
+      - 3002
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_BACKEND_URL=${BASE_URL}
@@ -125,8 +104,6 @@ services:
 volumes:
   clickhouse-data:
   postgres-data:
-  caddy_data: # Persistent volume for Caddy's certificates and state
-  caddy_config: # Persistent volume for Caddy's configuration cache (optional but good practice)
 
 configs:
   clickhouse_network:
@@ -134,7 +111,6 @@ configs:
       <clickhouse>
           <listen_host>0.0.0.0</listen_host>
       </clickhouse>
-
   clickhouse_json:
     content: |
       <clickhouse>
@@ -142,7 +118,6 @@ configs:
               <enable_json_type>1</enable_json_type>
           </settings>
       </clickhouse>
-
   clickhouse_logging:
     content: |
       <clickhouse>
@@ -161,7 +136,6 @@ configs:
         <latency_log remove="remove"/>
         <processors_profile_log remove="remove"/>
       </clickhouse>
-
   clickhouse_user_logging:
     content: |
       <clickhouse>

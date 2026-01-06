@@ -1,0 +1,10 @@
+include:
+  - ../networks.yml
+services:
+  databasus:
+    image: databasus/databasus
+    extends:
+      file: ../common.yml
+      service: main
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/databasus-data

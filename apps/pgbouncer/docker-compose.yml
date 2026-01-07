@@ -7,7 +7,7 @@ services:
       file: ../common.yml
       service: side
     ports:
-      - "127.0.0.1:6432:6432"
+      - "6432:6432"
     volumes:
       - ../../apps-data/${APP_NAME}/config/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
       - ../../apps-data/${APP_NAME}/config/userlist.txt:/etc/pgbouncer/userlist.txt:ro

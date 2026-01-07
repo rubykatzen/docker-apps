@@ -1,9 +1,37 @@
+include:
+  - ../networks.yml
+  - ../postgres.yml
+x-environment: &environment
+  - CLICKHOUSE_DB=analytics
+  - CLICKHOUSE_USER=default
+  - CLICKHOUSE_PASSWORD=frog
+  - CLICKHOUSE_HOST=http://clickhouse:8123
+  - POSTGRES_USER=${APP_NAME}
+  - POSTGRES_PASSWORD=${DAPPS_DATABASE_PASSWORD}
+  - POSTGRES_DB=${APP_NAME}
+  - POSTGRES_HOST=postgres
+  - POSTGRES_PORT=5432
+  - HOST_BACKEND_PORT="3001:3001"
+  - HOST_CLIENT_PORT="3002:3002"
+    # Required: Your domain and base URL
+  - DOMAIN_NAME=${APP_NAME}.${DAPPS_DOMAIN}
+  - BASE_URL=https://${APP_NAME}.${DAPPS_DOMAIN}
+    # Required: Authentication secret (generate a random 32+ character string)
+  - BETTER_AUTH_SECRET=${DAPPS_KEY_HEX_32}
+    # Optional: Disable new user signups after creating admin account
+    # Optional but recommended: Mapbox token for globe visualizations
+    # MAPBOX_TOKEN=your_mapbox_token
+  - DISABLE_SIGNUP=false
+  - DISABLE_TELEMETRY=true
+  - NODE_ENV=production
+  - NEXT_PUBLIC_BACKEND_URL=https://${APP_NAME}.${DAPPS_DOMAIN}
+  - NEXT_PUBLIC_DISABLE_SIGNUP=false
 services:
   clickhouse:
     container_name: clickhouse
     image: clickhouse/clickhouse-server:25.4.2
     volumes:
-      - clickhouse-data:/var/lib/clickhouse
+      - ../../apps-data/${APP_NAME}/clickhouse:/var/lib/clickhouse
     configs:
       - source: clickhouse_network
         target: /etc/clickhouse-server/config.d/network.xml
@@ -13,10 +41,7 @@ services:
         target: /etc/clickhouse-server/config.d/logging_rules.xml
       - source: clickhouse_user_logging
         target: /etc/clickhouse-server/config.d/user_logging.xml
-    environment:
-      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-analytics}
-      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-default}
-      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-frog}
+    environment: *environment
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
       interval: 3s
@@ -24,56 +49,18 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
-    ports:
-      - "8123:8123"
-
-  postgres:
-    image: postgres:17.4
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER:-frog}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-frog}
-      - POSTGRES_DB=${POSTGRES_DB:-analytics}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 3s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
-
+    expose:
+      - 8123
+    networks:
+      - internal
   backend:
     image: ghcr.io/rybbit-io/rybbit-backend
-    container_name: backend
-    build:
-      context: .
-      dockerfile: server/Dockerfile
-    ports:
+    expose:
       - 3001
-    environment:
-      - NODE_ENV=production
-      - CLICKHOUSE_HOST=http://clickhouse:8123
-      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-analytics}
-      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-frog}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=${POSTGRES_DB:-analytics}
-      - POSTGRES_USER=${POSTGRES_USER:-frog}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-frog}
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
-      - BASE_URL=${BASE_URL}
-      - DISABLE_SIGNUP=${DISABLE_SIGNUP}
-      - DISABLE_TELEMETRY=${DISABLE_TELEMETRY}
-      - MAPBOX_TOKEN=${MAPBOX_TOKEN}
+    environment: *environment
     depends_on:
-      clickhouse:
-        condition: service_healthy
-      postgres:
-        condition: service_started
+      - clickhouse
+      - postgres
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3001/api/health"]
       interval: 3s
@@ -81,30 +68,24 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
-
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}
+      - traefik.http.middlewares.${APP_NAME}-api-strip.stripprefix.prefixes=/api
+      - traefik.http.routers.${APP_NAME}-api.middlewares=${APP_NAME}-api-strip
+      - traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=3001
+    networks:
+      - internal
+      - traefik
   client:
     image: ghcr.io/rybbit-io/rybbit-client
-    container_name: client
-    build:
-      context: .
-      dockerfile: client/Dockerfile
-      args:
-        NEXT_PUBLIC_BACKEND_URL: ${BASE_URL}
-        NEXT_PUBLIC_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
-    ports:
-      - 3002
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_BACKEND_URL=${BASE_URL}
-      - NEXT_PUBLIC_DISABLE_SIGNUP=${DISABLE_SIGNUP}
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
     depends_on:
       - backend
-    restart: unless-stopped
-
-volumes:
-  clickhouse-data:
-  postgres-data:
-
 configs:
   clickhouse_network:
     content: |

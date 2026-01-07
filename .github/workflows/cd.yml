@@ -26,7 +26,6 @@ jobs:
           envkey_DAPPS_CERTIFICATE_RESOLVER: ${{vars.DAPPS_CERTIFICATE_RESOLVER }}
           envkey_DAPPS_CLOUDFLARE_DNS_API_TOKEN: ${{ secrets.DAPPS_CLOUDFLARE_DNS_API_TOKEN }}
           envkey_DAPPS_TIMEZONE: ${{ vars.DAPPS_TIMEZONE }}
-          envkey_DAPPS_DAPPS_INTERNAL_NETWORK: ${{ vars.DAPPS_INTERNAL_NETWORK }}
           envkey_DAPPS_DATABASE_PASSWORD: ${{ secrets.DAPPS_DATABASE_PASSWORD }}
           envkey_DAPPS_KEY_HEX_16: ${{ secrets.DAPPS_KEY_HEX_16 }}
           envkey_DAPPS_KEY_HEX_32: ${{ secrets.DAPPS_KEY_HEX_32 }}

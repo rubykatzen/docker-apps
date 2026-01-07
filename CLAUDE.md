@@ -144,7 +144,11 @@ docker network create traefik
    - Include `../postgres.yml` and/or `../redis.yml`, `../mongo.yml` if needed
    - Reference data path: `../../apps-data/${APP_NAME}/`
 4. Add app name to `DAPPS` array in `apps.env`
-5. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
+5. **If app uses PostgreSQL**: Add database entry to `apps/pgbouncer/config/pgbouncer.template.ini`:
+   ```ini
+   appname = host=appname-postgres port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   ```
+6. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 
 Example minimal app structure:
 ```yaml

@@ -9,7 +9,7 @@ x-environment: &environment
   POSTGRES_DB: ${APP_NAME}
   POSTGRES_USER: ${APP_NAME}
   POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-  TIMEZONE: ${DAPPS_TIMEZONE}
+  TZ: ${DAPPS_TIMEZONE}
 services:
   tandoor:
     image: vabene1111/recipes

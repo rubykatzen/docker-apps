@@ -1,0 +1,24 @@
+include:
+  - ../networks.yml
+  - ../postgres.yml
+x-environment: &environment
+  SECRET_KEY: ${DAPPS_KEY_HEX_64}
+  DB_ENGINE: django.db.backends.postgresql
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: ${APP_NAME}
+  POSTGRES_USER: ${APP_NAME}
+  POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  TIMEZONE: ${DAPPS_TIMEZONE}
+services:
+  tandoor:
+    image: vabene1111/recipes
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/staticfiles:/opt/recipes/staticfiles
+      - ../../apps-data/${APP_NAME}/mediafiles:/opt/recipes/mediafiles
+    depends_on:
+      - postgres

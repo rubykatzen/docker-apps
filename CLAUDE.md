@@ -275,7 +275,7 @@ services:
 7. **No empty lines in .yml files** - remove all blank lines, keep file compact without any empty line breaks
 8. **No trailing spaces** - remove all trailing whitespace
 9. **Restart policy** - if used, always `restart: unless-stopped` (not `always`)
-10. **Volume paths consistency** - use matching folder names: `../../apps-data/${APP_NAME}/data:/data`, not `../../apps-data/${APP_NAME}/app-data:/data`
+10. **Volume paths consistency** - host folder name must match container mount point: `../../apps-data/${APP_NAME}/data:/data` (both are `data`), not `../../apps-data/${APP_NAME}/app-data:/data` or `../../apps-data/${APP_NAME}/library:/data`
 
 Example:
 ```yaml

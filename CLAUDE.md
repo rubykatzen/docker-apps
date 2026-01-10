@@ -146,7 +146,14 @@ docker network create traefik
 4. Add app name to `DAPPS` array in `apps.env`
 5. **If app uses PostgreSQL**: Add database entry to `apps/pgbouncer/config/pgbouncer.template.ini`:
    ```ini
+   # For standard postgres.yml:
    appname = host=appname-postgres port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   
+   # For pgvector.yml:
+   appname = host=appname-pgvector port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   
+   # For timescale.yml:
+   appname = host=appname-timescale port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
    ```
 6. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 

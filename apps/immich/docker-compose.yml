@@ -1,0 +1,26 @@
+include:
+  - ../networks.yml
+  - ../pgvector.yml
+  - ../redis.yml
+x-environment: &environment
+  DB_HOSTNAME: pgvector
+  DB_USERNAME: ${APP_NAME}
+  DB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  DB_DATABASE_NAME: ${APP_NAME}
+  DB_PORT: 5432
+  REDIS_HOSTNAME: redis
+  REDIS_PORT: 6379
+  TZ: ${DAPPS_TIMEZONE}
+  UPLOAD_LOCATION: /data
+services:
+  immich:
+    image: ghcr.io/immich-app/immich-server:release
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data
+    depends_on:
+      - pgvector
+      - redis

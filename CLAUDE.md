@@ -146,7 +146,14 @@ docker network create traefik
 4. Add app name to `DAPPS` array in `apps.env`
 5. **If app uses PostgreSQL**: Add database entry to `apps/pgbouncer/config/pgbouncer.template.ini`:
    ```ini
+   # For standard postgres.yml:
    appname = host=appname-postgres port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   
+   # For pgvector.yml:
+   appname = host=appname-pgvector port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   
+   # For timescale.yml:
+   appname = host=appname-timescale port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
    ```
 6. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 
@@ -275,7 +282,7 @@ services:
 7. **No empty lines in .yml files** - remove all blank lines, keep file compact without any empty line breaks
 8. **No trailing spaces** - remove all trailing whitespace
 9. **Restart policy** - if used, always `restart: unless-stopped` (not `always`)
-10. **Volume paths consistency** - use matching folder names: `../../apps-data/${APP_NAME}/data:/data`, not `../../apps-data/${APP_NAME}/app-data:/data`
+10. **Volume paths consistency** - host folder name must match container mount point: `../../apps-data/${APP_NAME}/data:/data` (both are `data`), not `../../apps-data/${APP_NAME}/app-data:/data` or `../../apps-data/${APP_NAME}/library:/data`
 
 Example:
 ```yaml

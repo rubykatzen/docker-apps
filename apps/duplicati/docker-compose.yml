@@ -1,0 +1,17 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
+  SETTINGS_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+  DUPLICATI__WEBSERVICE_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
+  DUPLICATI__WEBSERVICE_ALLOWED_HOSTNAMES: ${APP_NAME}.${DAPPS_DOMAIN}
+services:
+  duplicati:
+    image: duplicati/duplicati
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data
+      - ../../apps-data:/source/apps-data:ro

@@ -1,10 +1,6 @@
 <?php
-define("CACHE_PLACE_PATH", sys_get_temp_dir());
-define("ACCESS_TOKEN", "your_access_token");
-# Also possible:
-# define("CACHE_PLACE_PATH", "C:\\your\\Directory");
-# define("CACHE_PLACE_PATH", "/var/www/html/directory");
-# Remember to set correct privileges allowing PHP access.
+define("CACHE_PLACE_PATH", getenv("PICCACHE_CACHE_PATH") ?: sys_get_temp_dir());
+define("ACCESS_TOKEN", getenv("PICCACHE_ACCESS_TOKEN") ?: "");
 function join_paths(...$paths)
 {
     return preg_replace('~[/\\\\]+~', DIRECTORY_SEPARATOR, implode(DIRECTORY_SEPARATOR, $paths));

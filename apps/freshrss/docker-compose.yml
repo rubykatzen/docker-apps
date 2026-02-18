@@ -4,6 +4,8 @@ x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
   CRON_MIN: "3,17,32,47"
   TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16
+  PICCACHE_ACCESS_TOKEN: ${DAPPS_ADMIN_DEFAULT_PASS}
+  PICCACHE_CACHE_PATH: /var/www/FreshRSS/data/piccache
 services:
   freshrss:
     image: freshrss/freshrss

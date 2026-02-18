@@ -1,0 +1,94 @@
+<?php
+define("CACHE_PLACE_PATH", getenv("PICCACHE_CACHE_PATH") ?: sys_get_temp_dir());
+define("ACCESS_TOKEN", getenv("PICCACHE_ACCESS_TOKEN") ?: "");
+function join_paths(...$paths)
+{
+    return preg_replace('~[/\\\\]+~', DIRECTORY_SEPARATOR, implode(DIRECTORY_SEPARATOR, $paths));
+}
+
+function get_name($url)
+{
+    $tmp_path = join_paths(CACHE_PLACE_PATH, "piccache");
+    if (!file_exists($tmp_path)) mkdir(join_paths($tmp_path), 0777);
+    return join_paths($tmp_path, hash('sha256', $url));
+}
+
+function is_strict_url($url)
+{
+    $valid = filter_var($url, FILTER_VALIDATE_URL);
+    if ($valid === false) return false;
+
+    $parsed_url = parse_url($url);
+    // Must be http or https
+    if (!in_array($parsed_url['scheme'], array('http', 'https'))) return false;
+
+    return true;
+}
+
+function get($url)
+{
+    return file_exists(get_name($url)) ? get_name($url) : null;
+}
+
+function set($url)
+{
+    $file_name = get_name($url);
+    $context = stream_context_create([
+        'http' => [
+            'timeout' => 5
+        ]
+    ]);
+    $content = @file_get_contents($url, false, $context);
+    if (empty($content)) return null;
+    file_put_contents($file_name, $content);
+    return $file_name;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $post = json_decode(file_get_contents('php://input'), true);
+    if (!$post || !array_key_exists("url", $post) || !array_key_exists("access_token", $post)) {
+        http_response_code(400);
+        exit();
+    }
+    if ($post['access_token'] !== ACCESS_TOKEN) {
+        http_response_code(403);
+        exit();
+    }
+    if (!is_strict_url($post['url'])) {
+        http_response_code(400);
+        exit();
+    }
+    $file = set($post['url']);
+    if (!$file) {
+        http_response_code(404);
+        header('Content-Type: application/json; charset=utf-8');
+        echo '{"status": "FAILED_TO_FETCH"}' . PHP_EOL;
+        exit();
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    echo '{"status": "OK"}' . PHP_EOL;
+    exit();
+} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $url = $_GET['url'];
+    if (!$url || !is_strict_url($url)) {
+        http_response_code(400);
+        exit();
+    }
+    $file = get($url);
+    header("X-Piccache-Status: " . ($file ? "HIT" : "MISS"));
+    if (!$file) $file = set($url);
+    if (!$file) {
+        http_response_code(404);
+        exit();
+    }
+    $finfo = finfo_open(FILEINFO_MIME);
+    header('Content-Type: ' . finfo_file($finfo, $file));
+    finfo_close($finfo);
+    header('Content-Length: ' . filesize($file));
+    $fp = fopen($file, 'rb');
+    fpassthru($fp);
+    exit();
+} else {
+    http_response_code(405);
+    exit();
+}

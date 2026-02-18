@@ -14,4 +14,4 @@ services:
     volumes:
       - ../../apps-data/${APP_NAME}/data:/var/www/FreshRSS/data
       - ../../apps-data/${APP_NAME}/extensions:/var/www/FreshRSS/extensions
-      - piccache.php:/var/www/FreshRSS/piccache.php
+      - ./piccache.php:/var/www/FreshRSS/piccache.php

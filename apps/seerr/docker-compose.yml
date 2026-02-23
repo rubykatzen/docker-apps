@@ -1,0 +1,27 @@
+include:
+  - ../networks.yml
+  - ../postgres.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
+  DB_TYPE: postgres
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_USER: ${APP_NAME}
+  DB_PASS: ${DAPPS_DATABASE_PASSWORD}
+  DB_NAME: ${APP_NAME}
+  DB_LOG_QUERIES: false
+  DB_USE_SSL: false
+services:
+  seerr:
+    image: ghcr.io/seerr-team/seerr
+    extends:
+      file: ../common.yml
+      service: main
+    user: "${DAPPS_UID}:${DAPPS_GID}"
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/app/config
+    depends_on:
+      - postgres
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:${APP_PORT}/api/v1/status || exit 1

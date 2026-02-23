@@ -232,7 +232,7 @@ services:
     command: ["start", "--config", "/config.yml"]
     
     # 4. USER (if required)
-    user: "${UID}:${GID}"
+    user: "${DAPPS_UID}:${DAPPS_GID}"
     
     # 5. ENVIRONMENT (mandatory, via anchor)
     environment: *environment
@@ -300,7 +300,7 @@ services:
       file: ../common.yml
       service: main
     command: ["worker", "--concurrency", "10"]
-    user: "${UID}:${GID}"
+    user: "${DAPPS_UID}:${DAPPS_GID}"
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data

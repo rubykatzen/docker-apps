@@ -1,7 +1,12 @@
 {
   "permissions": {
-    "allow": [],
-    "ask": [],
-    "deny": []
+    "allow": [
+      "WebFetch(domain:docs.seerr.dev)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(chown:*)"
+    ],
+    "deny": [],
+    "ask": []
   }
 }

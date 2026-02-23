@@ -1,0 +1,22 @@
+include:
+  - ../networks.yml
+  - ../redis.yml
+x-environment: &environment
+  TYK_GW_SECRET: ${DAPPS_KEY_HEX_32}
+  TYK_GW_STORAGE_HOST: redis
+  TYK_GW_STORAGE_PORT: 6379
+services:
+  tyk:
+    image: docker.tyk.io/tyk-gateway/tyk-gateway
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/resources/apps:/opt/tyk-gateway/apps
+      - ../../apps-data/${APP_NAME}/resources/middleware:/opt/tyk-gateway/middleware
+      - ../../apps-data/${APP_NAME}/resources/certs:/opt/tyk-gateway/certs
+      - ../../apps-data/${APP_NAME}/resources/policies:/opt/tyk-gateway/policies
+      - ../../apps-data/${APP_NAME}/config/tyk.conf:/opt/tyk-gateway/tyk.conf:ro
+    depends_on:
+      - redis

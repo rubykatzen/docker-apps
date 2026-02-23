@@ -17,6 +17,7 @@ services:
     extends:
       file: ../common.yml
       service: main
+    user: "${UID}:${GID}"
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/app/config

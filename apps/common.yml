@@ -28,9 +28,19 @@ x-healthcheck: &healthcheck
   retries: 5
 x-labels: &labels
   - "traefik.enable=true"
+  - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+  - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false"
+  - "traefik.http.routers.${APP_NAME}-http.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+  - "traefik.http.routers.${APP_NAME}-http.entrypoints=http"
+  - "traefik.http.routers.${APP_NAME}-http.middlewares=redirect-to-https"
   - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
   - "traefik.http.routers.${APP_NAME}.entrypoints=https"
   - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
+  - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
+x-labels-http: &labels-http
+  - "traefik.enable=true"
+  - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+  - "traefik.http.routers.${APP_NAME}.entrypoints=http"
   - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 x-labels-api: &labels-api
   - traefik.enable=true
@@ -52,6 +62,17 @@ services:
     expose:
       - ${APP_PORT}
     labels: *labels
+    healthcheck: *healthcheck
+    networks:
+      - internal
+      - traefik
+    logging: *logging
+  main-http:
+    env_file: *env-file
+    restart: *restart
+    expose:
+      - ${APP_PORT}
+    labels: *labels-http
     healthcheck: *healthcheck
     networks:
       - internal

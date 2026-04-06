@@ -60,7 +60,6 @@ jobs:
           envkey_CODECOV_S3_BUCKET: ${{ vars.CODECOV_S3_BUCKET }}
           envkey_JELLYFIN_SHOWS_PATH: ${{ vars.JELLYFIN_SHOWS_PATH }}
           envkey_JELLYFIN_VIDEO_PATH: ${{ vars.JELLYFIN_VIDEO_PATH }}
-          envkey_JELLYFIN_ADULT_PATH: ${{ vars.JELLYFIN_ADULT_PATH }}
           envkey_QBITTORRENT_DOWNLOADS_PATH: ${{ vars.QBITTORRENT_DOWNLOADS_PATH }}
           envkey_WG_EASY_PASSWORD_HASH: ${{ secrets.WG_EASY_PASSWORD_HASH }}
           envkey_ICLOUDPD_DATA_PATH: ${{ vars.ICLOUDPD_DATA_PATH }}

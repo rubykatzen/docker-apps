@@ -14,6 +14,17 @@ A comprehensive Docker-based orchestration system for deploying and managing 50+
 - **Health Checks** - Built-in health monitoring for all services
 - **CI/CD Ready** - GitHub Actions workflow for automatic deployment via Tailscale
 
+## 🔄 Similar Services
+
+If you're evaluating alternatives, these projects solve a similar problem from different angles:
+
+| Service | Website | Focus | Service Templates |
+|------|---------|---------|---------|
+| **docker-apps** | This repository | Git-based Docker Compose stack with reusable templates and shell scripts | [apps](./apps/) |
+| **Dokploy** | [dokploy.com](https://dokploy.com) | PaaS-style deployment panel for apps, databases, and containers | [Dokploy/templates/blueprints](https://github.com/Dokploy/templates/tree/canary/blueprints) |
+| **Runtipi** | [runtipi.io](https://runtipi.io) | Beginner-friendly self-hosted app store and dashboard | [runtipi/runtipi-appstore/apps](https://github.com/runtipi/runtipi-appstore/tree/master/apps) |
+| **Coolify** | [coolify.io](https://coolify.io) | Self-hosted Heroku/Vercel-style platform for apps, databases, and services | [coollabsio/coolify/templates/compose](https://github.com/coollabsio/coolify/tree/v4.x/templates/compose) |
+
 ## 📋 Requirements
 
 - **Docker** >= 20.10

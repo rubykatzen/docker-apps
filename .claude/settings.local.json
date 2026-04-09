@@ -4,7 +4,8 @@
       "WebFetch(domain:docs.seerr.dev)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(chown:*)"
+      "Bash(chown:*)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []

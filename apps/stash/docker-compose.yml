@@ -1,0 +1,23 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  STASH_STASH: /data/
+  STASH_GENERATED: /generated/
+  STASH_METADATA: /metadata/
+  STASH_CACHE: /cache/
+  STASH_PORT: ${APP_PORT}
+services:
+  stash:
+    image: stashapp/stash
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${STASH_VIDEO_PATH}:/data
+      - ../../apps-data/${APP_NAME}/config:/root/.stash
+      - ../../apps-data/${APP_NAME}/metadata:/metadata
+      - ../../apps-data/${APP_NAME}/cache:/cache
+      - ../../apps-data/${APP_NAME}/blobs:/blobs
+      - ../../apps-data/${APP_NAME}/generated:/generated

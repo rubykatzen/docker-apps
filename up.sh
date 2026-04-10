@@ -14,7 +14,8 @@ fi
 for entry in "${apps[@]}"
 do
   (
-    read -r app overrides <<< "$entry"
+    read -r app <<< "$entry"
+    overrides="${entry#*$app}"
 
     echo "Starting: ${app}"
 

@@ -14,8 +14,9 @@ fi
 for entry in "${apps[@]}"
 do
   (
-    read -r app <<< "$entry"
-    overrides="${entry#*$app}"
+    normalized="${entry//$'\n'/ }"
+    normalized="${normalized//$'\t'/ }"
+    read -r app overrides <<< "$normalized"
 
     echo "Starting: ${app}"
 

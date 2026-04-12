@@ -27,7 +27,7 @@ x-environment: &environment
     {{- end -}}
 services:
   watchtower:
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     environment: *environment
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

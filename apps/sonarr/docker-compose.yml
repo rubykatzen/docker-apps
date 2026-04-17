@@ -13,5 +13,5 @@ services:
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/config
-      - ${QBITTORRENT_DOWNLOADS_PATH}:/downloads
+      - ${DOWNLOADS_PATH}:/downloads
       - ${JELLYFIN_SHOWS_PATH}:/shows

@@ -1,4 +1,17 @@
 #!/bin/bash
+set -e
+set -a
+source .env
+source apps.env
+set +a
 
-./down.sh "$@"
-./up.sh "$@"
+if [ $# -gt 0 ]; then
+  apps=("$@")
+else
+  apps=("${DAPPS[@]}")
+fi
+
+for app in "${apps[@]}"; do
+  ./down.sh "$app"
+  ./up.sh "$app"
+done

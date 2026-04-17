@@ -3,7 +3,9 @@ include:
 x-environment: &environment
   VPN_ENABLED: yes
   VPN_PROV: custom
-  VPN_CLIENT: wireguard
+  VPN_CLIENT: ${VPN_CLIENT}
+  VPN_USER: ${VPN_USER}
+  VPN_PASS: ${VPN_PASS}
   LAN_NETWORK: 172.16.0.0/12
   NAME_SERVERS: 1.1.1.1,8.8.8.8
   WEBUI_PORT: ${APP_PORT}

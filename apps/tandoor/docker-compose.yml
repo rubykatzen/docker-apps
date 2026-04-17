@@ -3,6 +3,7 @@ include:
   - ../postgres.yml
 x-environment: &environment
   SECRET_KEY: ${DAPPS_KEY_HEX_64}
+  ALLOWED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN},127.0.0.1
   DB_ENGINE: django.db.backends.postgresql
   POSTGRES_HOST: postgres
   POSTGRES_PORT: 5432

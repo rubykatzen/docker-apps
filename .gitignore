@@ -1,3 +1,4 @@
 /apps-data/*
 /.env
 /apps.env
+/backups/

@@ -28,6 +28,7 @@ x-healthcheck: &healthcheck
   retries: 5
 x-labels: &labels
   - "traefik.enable=true"
+  - "traefik.docker.network=traefik"
   - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
   - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false"
   - "traefik.http.routers.${APP_NAME}-http.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
@@ -39,6 +40,7 @@ x-labels: &labels
   - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 x-labels-http: &labels-http
   - "traefik.enable=true"
+  - "traefik.docker.network=traefik"
   - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
   - "traefik.http.routers.${APP_NAME}.entrypoints=https"
   - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
@@ -47,6 +49,7 @@ x-labels-http: &labels-http
   - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 x-labels-api: &labels-api
   - traefik.enable=true
+  - traefik.docker.network=traefik
   - traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`) && PathPrefix(`/api`)
   - traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}
   - traefik.http.middlewares.${APP_NAME}-api-strip.stripprefix.prefixes=/api

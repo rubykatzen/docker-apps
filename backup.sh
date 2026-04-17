@@ -38,14 +38,14 @@ for APP in $APPS; do
   echo ""
   if echo " $DAPPS_LIST " | grep -qw "$APP"; then
     echo "==> [$APP] Stopping container..."
-    ssh "$SERVER" "cd $REMOTE_PROJECT && ./down.sh $APP"
+    ssh "$SERVER" "cd $REMOTE_PROJECT && ./down.sh $APP" > /dev/null 2>&1
     echo "==> [$APP] Creating zip archive..."
-    ssh "$SERVER" "cd $REMOTE_APPS_DATA && find $APP/ -not -type s | zip -r $REMOTE_TMP/$ARCHIVE -@ -q"
+    ssh "$SERVER" "cd $REMOTE_APPS_DATA && find $APP/ -not -type s | zip $REMOTE_TMP/$ARCHIVE -@ -q"
     echo "==> [$APP] Starting container back..."
-    ssh "$SERVER" "cd $REMOTE_PROJECT && ./up.sh $APP"
+    ssh "$SERVER" "cd $REMOTE_PROJECT && ./up.sh $APP" > /dev/null 2>&1
   else
     echo "==> [$APP] Not in DAPPS, skipping stop/start..."
-    ssh "$SERVER" "cd $REMOTE_APPS_DATA && find $APP/ -not -type s | zip -r $REMOTE_TMP/$ARCHIVE -@ -q"
+    ssh "$SERVER" "cd $REMOTE_APPS_DATA && find $APP/ -not -type s | zip $REMOTE_TMP/$ARCHIVE -@ -q"
   fi
   echo "==> [$APP] Downloading archive..."
   scp "$SERVER:$REMOTE_TMP/$ARCHIVE" "$LOCAL_BACKUPS_DIR/$ARCHIVE"

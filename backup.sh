@@ -24,20 +24,29 @@ if [ -z "$APPS" ]; then
   exit 0
 fi
 
+echo "==> Reading DAPPS array from remote apps.env..."
+DAPPS_LIST=$(ssh "$SERVER" "bash -c 'source $REMOTE_PROJECT/apps.env && echo \"\${DAPPS[*]}\"'")
+
 echo "==> Found apps: $(echo $APPS | tr '\n' ' ')"
+echo "==> Active DAPPS: $DAPPS_LIST"
 
 REMOTE_TMP="/tmp/docker-apps-backup-$$"
 ssh "$SERVER" "mkdir -p $REMOTE_TMP"
 
 for APP in $APPS; do
-  ARCHIVE="${SERVER_NAME}-${APP}-${DATETIME}.zip"
+  ARCHIVE="${APP}-${DATETIME}-${SERVER_NAME}.zip"
   echo ""
-  echo "==> [$APP] Stopping container..."
-  ssh "$SERVER" "cd $REMOTE_PROJECT && ./down.sh $APP"
-  echo "==> [$APP] Creating zip archive..."
-  ssh "$SERVER" "cd $REMOTE_APPS_DATA && zip -r $REMOTE_TMP/$ARCHIVE $APP/ -q"
-  echo "==> [$APP] Starting container back..."
-  ssh "$SERVER" "cd $REMOTE_PROJECT && ./up.sh $APP"
+  if echo " $DAPPS_LIST " | grep -qw "$APP"; then
+    echo "==> [$APP] Stopping container..."
+    ssh "$SERVER" "cd $REMOTE_PROJECT && ./down.sh $APP"
+    echo "==> [$APP] Creating zip archive..."
+    ssh "$SERVER" "cd $REMOTE_APPS_DATA && zip -r $REMOTE_TMP/$ARCHIVE $APP/ -q"
+    echo "==> [$APP] Starting container back..."
+    ssh "$SERVER" "cd $REMOTE_PROJECT && ./up.sh $APP"
+  else
+    echo "==> [$APP] Not in DAPPS, skipping stop/start..."
+    ssh "$SERVER" "cd $REMOTE_APPS_DATA && zip -r $REMOTE_TMP/$ARCHIVE $APP/ -q"
+  fi
   echo "==> [$APP] Downloading archive..."
   scp "$SERVER:$REMOTE_TMP/$ARCHIVE" "$LOCAL_BACKUPS_DIR/$ARCHIVE"
   ssh "$SERVER" "rm -f $REMOTE_TMP/$ARCHIVE"
@@ -48,4 +57,4 @@ ssh "$SERVER" "rm -rf $REMOTE_TMP"
 
 echo ""
 echo "Backup complete. Files saved to: $LOCAL_BACKUPS_DIR"
-ls -lh "$LOCAL_BACKUPS_DIR/${SERVER_NAME}-"*"-${DATETIME}.zip" 2>/dev/null || true
+ls -lh "$LOCAL_BACKUPS_DIR/"*"-${DATETIME}-${SERVER_NAME}.zip" 2>/dev/null || true

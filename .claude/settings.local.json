@@ -6,7 +6,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(chown:*)",
       "Bash(gh api:*)",
-      "Bash(chmod +x /Users/ineedjet/Projects/docker-apps/backup.sh)"
+      "Bash(chmod +x /Users/ineedjet/Projects/docker-apps/backup.sh)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

@@ -11,13 +11,9 @@ else
   apps=("${DAPPS[@]}")
 fi
 
-for entry in "${apps[@]}"
+for app in "${apps[@]}"
 do
   (
-    normalized="${entry//$'\n'/ }"
-    normalized="${normalized//$'\t'/ }"
-    read -r app overrides <<< "$normalized"
-
     echo "Starting: ${app}"
 
     # Load app-specific env variables
@@ -27,10 +23,12 @@ do
       set +a
     fi
 
-    # Apply inline overrides (take precedence over .env files)
-    for override in $overrides; do
-      export "$override"
-    done
+    # Apply overrides from apps-data (take precedence over global env)
+    if [[ -f ./apps-data/"${app}"/.env ]]; then
+      set -a
+      source ./apps-data/"${app}"/.env
+      set +a
+    fi
 
     # Create apps-data folder
     mkdir -p ./apps-data/"${app}"
@@ -55,8 +53,13 @@ do
       done
     fi
 
-    docker compose --env-file ./apps/"${app}"/.env --env-file .env -f ./apps/"${app}"/docker-compose.yml pull
-    docker compose --env-file ./apps/"${app}"/.env --env-file .env -f ./apps/"${app}"/docker-compose.yml up -d --remove-orphans
+    extra_env_file=()
+    if [[ -f ./apps-data/"${app}"/.env ]]; then
+      extra_env_file=(--env-file ./apps-data/"${app}"/.env)
+    fi
+
+    docker compose --env-file .env --env-file ./apps/"${app}"/.env "${extra_env_file[@]}" -f ./apps/"${app}"/docker-compose.yml pull
+    docker compose --env-file .env --env-file ./apps/"${app}"/.env "${extra_env_file[@]}" -f ./apps/"${app}"/docker-compose.yml up -d --remove-orphans
   )
 done
 

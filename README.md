@@ -119,6 +119,10 @@ docker-apps/
 │   ├── traefik/                 # SSL certificates
 │   ├── postgres/                # PostgreSQL data
 │   └── {app-name}/              # Each app's data
+│       ├── .env                 # Optional: per-app env overrides
+│       └── ...                  # App data directories
+│
+├── backups/                       # Backup archives (git-ignored)
 │
 ├── .env                          # Global configuration (git-ignored)
 ├── .env.example                  # Configuration template
@@ -130,6 +134,7 @@ docker-apps/
 ├── restart.sh                    # Restart applications
 ├── logs.sh                       # View application logs
 ├── update.sh                     # Update images
+├── backup.sh                     # Backup app data
 └── init.sh                       # Initial setup
 ```
 
@@ -187,8 +192,16 @@ docker compose --env-file ./apps/portainer/.env --env-file .env \
 ```bash
 # Pull latest images and restart all apps
 ./update.sh
-
 ```
+
+### Backup Applications
+
+```bash
+# Backup all apps from a remote server
+./backup.sh user@server.com
+```
+
+The script stops each app one at a time, creates a zip archive, restarts it, then downloads the archive to `backups/`. Files are named `{server}-{app}-{datetime}.zip`.
 
 ## 📦 Available Applications
 | Name | Purpose | 
@@ -229,7 +242,9 @@ docker compose --env-file ./apps/portainer/.env --env-file .env \
 
 ### Environment Variables
 
-**Global (`/.env`)**:
+Variables are applied in this order — each level overrides the previous:
+
+**1. Global (`/.env`)**:
 ```bash
 DAPPS_DOMAIN                 # Base domain (required)
 DAPPS_CERTIFICATE_RESOLVER   # letsencrypt or cloudflare
@@ -241,11 +256,21 @@ DAPPS_KEY_HEX_64             # 64-byte hex key for apps
 DAPPS_TIMEZONE               # System timezone (UTC, etc.)
 ```
 
-**App-specific (`/apps/{app}/.env`)**:
+**2. App-specific (`/apps/{app}/.env`)**:
 ```bash
 APP_NAME   # Application identifier (used in URLs)
 APP_PORT   # Internal container port
 ```
+
+**3. Per-app overrides (`/apps-data/{app}/.env`)**:
+
+Create this file to override any global variable for a specific app:
+```bash
+# apps-data/myapp/.env
+DAPPS_DOMAIN=other-domain.com
+```
+
+This file is git-ignored and lives alongside app data, making it suitable for server-specific settings that shouldn't be committed.
 
 ### Network Architecture
 

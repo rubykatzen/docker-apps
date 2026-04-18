@@ -1,0 +1,29 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  JWT_SECRET: ${DAPPS_KEY_HEX_64}
+  API_KEY_SECRET: ${DAPPS_KEY_HEX_32}
+  STORAGE_ENCRYPTION_KEY: ${DAPPS_KEY_HEX_32}
+  INITIAL_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
+  DATA_DIR: /data
+  BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NEXT_PUBLIC_BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NODE_ENV: production
+services:
+  omniroute:
+    image: diegosouzapw/omniroute
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    expose:
+      - 20129
+    labels:
+      - "traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.${APP_NAME}-api.entrypoints=https"
+      - "traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
+      - "traefik.http.middlewares.${APP_NAME}-api-strip.stripprefix.prefixes=/api"
+      - "traefik.http.routers.${APP_NAME}-api.middlewares=${APP_NAME}-api-strip"
+      - "traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=20129"
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/data

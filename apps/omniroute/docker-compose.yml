@@ -16,14 +16,6 @@ services:
       file: ../common.yml
       service: main
     environment: *environment
-    expose:
-      - 20129
-    labels:
-      - "traefik.http.routers.${APP_NAME}-api.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.${APP_NAME}-api.entrypoints=https"
-      - "traefik.http.routers.${APP_NAME}-api.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
-      - "traefik.http.middlewares.${APP_NAME}-api-strip.stripprefix.prefixes=/api"
-      - "traefik.http.routers.${APP_NAME}-api.middlewares=${APP_NAME}-api-strip"
-      - "traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=20129"
+    stop_grace_period: 40s
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data

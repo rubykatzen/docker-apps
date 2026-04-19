@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a Docker-based application management system (docker-apps) that orchestrates multiple self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and provides a unified management interface for deploying and managing 50+ different applications.
+This is a Docker-based application management system (docker-apps) that orchestrates multiple self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and provides a unified management interface for deploying and managing 70+ different applications.
 
 ## Core Architecture
 
@@ -38,10 +38,11 @@ The repository uses a modular docker-compose structure with reusable components:
 
 ### Environment Variable System
 
-Three-tier environment variable cascade:
+Four-tier environment variable cascade (each level overrides the previous):
 1. `.env` - Global settings (DAPPS_* variables for domain, database password, API keys)
 2. `apps.env` - DAPPS array defining which apps to deploy
 3. `apps/{app}/.env` - App-specific variables (APP_NAME, APP_PORT)
+4. `apps-data/{app}/.env` - Per-app runtime overrides (git-ignored, server-specific, e.g. different DAPPS_DOMAIN)
 
 Key global variables in `.env`:
 - `DAPPS_DOMAIN` - Base domain for all services
@@ -105,19 +106,19 @@ The `up.sh` script:
 
 ### Updating Applications
 ```bash
-# Pull latest images and restart all apps
-./update.sh
+# up.sh pulls latest images automatically before starting
+./restart.sh
 ```
 
 ### Manual Docker Compose Commands
 When working with individual apps directly:
 ```bash
-# Must provide both env files and specify app path
-docker compose --env-file ./apps/{app}/.env --env-file .env -f ./apps/{app}/docker-compose.yml [command]
+# Must provide env files in cascade order and specify app path
+docker compose --env-file .env --env-file ./apps/{app}/.env --env-file ./apps-data/{app}/.env -f ./apps/{app}/docker-compose.yml [command]
 
 # Examples:
-docker compose --env-file ./apps/n8n/.env --env-file .env -f ./apps/n8n/docker-compose.yml logs -f
-docker compose --env-file ./apps/traefik/.env --env-file .env -f ./apps/traefik/docker-compose.yml restart
+docker compose --env-file .env --env-file ./apps/n8n/.env -f ./apps/n8n/docker-compose.yml logs -f
+docker compose --env-file .env --env-file ./apps/traefik/.env -f ./apps/traefik/docker-compose.yml restart
 ```
 
 ## Initial Setup
@@ -202,10 +203,6 @@ x-image: &image
 x-environment: &environment
   VAR1: ${VALUE1}
   DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
-
-# 3. X-IMAGE (if multiple services use the same image)
-x-image: &image
-  organization/app:1.0
 
 # 4. X-VOLUMES (if multiple services share volumes)
 x-volumes: &volumes
@@ -304,8 +301,6 @@ services:
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data
-    networks:
-      - traefik
 ```
 
 ## CI/CD

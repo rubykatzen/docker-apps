@@ -7,7 +7,9 @@
       "Bash(chown:*)",
       "Bash(gh api:*)",
       "Bash(chmod +x /Users/ineedjet/Projects/docker-apps/backup.sh)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(xargs -I{} gh api \"repos/diegosouzapw/OmniRoute/git/trees/{}\" --field recursive=1)",
+      "Bash(git remote *)"
     ],
     "deny": [],
     "ask": []

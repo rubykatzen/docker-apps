@@ -1,10 +1,10 @@
 # Docker Apps - Self-Hosted Application Management System
 
-A comprehensive Docker-based orchestration system for deploying and managing 50+ self-hosted applications. Built with Traefik reverse proxy, automatic SSL certificate management, and a unified command-line interface.
+A comprehensive Docker-based orchestration system for deploying and managing 70+ self-hosted applications. Built with Traefik reverse proxy, automatic SSL certificate management, and a unified command-line interface.
 
 ## 🎯 Key Features
 
-- **50+ Pre-configured Applications** - Ready-to-deploy services including monitoring, automation, media, CRM, and more
+- **70+ Pre-configured Applications** - Ready-to-deploy services including monitoring, automation, media, CRM, and more
 - **Traefik Reverse Proxy** - Automatic routing, SSL/TLS termination, and certificate management
 - **Automatic SSL Certificates** - Support for Cloudflare DNS and Let's Encrypt HTTP challenges
 - **Modular Architecture** - Reusable docker-compose components for easy maintenance and scaling
@@ -13,17 +13,6 @@ A comprehensive Docker-based orchestration system for deploying and managing 50+
 - **Database Integration** - PostgreSQL, Redis, MongoDB, TimescaleDB pre-configured
 - **Health Checks** - Built-in health monitoring for all services
 - **CI/CD Ready** - GitHub Actions workflow for automatic deployment via Tailscale
-
-## 🔄 Similar Services
-
-If you're evaluating alternatives, these projects solve a similar problem from different angles:
-
-| Service | Website | Focus | Service Templates |
-|------|---------|---------|---------|
-| **docker-apps** | This repository | Git-based Docker Compose stack with reusable templates and shell scripts | [apps](./apps/) |
-| **Dokploy** | [dokploy.com](https://dokploy.com) | PaaS-style deployment panel for apps, databases, and containers | [Dokploy/templates/blueprints](https://github.com/Dokploy/templates/tree/canary/blueprints) |
-| **Runtipi** | [runtipi.io](https://runtipi.io) | Beginner-friendly self-hosted app store and dashboard | [runtipi/runtipi-appstore/apps](https://github.com/runtipi/runtipi-appstore/tree/master/apps) |
-| **Coolify** | [coolify.io](https://coolify.io) | Self-hosted Heroku/Vercel-style platform for apps, databases, and services | [coollabsio/coolify/templates/compose](https://github.com/coollabsio/coolify/tree/v4.x/templates/compose) |
 
 ## 📋 Requirements
 
@@ -38,7 +27,7 @@ If you're evaluating alternatives, these projects solve a similar problem from d
 ### 1. Clone and Initialize
 
 ```bash
-git clone <repository-url> docker-apps
+git clone https://github.com/rubycats-com/docker-apps.git docker-apps
 cd docker-apps
 bash init.sh
 ```
@@ -99,6 +88,8 @@ DAPPS=(
 
 All apps will be accessible at `https://{app-name}.{DAPPS_DOMAIN}`
 
+> **Tip**: To override any global variable for a specific app without committing secrets, create `apps-data/{app}/.env`. For example, to run an app on a different domain: `echo "DAPPS_DOMAIN=other-domain.com" > apps-data/myapp/.env`
+
 ## 📁 Project Structure
 
 ```
@@ -133,7 +124,6 @@ docker-apps/
 ├── down.sh                       # Stop applications
 ├── restart.sh                    # Restart applications
 ├── logs.sh                       # View application logs
-├── update.sh                     # Update images
 ├── backup.sh                     # Backup app data
 └── init.sh                       # Initial setup
 ```
@@ -143,14 +133,11 @@ docker-apps/
 ### Start Applications
 
 ```bash
-# Start all apps defined in DAPPS array
+# Start all apps defined in DAPPS array (pulls latest images automatically)
 ./up.sh
 
 # Start specific apps
 ./up.sh traefik portainer n8n
-
-# Start app with dependencies
-./up.sh jellyfin  # Pulls and starts jellyfin and its dependencies
 ```
 
 ### Stop Applications
@@ -181,17 +168,6 @@ docker-apps/
 
 # View logs with timestamps
 ./logs.sh n8n
-
-# Follow logs in real-time
-docker compose --env-file ./apps/portainer/.env --env-file .env \
-  -f ./apps/portainer/docker-compose.yml logs -f
-```
-
-### Update Applications
-
-```bash
-# Pull latest images and restart all apps
-./update.sh
 ```
 
 ### Backup Applications
@@ -204,36 +180,79 @@ docker compose --env-file ./apps/portainer/.env --env-file .env \
 The script stops each app one at a time, creates a zip archive, restarts it, then downloads the archive to `backups/`. Files are named `{server}-{app}-{datetime}.zip`.
 
 ## 📦 Available Applications
-| Name | Purpose | 
+| Name | Purpose |
 |------|---------|
 | **traefik** | Reverse proxy & SSL |
 | **portainer** | Container management |
+| **watchtower** | Automatic image updates |
 | **uptime-kuma** | Monitoring & alerts |
-| **n8n** | Workflow automation | 
-| **jellyfin** | Media server | 
-| **metabase** | Analytics dashboard |
-| **homarr** | Dashboard | 
-| **homer** | Home page |
-| **freshrss** | RSS reader |
-| **grocy** | Inventory manager |
-| **kimai** | Time tracking | 
-| **monica** | CRM | PostgreSQL | 
-| **radarr** | Movie management | 
-| **sonarr** | TV show management |
-| **prowlarr** | Indexer manager |
-| **bazarr** | Subtitle manager | 
-| **metube** | YouTube downloader |
-| **qbittorrent** | Torrent client | 
-| **changedetection** | Website monitor |
-| **umami** | Analytics | PostgreSQL | 
-| **audiobookshelf** | Audiobook server | 
-| **wallos** | Subscription tracker |
-| **beszel** | Server monitoring | 
+| **gatus** | Status page & health checks |
+| **beszel** | Server monitoring |
+| **beszel-agent** | Beszel remote agent |
 | **scrutiny** | Disk health monitor |
 | **speedtest-tracker** | Speedtest monitor |
-| **home-assistant** | Home automation | 
-| **infisical** | Secrets management | 
-| **chatwoot** | Customer messaging | 
+| **n8n** | Workflow automation |
+| **activepieces** | Workflow automation |
+| **automatisch** | Workflow automation |
+| **semaphore** | Ansible UI & task runner |
+| **jellyfin** | Media server |
+| **jellyseerr** | Media request manager |
+| **radarr** | Movie management |
+| **sonarr** | TV show management |
+| **prowlarr** | Indexer manager |
+| **bazarr** | Subtitle manager |
+| **seerr** | Unified media requests |
+| **stash** | Adult media organizer |
+| **metube** | YouTube downloader |
+| **audiobookshelf** | Audiobook server |
+| **qbittorrent** | Torrent client |
+| **qbittorrent-vpn** | Torrent client with VPN |
+| **icloudpd** | iCloud photo downloader |
+| **immich** | Photo backup & management |
+| **rotki** | Crypto portfolio tracker |
+| **yamtrack** | Media tracker |
+| **homarr** | Dashboard |
+| **homer** | Home page |
+| **homepage** | Home page |
+| **freshrss** | RSS reader |
+| **rssbox** | RSS aggregator |
+| **rsshub** | RSS feed generator |
+| **changedetection** | Website monitor |
+| **grocy** | Inventory manager |
+| **tandoor** | Recipe manager |
+| **kimai** | Time tracking |
+| **solidtime** | Time tracking |
+| **monica** | Personal CRM |
+| **metabase** | Analytics dashboard |
+| **umami** | Web analytics |
+| **openpanel** | Web analytics |
+| **rybbit** | Web analytics |
+| **countly** | Mobile & web analytics |
+| **chatwoot** | Customer messaging |
+| **formbricks** | Form & survey builder |
+| **wallos** | Subscription tracker |
+| **infisical** | Secrets management |
+| **authentik** | Identity provider |
+| **2fauth** | Two-factor auth manager |
+| **outline-admin** | Wiki / knowledge base |
+| **growthbook** | Feature flags & A/B testing |
+| **unleash** | Feature flag management |
+| **codecov** | Code coverage |
+| **airbroke** | Error tracking |
+| **glitchtip** | Error tracking |
+| **bugsink** | Error tracking |
+| **sentry (sure)** | Error tracking |
+| **databasus** | Database management UI |
+| **pgbouncer** | PostgreSQL connection pooler |
+| **home-assistant** | Home automation |
+| **wireguard** | VPN server |
+| **amnezia** | VPN server |
+| **ipsec-vpn-server** | IPSec VPN server |
+| **sshd-proxy** | SSH proxy |
+| **virtual-dsm** | Virtual DSM (Synology) |
+| **windows** | Windows VM |
+| **omniroute** | AI provider proxy & router |
+| **flaresolverr** | Cloudflare bypass proxy |
 | **whoami** | Debug/test |
 
 *See each app's directory for current status and additional options*
@@ -309,16 +328,13 @@ x-environment: &environment
 
 services:
   myapp:
+    image: myapp:latest
     extends:
       file: ../common.yml
       service: main
-    image: myapp:latest
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data
-    # Add ports if needed
-    expose:
-      - ${APP_PORT}
 ```
 
 ### Step 4: Add to `apps.env`
@@ -377,13 +393,13 @@ grep DAPPS_CLOUDFLARE_DNS_API_TOKEN .env
 2. Check app logs: `./logs.sh app-name`
 3. Check Traefik logs: `./logs.sh traefik`
 4. Verify DNS resolves: `nslookup app-name.domain.com`
-5. Test internal access: `docker exec -it traefik ping app-name`
+5. Test internal connectivity: `docker exec -it traefik wget -q --spider http://app-name`
 
 ## 🔐 Security Best Practices
 
 1. **Change Default Credentials** - Update passwords in `.env` and app configurations
 2. **Use Strong Passwords** - Generate with: `openssl rand -base64 32`
-3. **Keep Images Updated** - Run `./update.sh` regularly
+3. **Keep Images Updated** - Run `./restart.sh` regularly (`up.sh` pulls latest images automatically)
 4. **Restrict Network Access** - Use firewall rules to limit access to Traefik ports (80, 443)
 5. **Enable HTTPS** - Always use HTTPS, never expose HTTP to internet
 6. **Backup Data** - Regularly backup `apps-data/` directory
@@ -406,12 +422,23 @@ Contributions are welcome! To add a new application:
 3. Document any special requirements
 4. Submit a pull request with the new app configuration
 
+## 🔄 Similar Services
+
+If you're evaluating alternatives, these projects solve a similar problem from different angles:
+
+| Service | Website | Focus | Service Templates |
+|------|---------|---------|---------|
+| **docker-apps** | This repository | Git-based Docker Compose stack with reusable templates and shell scripts | [apps](./apps/) |
+| **Dokploy** | [dokploy.com](https://dokploy.com) | PaaS-style deployment panel for apps, databases, and containers | [Dokploy/templates/blueprints](https://github.com/Dokploy/templates/tree/canary/blueprints) |
+| **Runtipi** | [runtipi.io](https://runtipi.io) | Beginner-friendly self-hosted app store and dashboard | [runtipi/runtipi-appstore/apps](https://github.com/runtipi/runtipi-appstore/tree/master/apps) |
+| **Coolify** | [coolify.io](https://coolify.io) | Self-hosted Heroku/Vercel-style platform for apps, databases, and services | [coollabsio/coolify/templates/compose](https://github.com/coollabsio/coolify/tree/v4.x/templates/compose) |
+
 ## 📝 License
 
 This project is provided as-is for self-hosted deployment.
 
 ---
 
-**Last Updated**: 2024
+**Last Updated**: 2026
 **Supported Docker Compose**: >= 2.0
 **Status**: Active Development

@@ -6,6 +6,7 @@ x-environment: &environment
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@paradedb:5432/${APP_NAME}
   KEY_VAULTS_SECRET: ${DAPPS_KEY_HEX_16}
   AUTH_SECRET: ${DAPPS_KEY_HEX_64}
+  APP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
   INTERNAL_APP_URL: http://localhost:${APP_PORT}
   S3_ENDPOINT: https://${DAPPS_S3_HOST}
   S3_BUCKET: ${APP_NAME}

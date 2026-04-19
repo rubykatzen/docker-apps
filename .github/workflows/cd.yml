@@ -69,6 +69,8 @@ jobs:
           envkey_DAPPS_GID: ${{ vars.DAPPS_GID }}
           envkey_YAMTRACK_TRAKT_CLIENT_ID: ${{ vars.YAMTRACK_TRAKT_CLIENT_ID }}
           envkey_YAMTRACK_TRAKT_CLIENT_SECRET: ${{ secrets.YAMTRACK_TRAKT_CLIENT_SECRET }}
+          envkey_DAPPS_GOOGLE_OAUTH_CLIENT_ID: ${{ vars.DAPPS_GOOGLE_OAUTH_CLIENT_ID }}
+          envkey_DAPPS_GOOGLE_CLIENT_SECRET: ${{ secrets.DAPPS_GOOGLE_CLIENT_SECRET }}
           file_name: .env
       - name: Upload .env via SSH
         uses: appleboy/scp-action@v1

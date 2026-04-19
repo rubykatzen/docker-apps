@@ -19,6 +19,8 @@ x-environment: &environment
   REDIS_URL: redis://redis:6379
   REDIS_PREFIX: lobehub
   REDIS_TLS: 0
+  ENABLE_OIDC: 1
+  JWKS_KEY: ${LOBEHUB_JWKS_KEY}
   NODE_ENV: production
 services:
   lobehub:

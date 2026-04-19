@@ -9,7 +9,8 @@
       "Bash(chmod +x /Users/ineedjet/Projects/docker-apps/backup.sh)",
       "WebSearch",
       "Bash(xargs -I{} gh api \"repos/diegosouzapw/OmniRoute/git/trees/{}\" --field recursive=1)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(curl -L https://raw.githubusercontent.com/lobehub/lobehub/canary/docker-compose/deploy/docker-compose.yml)"
     ],
     "deny": [],
     "ask": []

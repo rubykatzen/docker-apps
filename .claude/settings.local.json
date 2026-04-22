@@ -10,7 +10,11 @@
       "WebSearch",
       "Bash(xargs -I{} gh api \"repos/diegosouzapw/OmniRoute/git/trees/{}\" --field recursive=1)",
       "Bash(git remote *)",
-      "Bash(curl -L https://raw.githubusercontent.com/lobehub/lobehub/canary/docker-compose/deploy/docker-compose.yml)"
+      "Bash(curl -L https://raw.githubusercontent.com/lobehub/lobehub/canary/docker-compose/deploy/docker-compose.yml)",
+      "Bash(git add:*)",
+      "Bash(git restore:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

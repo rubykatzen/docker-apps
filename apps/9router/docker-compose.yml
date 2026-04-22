@@ -1,0 +1,16 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  JWT_SECRET: ${DAPPS_KEY_HEX_64}
+  INITIAL_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
+  NODE_ENV: production
+  NEXT_TELEMETRY_DISABLED: 1
+services:
+  9router:
+    image: ghcr.io/decolua/9router
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/data:/app/data

@@ -252,6 +252,7 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **virtual-dsm** | Virtual DSM (Synology) |
 | **windows** | Windows VM |
 | **lobehub** | AI chat with multi-provider support |
+| **metamcp** | MCP server aggregator & manager |
 | **omniroute** | AI provider proxy & router |
 | **paperclip** | AI coding assistant |
 | **flaresolverr** | Cloudflare bypass proxy |

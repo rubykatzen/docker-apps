@@ -1,0 +1,25 @@
+include:
+  - ../networks.yml
+  - ../postgres.yml
+x-environment: &environment
+  DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  BETTER_AUTH_SECRET: ${DAPPS_KEY_HEX_64}
+  APP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NEXT_PUBLIC_APP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NODE_ENV: production
+  LOG_LEVEL: errors-only
+  TRANSFORM_LOCALHOST_TO_DOCKER_INTERNAL: true
+  BOOTSTRAP_ENABLE: true
+  BOOTSTRAP_USER_EMAIL: ${DAPPS_ADMIN_MAIL}
+  BOOTSTRAP_USER_NAME: Admin
+  BOOTSTRAP_USER_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
+  BOOTSTRAP_DISABLE_REGISTRATION_SSO: true
+services:
+  metamcp:
+    image: ghcr.io/metatool-ai/metamcp
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    depends_on:
+      - postgres

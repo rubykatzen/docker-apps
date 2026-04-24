@@ -2,7 +2,13 @@ include:
   - ../networks.yml
 x-environment: &environment
   JWT_SECRET: ${DAPPS_KEY_HEX_64}
+  API_KEY_SECRET: ${DAPPS_KEY_HEX_32}
+  MACHINE_ID_SALT: ${DAPPS_KEY_HEX_32}
   INITIAL_PASSWORD: ${DAPPS_ADMIN_DEFAULT_PASS}
+  DATA_DIR: /data
+  HOME: /data
+  BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  NEXT_PUBLIC_BASE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
   NODE_ENV: production
   NEXT_TELEMETRY_DISABLED: 1
 services:
@@ -13,4 +19,4 @@ services:
       service: main
     environment: *environment
     volumes:
-      - ../../apps-data/${APP_NAME}/data:/app/data
+      - ../../apps-data/${APP_NAME}/data:/data

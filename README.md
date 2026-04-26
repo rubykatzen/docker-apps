@@ -214,6 +214,7 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **homarr** | Dashboard |
 | **homer** | Home page |
 | **homepage** | Home page |
+| **glance** | Dashboard |
 | **freshrss** | RSS reader |
 | **rssbox** | RSS aggregator |
 | **rsshub** | RSS feed generator |

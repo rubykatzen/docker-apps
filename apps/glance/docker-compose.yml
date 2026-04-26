@@ -1,0 +1,13 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
+services:
+  glance:
+    image: glanceapp/glance
+    extends:
+      file: ../common.yml
+      service: main
+    environment: *environment
+    volumes:
+      - ../../apps-data/${APP_NAME}/config:/app/config

@@ -11,3 +11,4 @@ services:
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/app/config
+      - ../../apps-data/${APP_NAME}/config/assets:/app/assets

@@ -308,6 +308,7 @@ Playwright MCP is intended for internal Docker network use, for example from Met
 - **traefik** - External network for reverse proxy communication
 - **internal** - Isolated network for app-to-app communication
 - **databases** - Dedicated network for database services (PostgreSQL, Redis, MongoDB)
+- **mcp** - External network for MCP services consumed by MetaMCP
 
 Apps are automatically connected to appropriate networks based on their needs.
 

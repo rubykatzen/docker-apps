@@ -25,7 +25,7 @@ The repository uses a modular docker-compose structure with reusable components:
    - Pre-defined service profiles: `main`, `main-http`, `main-bearer`, `api`, `host`, `side`
 
 2. **Shared Infrastructure** (`apps/networks.yml`, `apps/postgres.yml`, `apps/redis.yml`):
-   - `networks.yml`: Defines `internal`, `databases`, and `traefik` networks
+   - `networks.yml`: Defines `internal`, `databases`, `mcp`, and `traefik` networks
    - `postgres.yml`: PostgreSQL 17 service template
    - `redis.yml`: Redis 7 service template
    - Apps include these via `include:` directive to get database/cache services
@@ -135,6 +135,8 @@ mkdir apps-data/traefik
 touch apps-data/traefik/acme.json
 chmod 600 apps-data/traefik/acme.json
 docker network create traefik
+docker network create databases
+docker network create mcp
 ```
 
 ## Adding New Applications

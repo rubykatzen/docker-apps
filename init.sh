@@ -9,3 +9,4 @@ chmod 600 apps-data/traefik/acme.json
 
 docker network create traefik
 docker network create databases
+docker network create mcp

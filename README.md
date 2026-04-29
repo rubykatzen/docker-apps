@@ -29,7 +29,7 @@ A comprehensive Docker-based orchestration system for deploying and managing 70+
 ```bash
 git clone https://github.com/rubycats-com/docker-apps.git docker-apps
 cd docker-apps
-bash init.sh
+./up.sh
 ```
 
 This will:
@@ -38,6 +38,7 @@ This will:
 - Create `apps-data/` directory structure
 - Create Docker networks
 - Set up Traefik SSL configuration
+- Exit before deployment if `.env` or `apps.env` were just created
 
 ### 2. Configure Environment
 
@@ -124,8 +125,7 @@ docker-apps/
 ├── down.sh                       # Stop applications
 ├── restart.sh                    # Restart applications
 ├── logs.sh                       # View application logs
-├── backup.sh                     # Backup app data
-└── init.sh                       # Initial setup
+└── backup.sh                     # Backup app data
 ```
 
 ## 🎮 Common Commands

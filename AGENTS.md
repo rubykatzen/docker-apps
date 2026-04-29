@@ -125,19 +125,11 @@ docker compose --env-file .env --env-file ./apps/traefik/.env -f ./apps/traefik/
 
 ## Initial Setup
 
-For first-time setup (documented in `init.sh`):
+The `up.sh` script performs first-run setup automatically before loading environment variables:
 ```bash
-cp .env.example .env
-cp apps.env.example apps.env
-# Edit .env and apps.env with your configuration
-mkdir apps-data
-mkdir apps-data/traefik
-touch apps-data/traefik/acme.json
-chmod 600 apps-data/traefik/acme.json
-docker network create traefik
-docker network create databases
-docker network create mcp
+./up.sh
 ```
+It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing. If `.env` or `apps.env` were just created, it exits before deployment so the files can be edited first.
 
 ## Adding New Applications
 

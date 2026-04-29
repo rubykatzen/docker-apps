@@ -256,6 +256,7 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **metamcp** | MCP server aggregator & manager |
 | **omniroute** | AI provider proxy & router |
 | **paperclip** | AI coding assistant |
+| **playwright** | Playwright MCP browser automation |
 | **flaresolverr** | Cloudflare bypass proxy |
 | **whoami** | Debug/test |
 
@@ -294,6 +295,12 @@ DAPPS_DOMAIN=other-domain.com
 ```
 
 This file is git-ignored and lives alongside app data, making it suitable for server-specific settings that shouldn't be committed.
+
+Apps that extend `main-bearer` also read `APP_BEARER_TOKEN` from this file. For example, Playwright MCP requires:
+```bash
+# apps-data/playwright/.env
+APP_BEARER_TOKEN=your-long-random-token
+```
 
 ### Network Architecture
 

@@ -29,7 +29,7 @@ A comprehensive Docker-based orchestration system for deploying and managing 70+
 ```bash
 git clone https://github.com/rubycats-com/docker-apps.git docker-apps
 cd docker-apps
-bash init.sh
+./up.sh
 ```
 
 This will:
@@ -45,17 +45,17 @@ Edit `.env` with your settings:
 
 ```bash
 # Domain configuration
-DAPPS_DOMAIN=example.com
+DAPPS_DOMAIN=...
 
 # SSL/TLS Configuration
-DAPPS_CERTIFICATE_RESOLVER=letsencrypt  # or cloudflare
-DAPPS_CLOUDFLARE_DNS_API_TOKEN=your_token   # if using Cloudflare
+DAPPS_CERTIFICATE_RESOLVER=...
+DAPPS_CLOUDFLARE_DNS_API_TOKEN=...
 
 # Database
-DAPPS_DATABASE_PASSWORD=your_secure_password
+DAPPS_DATABASE_PASSWORD=...
 
 # System
-DAPPS_TIMEZONE=UTC
+DAPPS_TIMEZONE=...
 ```
 
 ### 3. Select Applications
@@ -124,8 +124,7 @@ docker-apps/
 ├── down.sh                       # Stop applications
 ├── restart.sh                    # Restart applications
 ├── logs.sh                       # View application logs
-├── backup.sh                     # Backup app data
-└── init.sh                       # Initial setup
+└── backup.sh                     # Backup app data
 ```
 
 ## 🎮 Common Commands
@@ -256,6 +255,7 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **metamcp** | MCP server aggregator & manager |
 | **omniroute** | AI provider proxy & router |
 | **paperclip** | AI coding assistant |
+| **playwright** | Playwright MCP browser automation |
 | **flaresolverr** | Cloudflare bypass proxy |
 | **whoami** | Debug/test |
 
@@ -295,11 +295,14 @@ DAPPS_DOMAIN=other-domain.com
 
 This file is git-ignored and lives alongside app data, making it suitable for server-specific settings that shouldn't be committed.
 
+Playwright MCP is intended for internal Docker network use, for example from MetaMCP via `http://playwright:8931/mcp`.
+
 ### Network Architecture
 
 - **traefik** - External network for reverse proxy communication
 - **internal** - Isolated network for app-to-app communication
 - **databases** - Dedicated network for database services (PostgreSQL, Redis, MongoDB)
+- **mcp** - External network for MCP services consumed by MetaMCP
 
 Apps are automatically connected to appropriate networks based on their needs.
 

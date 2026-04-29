@@ -38,7 +38,6 @@ This will:
 - Create `apps-data/` directory structure
 - Create Docker networks
 - Set up Traefik SSL configuration
-- Exit before deployment if `.env` or `apps.env` were just created
 
 ### 2. Configure Environment
 
@@ -46,17 +45,17 @@ Edit `.env` with your settings:
 
 ```bash
 # Domain configuration
-DAPPS_DOMAIN=example.com
+DAPPS_DOMAIN=...
 
 # SSL/TLS Configuration
-DAPPS_CERTIFICATE_RESOLVER=letsencrypt  # or cloudflare
-DAPPS_CLOUDFLARE_DNS_API_TOKEN=your_token   # if using Cloudflare
+DAPPS_CERTIFICATE_RESOLVER=...
+DAPPS_CLOUDFLARE_DNS_API_TOKEN=...
 
 # Database
-DAPPS_DATABASE_PASSWORD=your_secure_password
+DAPPS_DATABASE_PASSWORD=...
 
 # System
-DAPPS_TIMEZONE=UTC
+DAPPS_TIMEZONE=...
 ```
 
 ### 3. Select Applications

@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-created_env_files=0
 
 ensure_file() {
   local source_file="$1"
@@ -9,7 +8,6 @@ ensure_file() {
   if [[ ! -f "$target_file" ]]; then
     cp "$source_file" "$target_file"
     echo "Created: $target_file"
-    created_env_files=1
   fi
 }
 
@@ -30,11 +28,6 @@ chmod 600 apps-data/traefik/acme.json
 ensure_network traefik
 ensure_network databases
 ensure_network mcp
-
-if [[ "$created_env_files" -eq 1 ]]; then
-  echo "Edit .env and apps.env, then run ./up.sh again."
-  exit 0
-fi
 
 set -a
 source .env

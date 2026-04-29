@@ -129,7 +129,7 @@ The `up.sh` script performs first-run setup automatically before loading environ
 ```bash
 ./up.sh
 ```
-It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing. If `.env` or `apps.env` were just created, it exits before deployment so the files can be edited first.
+It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing. The default `apps.env.example` has an empty `DAPPS` array, so first run is safe before selecting apps.
 
 ## Adding New Applications
 

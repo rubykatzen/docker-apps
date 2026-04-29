@@ -19,6 +19,18 @@ x-labels-http: &labels-http
   - "traefik.http.routers.${APP_NAME}-plain.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
   - "traefik.http.routers.${APP_NAME}-plain.entrypoints=http"
   - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
+x-labels-bearer: &labels-bearer
+  - "traefik.enable=true"
+  - "traefik.docker.network=traefik"
+  - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+  - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false"
+  - "traefik.http.routers.${APP_NAME}-http.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)"
+  - "traefik.http.routers.${APP_NAME}-http.entrypoints=http"
+  - "traefik.http.routers.${APP_NAME}-http.middlewares=redirect-to-https"
+  - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`) && Header(`Authorization`, `Bearer ${APP_BEARER_TOKEN}`)"
+  - "traefik.http.routers.${APP_NAME}.entrypoints=https"
+  - "traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}"
+  - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
 x-labels-api: &labels-api
   - traefik.enable=true
   - traefik.docker.network=traefik
@@ -50,6 +62,16 @@ services:
     expose:
       - ${APP_PORT}
     labels: *labels-http
+    networks:
+      - internal
+      - traefik
+    logging: *logging
+  main-bearer:
+    env_file: *env-file
+    restart: *restart
+    expose:
+      - ${APP_PORT}
+    labels: *labels-bearer
     networks:
       - internal
       - traefik

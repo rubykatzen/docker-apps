@@ -1,0 +1,13 @@
+include:
+  - ../networks.yml
+x-environment: &environment
+  TZ: ${DAPPS_TIMEZONE}
+services:
+  playwright:
+    image: mcr.microsoft.com/playwright/mcp
+    extends:
+      file: ../common.yml
+      service: main-bearer
+    command: ["--port", "${APP_PORT}", "--host", "0.0.0.0"]
+    environment: *environment
+    init: true

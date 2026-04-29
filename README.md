@@ -295,11 +295,6 @@ DAPPS_DOMAIN=other-domain.com
 
 This file is git-ignored and lives alongside app data, making it suitable for server-specific settings that shouldn't be committed.
 
-Apps that extend `main-bearer` also read `APP_BEARER_TOKEN` from this file:
-```bash
-# apps-data/myapp/.env
-APP_BEARER_TOKEN=your-long-random-token
-```
 Playwright MCP is intended for internal Docker network use, for example from MetaMCP via `http://playwright:8931/mcp`.
 
 ### Network Architecture

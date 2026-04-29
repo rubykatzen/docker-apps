@@ -22,7 +22,7 @@ The repository uses a modular docker-compose structure with reusable components:
    - `x-healthcheck`: Universal health check logic supporting multiple tools (curl, wget, nc, etc.)
    - `x-labels`: Traefik labels for routing and SSL
    - `x-restart`: Restart policy (unless-stopped)
-   - Pre-defined service profiles: `main`, `main-http`, `main-bearer`, `api`, `host`, `side`
+   - Pre-defined service profiles: `main`, `main-http`, `api`, `host`, `side`
 
 2. **Shared Infrastructure** (`apps/networks.yml`, `apps/postgres.yml`, `apps/redis.yml`):
    - `networks.yml`: Defines `internal`, `databases`, `mcp`, and `traefik` networks
@@ -62,8 +62,6 @@ traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}
 ```
 
 Apps are accessible at `{app-name}.{DAPPS_DOMAIN}` with automatic SSL.
-
-Apps that extend `main-bearer` are also routed through Traefik, but their HTTPS router requires `Authorization: Bearer ${APP_BEARER_TOKEN}`. Store `APP_BEARER_TOKEN` in `apps-data/{app}/.env`, not in committed files.
 
 ## Common Commands
 
@@ -137,7 +135,7 @@ It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external D
 2. Create `.env` with `APP_NAME` and `APP_PORT`
 3. Create `docker-compose.yml`:
    - Include `../networks.yml` for network definitions
-   - Extend `../common.yml` service definitions (usually `main`, or `main-bearer` when the route must require a bearer token)
+   - Extend `../common.yml` service definitions (usually `main`)
    - Include `../postgres.yml` and/or `../redis.yml`, `../mongo.yml` if needed
    - Reference data path: `../../apps-data/${APP_NAME}/`
 4. Add app name to `DAPPS` array in `apps.env`
@@ -219,7 +217,7 @@ services:
     # 2. EXTENDS (if used)
     extends:
       file: ../common.yml
-      service: main  # main | main-http | main-bearer | api | host | side
+      service: main  # main | main-http | api | host | side
     
     # 3. COMMAND (if overriding)
     command: ["start", "--config", "/config.yml"]
@@ -259,7 +257,7 @@ services:
 4. **X-volumes for shared volumes** - if 2+ volumes repeat across services, extract them to `x-volumes: &volumes` and merge with unique ones
 5. **Image before extends** - declare what image is used, then extend common config
 6. **Environment via anchor** - always use `x-environment: &environment` pattern
-7. **Networks from extends** - `main`, `main-http`, `main-bearer`, and `api` profiles include `traefik` and `internal`; never add `databases` (it's only for DB admin tools)
+7. **Networks from extends** - `main`, `main-http`, and `api` profiles include `traefik` and `internal`; never add `databases` (it's only for DB admin tools)
 8. **Depends_on as simple list** - use array format without `condition:`, healthchecks are in common.yml
 9. **Depends_on order**: postgres → redis → mongo → app services
 10. **Volumes order**: data directories → config directories → template files (with :ro)

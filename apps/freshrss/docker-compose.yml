@@ -1,11 +1,16 @@
 include:
   - ../networks.yml
+  - ../postgres.yml
 x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
   CRON_MIN: "3,17,32,47"
   TRUSTED_PROXY: 172.16.0.1/12 192.168.0.1/16
   PICCACHE_ACCESS_TOKEN: ${DAPPS_ADMIN_DEFAULT_PASS}
   PICCACHE_CACHE_PATH: /var/www/FreshRSS/data
+  DB_HOST: postgres
+  DB_BASE: ${APP_NAME}
+  DB_USER: ${APP_NAME}
+  DB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
 services:
   freshrss:
     image: freshrss/freshrss
@@ -13,6 +18,9 @@ services:
       file: ../common.yml
       service: main
     environment: *environment
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - ../../apps-data/${APP_NAME}/data:/var/www/FreshRSS/data
       - ../../apps-data/${APP_NAME}/extensions:/var/www/FreshRSS/extensions

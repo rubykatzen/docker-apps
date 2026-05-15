@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Repository Overview
 
-This is a Docker-based application management system (docker-apps) that orchestrates multiple self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and provides a unified management interface for deploying and managing 70+ different applications.
+This is a Docker-based application management system (docker-apps) that orchestrates multiple self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and provides a unified management interface for deploying and managing 80+ different applications.
 
 ## Core Architecture
 
@@ -103,6 +103,15 @@ The `up.sh` script:
 # View logs for a specific app (requires single app name)
 ./logs.sh portainer
 ```
+
+### Backing Up Apps
+```bash
+# Back up all apps-data directories from a remote server to local backups/
+./backup.sh root@hawkeye.dupmachine.com
+./backup.sh root@mainframe.dupmachine.com
+```
+
+The `backup.sh` script stops each active app, zips its `apps-data/` directory, downloads it locally, then restarts the app. Inactive apps (not in DAPPS) are archived without stopping.
 
 ### Updating Applications
 ```bash

@@ -5,6 +5,7 @@ x-environment: &environment
   VPN_TYPE: ${VPN_TYPE}
   OPENVPN_USER: ${VPN_USER}
   OPENVPN_PASSWORD: ${VPN_PASS}
+  OPENVPN_CUSTOM_CONFIG: /gluetun/custom.ovpn
 services:
   gluetun:
     image: qmcgaw/gluetun

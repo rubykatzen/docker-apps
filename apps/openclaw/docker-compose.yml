@@ -10,7 +10,7 @@ x-environment: &environment
   OPENCLAW_WORKSPACE_DIR: /home/node/.openclaw/workspace
   OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
   OPENCLAW_DISABLE_BONJOUR: "1"
-  TZ: Europe/Berlin
+  TZ: ${DAPPS_TIMEZONE}
 services:
   openclaw:
     image: ghcr.io/openclaw/openclaw:2026.5.20

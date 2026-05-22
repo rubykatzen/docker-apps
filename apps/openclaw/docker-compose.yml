@@ -17,7 +17,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    command: ["node", "dist/index.js", "gateway", "--bind", "lan", "--port", "18789"]
+    command: ["node", "dist/index.js", "gateway", "--bind", "lan", "--port", "${APP_PORT}"]
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/home/node/.openclaw
@@ -31,7 +31,7 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:18789/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:${APP_PORT}/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 5s
       retries: 5

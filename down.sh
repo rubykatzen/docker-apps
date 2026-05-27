@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+source "$(dirname "$0")/lib.sh"
 set -a
 source .env
 source apps.env
@@ -13,5 +14,6 @@ fi
 
 for app in "${apps[@]}"
 do
+  generate_env "${app}"
   docker compose -f "./apps/${app}/docker-compose.yml" down
 done

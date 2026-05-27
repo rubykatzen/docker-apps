@@ -10,6 +10,7 @@ generate_env() {
   } | awk '
     /^[[:space:]]*#/ { next }
     /^[[:space:]]*$/ { next }
+    /=\(/ { next }
     /=/ {
       key = substr($0, 1, index($0, "=") - 1)
       vals[key] = $0

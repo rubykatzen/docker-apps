@@ -20,6 +20,22 @@ ensure_network() {
   fi
 }
 
+generate_env() {
+  local app="$1"
+  local output="./apps/${app}/.env"
+  {
+    cat .env
+    if [[ -f "./apps/${app}/.env.base" ]]; then
+      printf "\n"
+      cat "./apps/${app}/.env.base"
+    fi
+    if [[ -f "./apps-data/${app}/.env" ]]; then
+      printf "\n"
+      cat "./apps-data/${app}/.env"
+    fi
+  } > "$output"
+}
+
 ensure_file .env.example .env
 ensure_file apps.env.example apps.env
 mkdir -p apps-data/traefik
@@ -45,50 +61,30 @@ do
   (
     echo "Starting: ${app}"
 
-    # Load app-specific env variables
-    if [[ -f ./apps/"${app}"/.env ]]; then
-      set -a
-      source ./apps/"${app}"/.env
-      set +a
-    fi
+    generate_env "${app}"
 
-    # Apply overrides from apps-data (take precedence over global env)
-    if [[ -f ./apps-data/"${app}"/.env ]]; then
-      set -a
-      source ./apps-data/"${app}"/.env
-      set +a
-    fi
+    set -a
+    source "./apps/${app}/.env"
+    set +a
 
-    # Create apps-data folder
-    mkdir -p ./apps-data/"${app}"
+    mkdir -p "./apps-data/${app}"
 
-    # Process all templates in config if the directory exists
     config_template_dir="./apps/${app}/config"
     config_dir="./apps-data/${app}/config"
 
     if [[ -d "$config_template_dir" ]]; then
       mkdir -p "$config_dir"
       for template in "$config_template_dir"/*.template.*; do
-        # Check if file exists (to avoid error if no templates are found)
         [[ -e "$template" ]] || continue
-
-        # remove .template from the filename
         filename="$(basename "$template")"
         filename="${filename/.template./.}"
-
-        # Use envsubst
         envsubst < "$template" > "$config_dir/$filename"
         echo "Generated: $config_dir/$filename"
       done
     fi
 
-    extra_env_file=()
-    if [[ -f ./apps-data/"${app}"/.env ]]; then
-      extra_env_file=(--env-file ./apps-data/"${app}"/.env)
-    fi
-
-    docker compose --env-file .env --env-file ./apps/"${app}"/.env "${extra_env_file[@]}" -f ./apps/"${app}"/docker-compose.yml pull
-    docker compose --env-file .env --env-file ./apps/"${app}"/.env "${extra_env_file[@]}" -f ./apps/"${app}"/docker-compose.yml up -d --remove-orphans
+    docker compose -f "./apps/${app}/docker-compose.yml" pull
+    docker compose -f "./apps/${app}/docker-compose.yml" up -d --remove-orphans
   )
 done
 

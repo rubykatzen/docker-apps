@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
+  - ../postgres-17.yml
 x-environment: &environment
   TZ: ${DAPPS_TIMEZONE}
   DB_TYPE: postgres

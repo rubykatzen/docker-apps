@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
+  - ../postgres-17.yml
 x-environment: &environment
   MB_DB_TYPE: postgres
   MB_DB_DBNAME: ${APP_NAME}

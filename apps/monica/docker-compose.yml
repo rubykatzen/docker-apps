@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../mysql.yml
+  - ../mysql-8.yml
 x-environment: &environment
   APP_KEY: ${DAPPS_KEY_BASE64_32}
   APP_ENV: production

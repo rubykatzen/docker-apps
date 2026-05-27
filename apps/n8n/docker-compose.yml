@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../redis.yml
+  - ../postgres-17.yml
+  - ../redis-7.yml
 x-image: &image n8nio/n8n:next
 x-environment: &environment
   DB_TYPE: postgresdb

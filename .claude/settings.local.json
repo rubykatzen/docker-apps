@@ -25,7 +25,12 @@
       "Bash(gh pr *)",
       "Bash(git merge *)",
       "Bash(gh run *)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(sed -i '' 's|\\\\.\\\\./postgres\\\\.yml|../postgres-17.yml|g' '/Users/ineedjet/Projects/docker-apps/apps/*/docker-compose.yml')",
+      "Bash(sed -i '' 's|\\\\.\\\\./redis\\\\.yml|../redis-7.yml|g' '/Users/ineedjet/Projects/docker-apps/apps/*/docker-compose.yml')",
+      "Bash(sed -i '' 's|\\\\.\\\\./pgvector\\\\.yml|../pgvector-17.yml|g' '/Users/ineedjet/Projects/docker-apps/apps/*/docker-compose.yml')",
+      "Bash(sed -i '' 's|\\\\.\\\\./clickhouse\\\\.yml|../clickhouse-24.yml|g' '/Users/ineedjet/Projects/docker-apps/apps/*/docker-compose.yml')",
+      "Bash(sed -i '' 's|\\\\.\\\\./mysql\\\\.yml|../mysql-8.yml|g' '/Users/ineedjet/Projects/docker-apps/apps/*/docker-compose.yml')"
     ],
     "deny": [],
     "ask": []

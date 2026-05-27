@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../redis.yml
+  - ../redis-7.yml
 x-environment: &environment
   NODE_ENV: production
   CACHE_TYPE: redis

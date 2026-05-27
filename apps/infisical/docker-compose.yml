@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../redis.yml
+  - ../postgres-17.yml
+  - ../redis-7.yml
 x-environment: &environment
   ENCRYPTION_KEY: ${DAPPS_KEY_HEX_16}
   AUTH_SECRET: ${DAPPS_KEY_HEX_32}

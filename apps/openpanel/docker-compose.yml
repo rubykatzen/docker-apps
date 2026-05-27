@@ -1,8 +1,8 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../redis.yml
-  - ../clickhouse.yml
+  - ../postgres-17.yml
+  - ../redis-7.yml
+  - ../clickhouse-24.yml
 x-environment: &environment
   NODE_ENV: production
   NEXT_PUBLIC_SELF_HOSTED: true

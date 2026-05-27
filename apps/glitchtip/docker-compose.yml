@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../redis.yml
+  - ../postgres-17.yml
+  - ../redis-7.yml
 x-image: &image glitchtip/glitchtip
 x-environment: &environment
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}

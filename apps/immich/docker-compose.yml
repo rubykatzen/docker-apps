@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../pgvector.yml
-  - ../redis.yml
+  - ../pgvector-17.yml
+  - ../redis-7.yml
 x-environment: &environment
   DB_HOSTNAME: pgvector
   DB_USERNAME: ${APP_NAME}

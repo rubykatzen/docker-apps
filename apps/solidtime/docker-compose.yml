@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../gotenberg.yml
+  - ../postgres-17.yml
+  - ../gotenberg-8.yml
 x-image: &image solidtime/solidtime
 x-user: &user "${DAPPS_UID}:${DAPPS_GID}"
 x-environment: &environment

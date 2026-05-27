@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../redis.yml
+  - ../redis-7.yml
 x-environment: &environment
   SITE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
   REDIS_URL: redis://redis:6379/0

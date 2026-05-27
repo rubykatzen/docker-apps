@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../redis.yml
+  - ../postgres-17.yml
+  - ../redis-7.yml
 x-environment: &environment
   AP_ENGINE_EXECUTABLE_PATH: dist/packages/engine/main.js
   AP_API_KEY: ${DAPPS_KEY_HEX_64}

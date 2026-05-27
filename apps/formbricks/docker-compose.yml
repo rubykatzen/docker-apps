@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../pgvector.yml
-  - ../redis.yml
+  - ../pgvector-17.yml
+  - ../redis-7.yml
 x-environment: &environment
   WEBAPP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
   NEXTAUTH_URL: https://${APP_NAME}.${DAPPS_DOMAIN}

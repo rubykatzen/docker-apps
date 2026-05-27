@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
+  - ../postgres-17.yml
 x-environment: &environment
   DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   BETTER_AUTH_SECRET: ${DAPPS_KEY_HEX_64}

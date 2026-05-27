@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
+  - ../postgres-17.yml
 x-environment: &environment
   GATUS_CONFIG_PATH: /config/yml
   TZ: ${DAPPS_TIMEZONE}

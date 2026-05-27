@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
-  - ../postgres.yml
-  - ../redis.yml
+  - ../postgres-17.yml
+  - ../redis-7.yml
 x-environment: &environment
   APP_ENV: production
   REDIS_HOST: redis

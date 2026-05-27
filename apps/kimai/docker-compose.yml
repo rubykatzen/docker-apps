@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../mysql.yml
+  - ../mysql-8.yml
 x-environment: &environment
   ADMINMAIL: ${DAPPS_ADMIN_MAIL}
   ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}

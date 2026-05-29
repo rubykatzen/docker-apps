@@ -225,7 +225,6 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **monica** | Personal CRM |
 | **metabase** | Analytics dashboard |
 | **umami** | Web analytics |
-| **openpanel** | Web analytics |
 | **rybbit** | Web analytics |
 | **countly** | Mobile & web analytics |
 | **chatwoot** | Customer messaging |

@@ -230,7 +230,6 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **chatwoot** | Customer messaging |
 | **formbricks** | Form & survey builder |
 | **wallos** | Subscription tracker |
-| **infisical** | Secrets management |
 | **authentik** | Identity provider |
 | **2fauth** | Two-factor auth manager |
 | **outline-admin** | Wiki / knowledge base |

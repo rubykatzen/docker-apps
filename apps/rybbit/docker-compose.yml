@@ -15,7 +15,7 @@ x-environment: &environment
   POSTGRES_DB: ${APP_NAME}
   POSTGRES_USER: ${APP_NAME}
   POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-  CLICKHOUSE_HOST: http://clickhouse:8123
+  CLICKHOUSE_HOST: http://${APP_NAME}-clickhouse:8123
   CLICKHOUSE_DB: ${APP_NAME}
   CLICKHOUSE_USER: default
 

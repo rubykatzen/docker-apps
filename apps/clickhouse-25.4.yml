@@ -22,7 +22,9 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - internal
+      internal:
+        aliases:
+          - ${APP_NAME}-clickhouse
     ulimits:
       nofile:
         soft: 262144

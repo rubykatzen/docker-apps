@@ -1,6 +1,6 @@
 include:
   - ../networks.yml
-  - ../postgres-17.yml
+  - ../postgres-18.yml
   - ../clickhouse-25.4.yml
 
 x-environment: &environment

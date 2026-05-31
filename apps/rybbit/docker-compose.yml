@@ -36,9 +36,11 @@ services:
     image: ghcr.io/rybbit-io/rybbit-backend
     extends:
       file: ../common.yml
-      service: side
+      service: api
     expose:
       - 3001
+    labels:
+      - "traefik.http.services.${APP_NAME}-api.loadbalancer.server.port=3001"
     environment: *environment
     depends_on:
       clickhouse:

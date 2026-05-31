@@ -234,8 +234,6 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 | **authentik** | Identity provider |
 | **2fauth** | Two-factor auth manager |
 | **outline-admin** | Wiki / knowledge base |
-| **growthbook** | Feature flags & A/B testing |
-| **unleash** | Feature flag management |
 | **codecov** | Code coverage |
 | **airbroke** | Error tracking |
 | **glitchtip** | Error tracking |

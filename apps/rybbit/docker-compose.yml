@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
   - ../postgres-18.yml
-  - ../clickhouse-25.4.yml
+  - ../clickhouse-26.5.yml
 
 x-environment: &environment
   NODE_ENV: production
@@ -17,7 +17,8 @@ x-environment: &environment
   POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
   CLICKHOUSE_HOST: http://clickhouse:8123
   CLICKHOUSE_DB: ${APP_NAME}
-  CLICKHOUSE_USER: default
+  CLICKHOUSE_USER: ${APP_NAME}
+  CLICKHOUSE_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
 
 services:
   client:

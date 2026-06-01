@@ -1,9 +1,12 @@
 services:
   clickhouse:
-    image: clickhouse/clickhouse-server:25.4
+    image: clickhouse/clickhouse-server:26.5
     restart: unless-stopped
     environment:
       CLICKHOUSE_DB: ${APP_NAME}
+      CLICKHOUSE_USER: ${APP_NAME}
+      CLICKHOUSE_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     volumes:
       - ../apps-data/${APP_NAME}/clickhouse/data:/var/lib/clickhouse
       - ../apps-data/${APP_NAME}/clickhouse/logs:/var/log/clickhouse-server
@@ -34,7 +37,6 @@ services:
     logging:
       options:
         max-size: 10m
-
 configs:
   clickhouse_network:
     content: |

@@ -21,29 +21,29 @@ jobs:
       - name: Create .env
         uses: SpicyPizza/create-envfile@v2
         with:
-          envkey_DAPPS_ADMIN_MAIL: ${{ vars.DAPPS_ADMIN_MAIL }}
-          envkey_DAPPS_ADMIN_DEFAULT_PASS: ${{ secrets.DAPPS_ADMIN_DEFAULT_PASS }}
-          envkey_DAPPS_CERTIFICATE_RESOLVER: ${{ vars.DAPPS_CERTIFICATE_RESOLVER }}
-          envkey_DAPPS_CLOUDFLARE_DNS_API_TOKEN: ${{ secrets.DAPPS_CLOUDFLARE_DNS_API_TOKEN }}
-          envkey_DAPPS_TIMEZONE: ${{ vars.DAPPS_TIMEZONE }}
-          envkey_DAPPS_DATABASE_PASSWORD: ${{ secrets.DAPPS_DATABASE_PASSWORD }}
-          envkey_DAPPS_KEY_HEX_16: ${{ secrets.DAPPS_KEY_HEX_16 }}
-          envkey_DAPPS_KEY_HEX_32: ${{ secrets.DAPPS_KEY_HEX_32 }}
-          envkey_DAPPS_KEY_HEX_64: ${{ secrets.DAPPS_KEY_HEX_64 }}
-          envkey_DAPPS_KEY_BASE64_32: ${{ secrets.DAPPS_KEY_BASE64_32 }}
-          envkey_DAPPS_TELEGRAM_TELEGRAM_TOKEN: ${{ secrets.DAPPS_TELEGRAM_TELEGRAM_TOKEN }}
-          envkey_DAPPS_TELEGRAM_CHAT: ${{ vars.DAPPS_TELEGRAM_CHAT }}
-          envkey_DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL: ${{ secrets.DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL }}
-          envkey_DAPPS_HTPASSWD: ${{ secrets.DAPPS_HTPASSWD }}
-          envkey_DAPPS_SMTP_HOSTNAME: ${{ vars.DAPPS_SMTP_HOSTNAME }}
-          envkey_DAPPS_SMTP_PORT: ${{ vars.DAPPS_SMTP_PORT }}
-          envkey_DAPPS_SMTP_USERNAME: ${{ vars.DAPPS_SMTP_USERNAME }}
-          envkey_DAPPS_SMTP_PASSWORD: ${{ secrets.DAPPS_SMTP_PASSWORD }}
-          envkey_DAPPS_SMTP_FROM: ${{ vars.DAPPS_SMTP_FROM }}
-          envkey_DAPPS_S3_HOST: ${{ vars.DAPPS_S3_HOST }}
-          envkey_DAPPS_S3_REGION: ${{ vars.DAPPS_S3_REGION }}
-          envkey_DAPPS_S3_ACCESS_KEY_ID: ${{ vars.DAPPS_S3_ACCESS_KEY_ID }}
-          envkey_DAPPS_S3_SECRET_ACCESS_KEY: ${{ secrets.DAPPS_S3_SECRET_ACCESS_KEY }}
+          envkey_APPS_ADMIN_MAIL: ${{ vars.DAPPS_ADMIN_MAIL }}
+          envkey_APPS_ADMIN_DEFAULT_PASS: ${{ secrets.DAPPS_ADMIN_DEFAULT_PASS }}
+          envkey_APPS_CERTIFICATE_RESOLVER: ${{ vars.DAPPS_CERTIFICATE_RESOLVER }}
+          envkey_APPS_CLOUDFLARE_DNS_API_TOKEN: ${{ secrets.DAPPS_CLOUDFLARE_DNS_API_TOKEN }}
+          envkey_APPS_TIMEZONE: ${{ vars.DAPPS_TIMEZONE }}
+          envkey_APPS_DATABASE_PASSWORD: ${{ secrets.DAPPS_DATABASE_PASSWORD }}
+          envkey_APPS_KEY_HEX_16: ${{ secrets.DAPPS_KEY_HEX_16 }}
+          envkey_APPS_KEY_HEX_32: ${{ secrets.DAPPS_KEY_HEX_32 }}
+          envkey_APPS_KEY_HEX_64: ${{ secrets.DAPPS_KEY_HEX_64 }}
+          envkey_APPS_KEY_BASE64_32: ${{ secrets.DAPPS_KEY_BASE64_32 }}
+          envkey_APPS_TELEGRAM_TELEGRAM_TOKEN: ${{ secrets.DAPPS_TELEGRAM_TELEGRAM_TOKEN }}
+          envkey_APPS_TELEGRAM_CHAT: ${{ vars.DAPPS_TELEGRAM_CHAT }}
+          envkey_APPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL: ${{ secrets.DAPPS_SHOUTRRR_TELEGRAM_NOTIFICATION_URL }}
+          envkey_APPS_HTPASSWD: ${{ secrets.DAPPS_HTPASSWD }}
+          envkey_APPS_SMTP_HOSTNAME: ${{ vars.DAPPS_SMTP_HOSTNAME }}
+          envkey_APPS_SMTP_PORT: ${{ vars.DAPPS_SMTP_PORT }}
+          envkey_APPS_SMTP_USERNAME: ${{ vars.DAPPS_SMTP_USERNAME }}
+          envkey_APPS_SMTP_PASSWORD: ${{ secrets.DAPPS_SMTP_PASSWORD }}
+          envkey_APPS_SMTP_FROM: ${{ vars.DAPPS_SMTP_FROM }}
+          envkey_APPS_S3_HOST: ${{ vars.DAPPS_S3_HOST }}
+          envkey_APPS_S3_REGION: ${{ vars.DAPPS_S3_REGION }}
+          envkey_APPS_S3_ACCESS_KEY_ID: ${{ vars.DAPPS_S3_ACCESS_KEY_ID }}
+          envkey_APPS_S3_SECRET_ACCESS_KEY: ${{ secrets.DAPPS_S3_SECRET_ACCESS_KEY }}
           envkey_BESZEL_AGENT_PUBLIC_KEY: ${{ vars.BESZEL_AGENT_PUBLIC_KEY }}
           envkey_RSSHUB_ACCESS_KEY: ${{ secrets.RSSHUB_ACCESS_KEY }}
           envkey_RSSHUB_TWITTER_AUTH_TOKEN: ${{ secrets.RSSHUB_TWITTER_AUTH_TOKEN }}
@@ -65,12 +65,12 @@ jobs:
           envkey_ICLOUDPD_DATA_PATH: ${{ vars.ICLOUDPD_DATA_PATH }}
           envkey_AUDIOBOOKSHELF_AUDIOBOOKS_PATH: ${{ vars.AUDIOBOOKSHELF_AUDIOBOOKS_PATH }}
           envkey_METUBE_DOWNLOADS_PATH: ${{ vars.METUBE_DOWNLOADS_PATH }}
-          envkey_DAPPS_UID: ${{ vars.DAPPS_UID }}
-          envkey_DAPPS_GID: ${{ vars.DAPPS_GID }}
+          envkey_APPS_UID: ${{ vars.DAPPS_UID }}
+          envkey_APPS_GID: ${{ vars.DAPPS_GID }}
           envkey_YAMTRACK_TRAKT_CLIENT_ID: ${{ vars.YAMTRACK_TRAKT_CLIENT_ID }}
           envkey_YAMTRACK_TRAKT_CLIENT_SECRET: ${{ secrets.YAMTRACK_TRAKT_CLIENT_SECRET }}
-          envkey_DAPPS_GOOGLE_OAUTH_CLIENT_ID: ${{ vars.DAPPS_GOOGLE_OAUTH_CLIENT_ID }}
-          envkey_DAPPS_GOOGLE_CLIENT_SECRET: ${{ secrets.DAPPS_GOOGLE_CLIENT_SECRET }}
+          envkey_APPS_GOOGLE_OAUTH_CLIENT_ID: ${{ vars.DAPPS_GOOGLE_OAUTH_CLIENT_ID }}
+          envkey_APPS_GOOGLE_CLIENT_SECRET: ${{ secrets.DAPPS_GOOGLE_CLIENT_SECRET }}
           file_name: .env
       - name: Upload .env via SSH
         uses: appleboy/scp-action@v1

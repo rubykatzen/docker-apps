@@ -2,17 +2,17 @@ include:
   - ../networks.yml
   - ../redis-7.yml
 x-environment: &environment
-  SITE_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  SITE_URL: https://${APP_NAME}.${APPS_DOMAIN}
   REDIS_URL: redis://redis:6379/0
-  CSRF_TRUSTED_ORIGINS: https://${APP_NAME}.${DAPPS_DOMAIN}
+  CSRF_TRUSTED_ORIGINS: https://${APP_NAME}.${APPS_DOMAIN}
   DEFAULT_TARGET_LANGUAGE: Russian
-  SECRET_KEY: ${DAPPS_KEY_HEX_32}
+  SECRET_KEY: ${APPS_KEY_HEX_32}
   PORT: 8000
   DEBUG: 0
   DEMO: 0
   USER_MANAGEMENT: 0
   LOG_LEVEL: ERROR
-  TIME_ZONE: ${DAPPS_TIMEZONE}
+  TIME_ZONE: ${APPS_TIMEZONE}
   default_max_posts: 20
 services:
   rssbox:

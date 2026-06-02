@@ -2,12 +2,12 @@ include:
   - ../networks.yml
   - ../mysql-8.yml
 x-environment: &environment
-  APP_KEY: ${DAPPS_KEY_BASE64_32}
+  APP_KEY: ${APPS_KEY_BASE64_32}
   APP_ENV: production
   DB_DATABASE: ${APP_NAME}
   DB_HOST: mysql
   DB_USERNAME: ${APP_NAME}
-  DB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  DB_PASSWORD: ${APPS_DATABASE_PASSWORD}
 services:
   app:
     image: monica

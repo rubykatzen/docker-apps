@@ -1,9 +1,9 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  PUID: ${DAPPS_UID}
-  PGID: ${DAPPS_GID}
-  TZ: ${DAPPS_TIMEZONE}
+  PUID: ${APPS_UID}
+  PGID: ${APPS_GID}
+  TZ: ${APPS_TIMEZONE}
 services:
   bazarr:
     image: ghcr.io/hotio/bazarr

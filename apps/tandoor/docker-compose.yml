@@ -2,15 +2,15 @@ include:
   - ../networks.yml
   - ../postgres-17.yml
 x-environment: &environment
-  SECRET_KEY: ${DAPPS_KEY_HEX_64}
-  ALLOWED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN},127.0.0.1
+  SECRET_KEY: ${APPS_KEY_HEX_64}
+  ALLOWED_HOSTS: ${APP_NAME}.${APPS_DOMAIN},127.0.0.1
   DB_ENGINE: django.db.backends.postgresql
   POSTGRES_HOST: postgres
   POSTGRES_PORT: 5432
   POSTGRES_DB: ${APP_NAME}
   POSTGRES_USER: ${APP_NAME}
-  POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
-  TZ: ${DAPPS_TIMEZONE}
+  POSTGRES_PASSWORD: ${APPS_DATABASE_PASSWORD}
+  TZ: ${APPS_TIMEZONE}
 services:
   tandoor:
     image: vabene1111/recipes

@@ -1,1 +1,1 @@
-"pgbouncer" "${DAPPS_DATABASE_PASSWORD}"
+"pgbouncer" "${APPS_DATABASE_PASSWORD}"

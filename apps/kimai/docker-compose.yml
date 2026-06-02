@@ -2,10 +2,10 @@ include:
   - ../networks.yml
   - ../mysql-8.yml
 x-environment: &environment
-  ADMINMAIL: ${DAPPS_ADMIN_MAIL}
-  ADMINPASS: ${DAPPS_ADMIN_DEFAULT_PASS}
-  DATABASE_URL: mysql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
-  TRUSTED_HOSTS: ${APP_NAME}.${DAPPS_DOMAIN}|localhost|127.0.0.1
+  ADMINMAIL: ${APPS_ADMIN_MAIL}
+  ADMINPASS: ${APPS_ADMIN_DEFAULT_PASS}
+  DATABASE_URL: mysql://${APP_NAME}:${APPS_DATABASE_PASSWORD}@mysql/${APP_NAME}
+  TRUSTED_HOSTS: ${APP_NAME}.${APPS_DOMAIN}|localhost|127.0.0.1
   TRUSTED_PROXIES: 172.16.0.0/12,10.0.0.0/8
 services:
   kimai:

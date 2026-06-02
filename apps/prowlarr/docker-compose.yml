@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  TZ: ${DAPPS_TIMEZONE}
+  TZ: ${APPS_TIMEZONE}
 services:
   prowlarr:
     image: ghcr.io/hotio/prowlarr

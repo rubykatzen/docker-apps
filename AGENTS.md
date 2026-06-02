@@ -12,7 +12,7 @@ This is a Docker-based application management system (docker-apps) that orchestr
 - `apps/` - Contains docker-compose configurations for each application
 - `apps-data/` - Persistent data storage for all running applications
 - `.env` - Global environment variables (domain, credentials, SSL settings)
-- `apps.env` - List of applications to deploy (DAPPS array) and shared variables like DAPPS_DOMAIN
+- `apps.env` - List of applications to deploy (APPS array) and shared variables like APPS_DOMAIN
 - Shell scripts at root for orchestration
 
 ### Docker Compose Architecture
@@ -40,37 +40,37 @@ The repository uses a modular docker-compose structure with reusable components:
 ### Environment Variable System
 
 Four-tier environment variable cascade (each level overrides the previous):
-1. `.env` - Global settings (DAPPS_* variables for domain, database password, API keys)
-2. `apps.env` - DAPPS array and shared variables (DAPPS_DOMAIN, DAPPS_CERTIFICATE_RESOLVER, etc.)
+1. `.env` - Global settings (APPS_* variables for domain, database password, API keys)
+2. `apps.env` - APPS array and shared variables (APPS_DOMAIN, APPS_CERTIFICATE_RESOLVER, etc.)
 3. `apps/{app}/.env.base` - App-specific variables (APP_NAME, APP_PORT)
-4. `apps-data/{app}/.env` - Per-app runtime overrides (git-ignored, server-specific, e.g. different DAPPS_DOMAIN)
+4. `apps-data/{app}/.env` - Per-app runtime overrides (git-ignored, server-specific, e.g. different APPS_DOMAIN)
 
 Before starting each app, `up.sh` runs `generate_env` which merges all four levels into `apps/{app}/.env`. This allows running docker compose directly from the app folder without any `--env-file` flags.
 
 Key global variables in `.env`:
-- `DAPPS_DOMAIN` - Base domain for all services
-- `DAPPS_CERTIFICATE_RESOLVER` - SSL resolver (Cloudflare DNS or HTTP challenge)
-- `DAPPS_DATABASE_PASSWORD` - Shared database password
-- `DAPPS_KEY_HEX_{16,32,64}` - Encryption keys for various apps
-- `DAPPS_TIMEZONE` - System timezone
+- `APPS_DOMAIN` - Base domain for all services
+- `APPS_CERTIFICATE_RESOLVER` - SSL resolver (Cloudflare DNS or HTTP challenge)
+- `APPS_DATABASE_PASSWORD` - Shared database password
+- `APPS_KEY_HEX_{16,32,64}` - Encryption keys for various apps
+- `APPS_TIMEZONE` - System timezone
 
 ### Traefik Integration
 
 All apps use Traefik labels pattern:
 ```yaml
 traefik.enable=true
-traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${DAPPS_DOMAIN}`)
-traefik.http.routers.${APP_NAME}.tls.certresolver=${DAPPS_CERTIFICATE_RESOLVER}
+traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${APPS_DOMAIN}`)
+traefik.http.routers.${APP_NAME}.tls.certresolver=${APPS_CERTIFICATE_RESOLVER}
 traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}
 ```
 
-Apps are accessible at `{app-name}.{DAPPS_DOMAIN}` with automatic SSL.
+Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 
 ## Common Commands
 
 ### Starting Applications
 ```bash
-# Start all apps defined in DAPPS array in apps.env
+# Start all apps defined in APPS array in apps.env
 ./up.sh
 
 # Start specific app(s)
@@ -115,7 +115,7 @@ The `up.sh` script:
 ./backup.sh root@mainframe.dupmachine.com
 ```
 
-The `backup.sh` script stops each active app, zips its `apps-data/` directory, downloads it locally, then restarts the app. Inactive apps (not in DAPPS) are archived without stopping.
+The `backup.sh` script stops each active app, zips its `apps-data/` directory, downloads it locally, then restarts the app. Inactive apps (not in APPS) are archived without stopping.
 
 ### Updating Applications
 ```bash
@@ -139,7 +139,7 @@ The `up.sh` script performs first-run setup automatically before loading environ
 ```bash
 ./up.sh
 ```
-It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing. The default `apps.env.example` has an empty `DAPPS` array, so first run is safe before selecting apps.
+It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing. The default `apps.env.example` has an empty `APPS` array, so first run is safe before selecting apps.
 
 ## Adding New Applications
 
@@ -150,17 +150,17 @@ It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external D
    - Extend `../common.yml` service definitions (usually `main`)
    - Include `../postgres.yml` and/or `../redis.yml`, `../mongo.yml` if needed
    - Reference data path: `../../apps-data/${APP_NAME}/`
-4. Add app name to `DAPPS` array in `apps.env`
+4. Add app name to `APPS` array in `apps.env`
 5. **If app uses PostgreSQL**: Add database entry to `apps/pgbouncer/config/pgbouncer.template.ini`:
    ```ini
    # For standard postgres.yml:
-   appname = host=appname-postgres port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   appname = host=appname-postgres port=5432 dbname=appname user=appname password=${APPS_DATABASE_PASSWORD}
    
    # For pgvector.yml:
-   appname = host=appname-pgvector port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   appname = host=appname-pgvector port=5432 dbname=appname user=appname password=${APPS_DATABASE_PASSWORD}
    
    # For timescale.yml:
-   appname = host=appname-timescale port=5432 dbname=appname user=appname password=${DAPPS_DATABASE_PASSWORD}
+   appname = host=appname-timescale port=5432 dbname=appname user=appname password=${APPS_DATABASE_PASSWORD}
    ```
 6. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 
@@ -208,7 +208,7 @@ x-image: &image
 # 3. X-ENVIRONMENT (only if environment variables exist)
 x-environment: &environment
   VAR1: ${VALUE1}
-  DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  DATABASE_URL: postgresql://postgres:${APPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
 
 # 4. X-VOLUMES (if multiple services share volumes)
 x-volumes: &volumes
@@ -235,7 +235,7 @@ services:
     command: ["start", "--config", "/config.yml"]
     
     # 4. USER (if required)
-    user: "${DAPPS_UID}:${DAPPS_GID}"
+    user: "${APPS_UID}:${APPS_GID}"
     
     # 5. ENVIRONMENT (mandatory, via anchor)
     environment: *environment
@@ -293,7 +293,7 @@ include:
   - ../networks.yml
   - ../postgres.yml
 x-environment: &environment
-  DATABASE_URL: postgresql://postgres:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  DATABASE_URL: postgresql://postgres:${APPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
   ENABLE_FEATURE: true
   PORT: 8080
 services:
@@ -303,7 +303,7 @@ services:
       file: ../common.yml
       service: main
     command: ["worker", "--concurrency", "10"]
-    user: "${DAPPS_UID}:${DAPPS_GID}"
+    user: "${APPS_UID}:${APPS_GID}"
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data

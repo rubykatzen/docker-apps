@@ -2,15 +2,15 @@ include:
   - ../networks.yml
   - ../postgres-17.yml
 x-environment: &environment
-  DATABASE_URL: postgresql://${APP_NAME}:${DAPPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
-  BETTER_AUTH_SECRET: ${DAPPS_KEY_HEX_64}
+  DATABASE_URL: postgresql://${APP_NAME}:${APPS_DATABASE_PASSWORD}@postgres:5432/${APP_NAME}
+  BETTER_AUTH_SECRET: ${APPS_KEY_HEX_64}
   HOST: 0.0.0.0
   NODE_ENV: production
   SERVE_UI: true
   PAPERCLIP_HOME: /data
   PAPERCLIP_INSTANCE_ID: default
   PAPERCLIP_CONFIG: /data/instances/default/config.json
-  PAPERCLIP_PUBLIC_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  PAPERCLIP_PUBLIC_URL: https://${APP_NAME}.${APPS_DOMAIN}
   PAPERCLIP_DEPLOYMENT_MODE: authenticated
   PAPERCLIP_DEPLOYMENT_EXPOSURE: public
   OPENCODE_ALLOW_ALL_MODELS: true

@@ -9,7 +9,7 @@ set +a
 if [ $# -gt 0 ]; then
   apps=("$@")
 else
-  apps=("${DAPPS[@]}")
+  apps=("${APPS[@]}")
 fi
 
 for app in "${apps[@]}"

@@ -2,12 +2,12 @@ include:
   - ../networks.yml
   - ../postgres-17.yml
 x-environment: &environment
-  TZ: ${DAPPS_TIMEZONE}
+  TZ: ${APPS_TIMEZONE}
   DB_TYPE: postgres
   DB_HOST: postgres
   DB_PORT: 5432
   DB_USER: ${APP_NAME}
-  DB_PASS: ${DAPPS_DATABASE_PASSWORD}
+  DB_PASS: ${APPS_DATABASE_PASSWORD}
   DB_NAME: ${APP_NAME}
   DB_LOG_QUERIES: false
   DB_USE_SSL: false
@@ -17,7 +17,7 @@ services:
     extends:
       file: ../common.yml
       service: main
-    user: "${DAPPS_UID}:${DAPPS_GID}"
+    user: "${APPS_UID}:${APPS_GID}"
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/config:/app/config

@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  WG_HOST: ${DAPPS_HOST}
+  WG_HOST: ${APPS_HOST}
   LANGUAGE: en
   PORT: 80
   PASSWORD_HASH: ${WG_EASY_PASSWORD_HASH}

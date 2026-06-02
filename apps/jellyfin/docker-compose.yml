@@ -1,8 +1,8 @@
 include:
   - ../networks.yml
 x-environment: &environment
-  TZ: ${DAPPS_TIMEZONE}
-  JELLYFIN_PublishedServerUrl: http://${APP_NAME}.${DAPPS_DOMAIN}
+  TZ: ${APPS_TIMEZONE}
+  JELLYFIN_PublishedServerUrl: http://${APP_NAME}.${APPS_DOMAIN}
 services:
   jellyfin:
     image: jellyfin/jellyfin

@@ -5,8 +5,8 @@ include:
 x-environment: &environment
   environment:
     # https://www.chatwoot.com/docs/self-hosted/configuration/environment-variables/#rails-production-variables
-    SECRET_KEY_BASE: ${DAPPS_KEY_HEX_64} # Replace it with the URL you are planning to use for your app
-    FRONTEND_URL: https://${APP_NAME}.${DAPPS_DOMAIN} # To use a dedicated URL for help center pages
+    SECRET_KEY_BASE: ${APPS_KEY_HEX_64} # Replace it with the URL you are planning to use for your app
+    FRONTEND_URL: https://${APP_NAME}.${APPS_DOMAIN} # To use a dedicated URL for help center pages
     # HELPCENTER_URL=http://0.0.0.0:3000 # If the variable is set, all non-authenticated pages would fall back to the default locale.
     # DEFAULT_LOCALE=en # Whenever a new account is created, the default language will be DEFAULT_LOCALE instead of en
     ENABLE_ACCOUNT_SIGNUP: false # true: default option, allows signups, false: disable, api_only: disables the UI, but you can use account apis
@@ -17,7 +17,7 @@ x-environment: &environment
     POSTGRES_USER: ${APP_NAME}
     POSTGRES_USERNAME: ${APP_NAME}
     POSTGRES_HOST: pgvector
-    POSTGRES_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+    POSTGRES_PASSWORD: ${APPS_DATABASE_PASSWORD}
     MAILER_SENDER_EMAIL: Chatwoot <accounts@chatwoot.com> # Email from all outgoing emails are sent: `email@yourdomain.com` or `BrandName <email@yourdomain.com>`
     SMTP_DOMAIN: chatwoot.com
     SMTP_ADDRESS:

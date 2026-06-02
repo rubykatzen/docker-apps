@@ -10,7 +10,7 @@ if [ $# -eq 1 ]; then
   app="$1"
 else
   echo "Usage: $0 <app_name>"
-  echo "Available apps: ${DAPPS[*]}"
+  echo "Available apps: ${APPS[*]}"
   exit 1
 fi
 

@@ -8,9 +8,9 @@ x-environment: &environment
   OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
   OPENCLAW_CONFIG_DIR: /home/node/.openclaw
   OPENCLAW_WORKSPACE_DIR: /home/node/.openclaw/workspace
-  OPENCLAW_GATEWAY_TOKEN: ${DAPPS_KEY_HEX_32}
+  OPENCLAW_GATEWAY_TOKEN: ${APPS_KEY_HEX_32}
   OPENCLAW_DISABLE_BONJOUR: "1"
-  TZ: ${DAPPS_TIMEZONE}
+  TZ: ${APPS_TIMEZONE}
 services:
   openclaw:
     image: ghcr.io/openclaw/openclaw:2026.5.20

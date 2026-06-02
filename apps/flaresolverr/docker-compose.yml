@@ -2,7 +2,7 @@ include:
   - ../networks.yml
 x-environment: &environment
   LOG_LEVEL: info
-  TZ: ${DAPPS_TIMEZONE}
+  TZ: ${APPS_TIMEZONE}
 services:
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr

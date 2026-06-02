@@ -45,17 +45,17 @@ Edit `.env` with your settings:
 
 ```bash
 # Domain configuration
-DAPPS_DOMAIN=...
+APPS_DOMAIN=...
 
 # SSL/TLS Configuration
-DAPPS_CERTIFICATE_RESOLVER=...
-DAPPS_CLOUDFLARE_DNS_API_TOKEN=...
+APPS_CERTIFICATE_RESOLVER=...
+APPS_CLOUDFLARE_DNS_API_TOKEN=...
 
 # Database
-DAPPS_DATABASE_PASSWORD=...
+APPS_DATABASE_PASSWORD=...
 
 # System
-DAPPS_TIMEZONE=...
+APPS_TIMEZONE=...
 ```
 
 ### 3. Select Applications
@@ -63,7 +63,7 @@ DAPPS_TIMEZONE=...
 Edit `apps.env` and choose which apps to deploy:
 
 ```bash
-DAPPS=(
+APPS=(
 	'traefik'           # Required - reverse proxy
 	'portainer'         # Container management
 	'uptime-kuma'       # Monitoring
@@ -86,9 +86,9 @@ DAPPS=(
 ./logs.sh portainer
 ```
 
-All apps will be accessible at `https://{app-name}.{DAPPS_DOMAIN}`
+All apps will be accessible at `https://{app-name}.{APPS_DOMAIN}`
 
-> **Tip**: To override any global variable for a specific app without committing secrets, create `apps-data/{app}/.env`. For example, to run an app on a different domain: `echo "DAPPS_DOMAIN=other-domain.com" > apps-data/myapp/.env`
+> **Tip**: To override any global variable for a specific app without committing secrets, create `apps-data/{app}/.env`. For example, to run an app on a different domain: `echo "APPS_DOMAIN=other-domain.com" > apps-data/myapp/.env`
 
 ## 📁 Project Structure
 
@@ -132,7 +132,7 @@ docker-apps/
 ### Start Applications
 
 ```bash
-# Start all apps defined in DAPPS array (pulls latest images automatically)
+# Start all apps defined in APPS array (pulls latest images automatically)
 ./up.sh
 
 # Start specific apps
@@ -265,14 +265,14 @@ Variables are applied in this order — each level overrides the previous:
 
 **1. Global (`/.env`)**:
 ```bash
-DAPPS_DOMAIN                 # Base domain (required)
-DAPPS_CERTIFICATE_RESOLVER   # letsencrypt or cloudflare
-DAPPS_CLOUDFLARE_DNS_API_TOKEN   # If using Cloudflare DNS
-DAPPS_DATABASE_PASSWORD      # PostgreSQL/MySQL password
-DAPPS_KEY_HEX_16             # 16-byte hex key for apps
-DAPPS_KEY_HEX_32             # 32-byte hex key for apps
-DAPPS_KEY_HEX_64             # 64-byte hex key for apps
-DAPPS_TIMEZONE               # System timezone (UTC, etc.)
+APPS_DOMAIN                 # Base domain (required)
+APPS_CERTIFICATE_RESOLVER   # letsencrypt or cloudflare
+APPS_CLOUDFLARE_DNS_API_TOKEN   # If using Cloudflare DNS
+APPS_DATABASE_PASSWORD      # PostgreSQL/MySQL password
+APPS_KEY_HEX_16             # 16-byte hex key for apps
+APPS_KEY_HEX_32             # 32-byte hex key for apps
+APPS_KEY_HEX_64             # 64-byte hex key for apps
+APPS_TIMEZONE               # System timezone (UTC, etc.)
 ```
 
 **2. App-specific (`/apps/{app}/.env`)**:
@@ -286,7 +286,7 @@ APP_PORT   # Internal container port
 Create this file to override any global variable for a specific app:
 ```bash
 # apps-data/myapp/.env
-DAPPS_DOMAIN=other-domain.com
+APPS_DOMAIN=other-domain.com
 ```
 
 This file is git-ignored and lives alongside app data, making it suitable for server-specific settings that shouldn't be committed.
@@ -343,7 +343,7 @@ services:
 ### Step 4: Add to `apps.env`
 
 ```bash
-DAPPS=(
+APPS=(
   'traefik'
   'myapp'     # Add your new app
 )
@@ -387,7 +387,7 @@ ls -la apps-data/traefik/acme.json
 chmod 600 apps-data/traefik/acme.json
 
 # For Cloudflare issues, verify API token is set in .env
-grep DAPPS_CLOUDFLARE_DNS_API_TOKEN .env
+grep APPS_CLOUDFLARE_DNS_API_TOKEN .env
 ```
 
 ### Application Not Accessible

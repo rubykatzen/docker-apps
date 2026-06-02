@@ -3,16 +3,16 @@ include:
   - ../postgres-17.yml
   - ../gotenberg-8.yml
 x-image: &image solidtime/solidtime
-x-user: &user "${DAPPS_UID}:${DAPPS_GID}"
+x-user: &user "${APPS_UID}:${APPS_GID}"
 x-environment: &environment
   APP_NAME: solidtime
   VITE_APP_NAME: solidtime
   APP_ENV: production
   APP_DEBUG: false
-  APP_URL: https://${APP_NAME}.${DAPPS_DOMAIN}
+  APP_URL: https://${APP_NAME}.${APPS_DOMAIN}
   APP_FORCE_HTTPS: true
   TRUSTED_PROXIES: 172.16.0.0/12,10.0.0.0/8
-  APP_KEY: ${DAPPS_KEY_BASE64_32}
+  APP_KEY: ${APPS_KEY_BASE64_32}
   LOG_CHANNEL: stderr_daily
   LOG_LEVEL: info
   DB_CONNECTION: pgsql
@@ -21,19 +21,19 @@ x-environment: &environment
   DB_SSLMODE: prefer
   DB_DATABASE: ${APP_NAME}
   DB_USERNAME: ${APP_NAME}
-  DB_PASSWORD: ${DAPPS_DATABASE_PASSWORD}
+  DB_PASSWORD: ${APPS_DATABASE_PASSWORD}
   MAIL_MAILER: smtp
-  MAIL_HOST: ${DAPPS_SMTP_HOSTNAME}
-  MAIL_PORT: ${DAPPS_SMTP_PORT}
+  MAIL_HOST: ${APPS_SMTP_HOSTNAME}
+  MAIL_PORT: ${APPS_SMTP_PORT}
   MAIL_ENCRYPTION: tls
-  MAIL_FROM_ADDRESS: ${DAPPS_SMTP_FROM}
+  MAIL_FROM_ADDRESS: ${APPS_SMTP_FROM}
   MAIL_FROM_NAME: solidtime
-  MAIL_USERNAME: ${DAPPS_SMTP_USERNAME}
-  MAIL_PASSWORD: ${DAPPS_SMTP_PASSWORD}
+  MAIL_USERNAME: ${APPS_SMTP_USERNAME}
+  MAIL_PASSWORD: ${APPS_SMTP_PASSWORD}
   QUEUE_CONNECTION: database
   FILESYSTEM_DISK: local
   PUBLIC_FILESYSTEM_DISK: public
-  SUPER_ADMINS: ${DAPPS_ADMIN_MAIL}
+  SUPER_ADMINS: ${APPS_ADMIN_MAIL}
   GOTENBERG_URL: http://gotenberg:3000
 x-volumes: &volumes
   - ../../apps-data/${APP_NAME}/storage:/var/www/html/storage

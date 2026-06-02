@@ -6,7 +6,7 @@ x-environment: &environment
   MB_DB_DBNAME: ${APP_NAME}
   MB_DB_PORT: 5432
   MB_DB_USER: ${APP_NAME}
-  MB_DB_PASS: ${DAPPS_DATABASE_PASSWORD}
+  MB_DB_PASS: ${APPS_DATABASE_PASSWORD}
   MB_DB_HOST: postgres
 services:
   metabase:

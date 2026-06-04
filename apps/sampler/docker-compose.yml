@@ -2,12 +2,12 @@ include:
   - ../networks.yml
 x-environment: &environment
   TZ: "${APPS_TIMEZONE}"
-  CRON_EXPRESSION: "${RASTLOS_CRON_EXPRESSION:-0 * * * *}"
+  CRON_EXPRESSION: "${SAMPLER_CRON_EXPRESSION:-0 * * * *}"
   PING_PROMPT: "Reply with one ASCII digit only: what is 2 plus 2?}"
   LOG_DIR: /data/logs
 services:
-  rastlos:
-    image: ghcr.io/dupmachine/rastlos
+  sampler:
+    image: ghcr.io/dupmachine/sampler
     extends:
       file: ../common.yml
       service: side

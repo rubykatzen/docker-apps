@@ -6,7 +6,7 @@ usage() {
 Usage:
   ./fetch-env.sh [package[:tag]]
 
-Downloads the encrypted env OCI artifact, decrypts env.sops.env with the local
+Downloads the encrypted env OCI artifact, decrypts .sops.env with the local
 SOPS age key, and atomically writes .env in the project root.
 
 Defaults:
@@ -86,9 +86,9 @@ trap cleanup EXIT
 echo "Pulling encrypted env: $ref"
 oras pull --output "$tmp_dir" "$ref"
 
-encrypted_env="$tmp_dir/env.sops.env"
+encrypted_env="$tmp_dir/.sops.env"
 if [[ ! -f "$encrypted_env" ]]; then
-  echo "Downloaded artifact does not contain env.sops.env" >&2
+  echo "Downloaded artifact does not contain .sops.env" >&2
   exit 1
 fi
 

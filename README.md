@@ -69,7 +69,7 @@ decrypt it with the local SOPS age key:
 ./fetch-env.sh ghcr.io/dupmachine/docker-apps--agatha:latest
 ```
 
-The downloaded OCI artifact must contain `env.sops.env`. The script decrypts it
+The downloaded OCI artifact must contain `.sops.env`. The script decrypts it
 with `sops` and atomically writes `.env`.
 
 Install `oras` and `sops` on the server before using this command. If the SOPS

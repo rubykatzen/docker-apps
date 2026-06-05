@@ -79,24 +79,6 @@ APPS_DATABASE_PASSWORD=...
 APPS_TIMEZONE=...
 ```
 
-Production servers can also fetch an encrypted generated env from GHCR and
-decrypt it with the local SOPS age key:
-
-```bash
-# Uses ghcr.io/dupmachine/docker-apps--$(hostname -s | lowercase):latest
-./fetch-env.sh
-
-# Or specify the package/tag explicitly
-./fetch-env.sh ghcr.io/dupmachine/docker-apps--agatha:latest
-```
-
-The downloaded OCI artifact must contain `.sops.env`. The script decrypts it
-with `sops` and atomically writes `.env`.
-
-Install `oras` and `sops` on the server before using this command. If the SOPS
-age private key is not in the default SOPS location, pass it through
-`SOPS_AGE_KEY_FILE`.
-
 ### Ansible Deploy
 
 The repository includes an Ansible playbook for deploying the published Docker Apps bundle and encrypted env package:
@@ -109,6 +91,8 @@ ansible-playbook ansible/deploy-docker-apps.yml \
 ```
 
 The playbook pulls `ghcr.io/dupmachine/docker-apps:latest`, pulls the server-specific encrypted env OCI artifact, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+
+For now, `.env` is managed from the encrypted OCI artifact, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
 
 ### Publish SOPS Env Action
 
@@ -194,7 +178,6 @@ docker-apps/
 ├── apps.env                      # App list (git-ignored)
 ├── apps.env.example             # App list template
 │
-├── fetch-env.sh                  # Fetch and decrypt encrypted runtime env
 ├── up.sh                         # Start applications
 ├── down.sh                       # Stop applications
 ├── restart.sh                    # Restart applications

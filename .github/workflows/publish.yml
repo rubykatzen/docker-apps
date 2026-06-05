@@ -31,7 +31,6 @@ jobs:
             apps.env.example \
             backup.sh \
             down.sh \
-            fetch-env.sh \
             lib.sh \
             logs.sh \
             restart.sh \

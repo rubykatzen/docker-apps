@@ -97,6 +97,34 @@ Install `oras` and `sops` on the server before using this command. If the SOPS
 age private key is not in the default SOPS location, pass it through
 `SOPS_AGE_KEY_FILE`.
 
+### Ansible Deploy
+
+The repository includes an Ansible playbook for deploying the published Docker Apps bundle and encrypted env package:
+
+```bash
+ansible-playbook ansible/deploy-docker-apps.yml \
+  -i mainframe, \
+  -u root \
+  -e docker_apps_env_package=ghcr.io/dupmachine/docker-apps--mainframe
+```
+
+The playbook pulls `ghcr.io/dupmachine/docker-apps:latest`, pulls the server-specific encrypted env OCI artifact, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+
+### Publish SOPS Env Action
+
+This repository also vendors the local composite action that publishes encrypted env artifacts:
+
+```yaml
+- uses: ./.github/actions/publish-sops-env
+  with:
+    manifest: projects/docker-apps/mainframe.yml
+    keys-directory: keys
+    token: ${{ secrets.GITHUB_TOKEN }}
+  env:
+    GITHUB_SECRETS_JSON: ${{ toJson(secrets) }}
+    GITHUB_VARS_JSON: ${{ toJson(vars) }}
+```
+
 ### 3. Select Applications
 
 Edit `apps.env` and choose which apps to deploy:
@@ -153,6 +181,13 @@ docker-apps/
 │       └── ...                  # App data directories
 │
 ├── backups/                       # Backup archives (git-ignored)
+├── ansible/
+│   └── deploy-docker-apps.yml      # Deploy published bundle and encrypted env
+├── .github/
+│   ├── actions/
+│   │   └── publish-sops-env/       # Local action for encrypted env OCI artifacts
+│   └── workflows/
+│       └── publish.yml             # Publish Docker Apps OCI bundle
 │
 ├── .env                          # Global configuration (git-ignored)
 ├── .env.example                  # Configuration template

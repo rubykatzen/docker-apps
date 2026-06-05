@@ -1,0 +1,111 @@
+name: Publish SOPS env
+description: Render an env manifest, encrypt it with SOPS age recipients, and publish it as an OCI artifact.
+inputs:
+  manifest:
+    description: Path to the YAML env manifest.
+    required: true
+  keys-directory:
+    description: Directory containing public age recipients named <key>.pub.
+    required: false
+    default: keys
+  token:
+    description: Token with permission to push to the manifest's OCI package.
+    required: true
+  tag:
+    description: Immutable OCI tag. Defaults to the first eight characters of GITHUB_SHA.
+    required: false
+    default: ""
+  latest-tag:
+    description: Mutable tag to update after publishing. Set to an empty string to disable.
+    required: false
+    default: latest
+outputs:
+  package:
+    description: OCI package from the manifest.
+    value: ${{ steps.render.outputs.package }}
+  tag:
+    description: Immutable OCI tag used for the publication.
+    value: ${{ steps.publish.outputs.tag }}
+runs:
+  using: composite
+  steps:
+    - uses: oras-project/setup-oras@v1
+    - name: Install dependencies
+      shell: bash
+      env:
+        SOPS_VERSION: "3.13.1"
+      run: |
+        python3 -m pip install --disable-pip-version-check --requirement "$GITHUB_ACTION_PATH/requirements.txt"
+        mkdir -p "$RUNNER_TEMP/publish-sops-env/bin"
+        curl --fail --location --silent --show-error \
+          "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64" \
+          --output "$RUNNER_TEMP/publish-sops-env/bin/sops"
+        chmod +x "$RUNNER_TEMP/publish-sops-env/bin/sops"
+        echo "$RUNNER_TEMP/publish-sops-env/bin" >> "$GITHUB_PATH"
+    - name: Render env
+      id: render
+      shell: bash
+      env:
+        MANIFEST: ${{ inputs.manifest }}
+      run: |
+        mkdir -p "$RUNNER_TEMP/publish-sops-env"
+        python3 "$GITHUB_ACTION_PATH/scripts/render-env.py" \
+          --manifest "$MANIFEST" \
+          --output "$RUNNER_TEMP/publish-sops-env/plain.env"
+    - name: Encrypt env
+      shell: bash
+      env:
+        KEYS: ${{ steps.render.outputs.keys }}
+        KEYS_DIRECTORY: ${{ inputs.keys-directory }}
+      run: |
+        recipients=""
+        IFS=',' read -ra names <<< "$KEYS"
+        for name in "${names[@]}"; do
+          recipient="$(tr -d '[:space:]' < "$KEYS_DIRECTORY/${name}.pub")"
+          if [[ ! "$recipient" =~ ^age1 ]]; then
+            echo "Invalid age recipient: $KEYS_DIRECTORY/${name}.pub" >&2
+            exit 1
+          fi
+          recipients="${recipients:+$recipients,}$recipient"
+        done
+        SOPS_AGE_RECIPIENTS="$recipients" sops encrypt \
+          --input-type dotenv \
+          --output-type dotenv \
+          "$RUNNER_TEMP/publish-sops-env/plain.env" \
+          > "$RUNNER_TEMP/publish-sops-env/.sops.env"
+        rm "$RUNNER_TEMP/publish-sops-env/plain.env"
+    - name: Log in to registry
+      shell: bash
+      env:
+        TOKEN: ${{ inputs.token }}
+        PACKAGE: ${{ steps.render.outputs.package }}
+      run: |
+        registry="${PACKAGE%%/*}"
+        echo "$TOKEN" | oras login "$registry" --username "$GITHUB_ACTOR" --password-stdin
+    - name: Publish OCI artifact
+      id: publish
+      shell: bash
+      env:
+        PACKAGE: ${{ steps.render.outputs.package }}
+        REQUESTED_TAG: ${{ inputs.tag }}
+        LATEST_TAG: ${{ inputs.latest-tag }}
+      run: |
+        tag="$REQUESTED_TAG"
+        if [ -z "$tag" ]; then
+          tag="${GITHUB_SHA:0:8}"
+        fi
+        (
+          cd "$RUNNER_TEMP/publish-sops-env"
+          oras push \
+            "$PACKAGE:$tag" \
+            --artifact-type application/vnd.dupmachine.sops.env \
+            ".sops.env:application/vnd.dupmachine.sops.env"
+        )
+        if [ -n "$LATEST_TAG" ]; then
+          oras tag "$PACKAGE:$tag" "$LATEST_TAG"
+        fi
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"
+    - name: Cleanup
+      if: always()
+      shell: bash
+      run: rm -rf "$RUNNER_TEMP/publish-sops-env"

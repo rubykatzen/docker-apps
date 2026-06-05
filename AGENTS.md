@@ -76,7 +76,7 @@ Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 ```
 
 The `up.sh` script:
-- Generates `apps/{app}/.env` by merging the four-tier cascade for each app
+- Generates `apps/{app}/.env` by merging the three-tier cascade for each app
 - Sources the merged env for template processing
 - Processes config templates using envsubst (files matching `*.template.*`)
 - Creates apps-data directories
@@ -319,11 +319,14 @@ services:
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/cd.yml`) automatically deploys on push to main:
-1. Connects via Tailscale VPN
-2. Creates .env from GitHub secrets/vars
-3. Uploads .env via SSH
-4. Pulls latest code and runs `./restart.sh`
+GitHub Actions workflow (`.github/workflows/publish.yml`) publishes a Docker Apps OCI bundle to GHCR on push to `main`:
+1. Builds `docker-apps.tar.gz` from compose files, helper scripts, examples, and README
+2. Verifies runtime state is excluded (`.env`, `apps.env`, `apps-data`, `backups`, generated `apps/*/.env`)
+3. Publishes `ghcr.io/dupmachine/docker-apps:<short-sha>` and updates `latest`
+
+Deployment helpers live in this repository:
+- `ansible/deploy-docker-apps.yml` pulls the app bundle and server-specific encrypted env package, decrypts `.sops.env` on the server, switches a timestamped release, and runs `./restart.sh`
+- `.github/actions/publish-sops-env/` is a local composite action for rendering env manifests from GitHub Secrets/Variables, encrypting them for age recipients, and publishing `.sops.env` as an OCI artifact
 
 ## Notable App Configurations
 

@@ -58,6 +58,24 @@ APPS_DATABASE_PASSWORD=...
 APPS_TIMEZONE=...
 ```
 
+Production servers can also fetch an encrypted generated env from GHCR and
+decrypt it with the local SOPS age key:
+
+```bash
+# Uses ghcr.io/dupmachine/docker-apps--$(hostname -s | lowercase):latest
+./fetch-env.sh
+
+# Or specify the package/tag explicitly
+./fetch-env.sh ghcr.io/dupmachine/docker-apps--agatha:latest
+```
+
+The downloaded OCI artifact must contain `env.sops.env`. The script decrypts it
+with `sops` and atomically writes `.env`.
+
+Install `oras` and `sops` on the server before using this command. If the SOPS
+age private key is not in the default SOPS location, pass it through
+`SOPS_AGE_KEY_FILE`.
+
 ### 3. Select Applications
 
 Edit `apps.env` and choose which apps to deploy:
@@ -120,6 +138,7 @@ docker-apps/
 ├── apps.env                      # App list (git-ignored)
 ├── apps.env.example             # App list template
 │
+├── fetch-env.sh                  # Fetch and decrypt encrypted runtime env
 ├── up.sh                         # Start applications
 ├── down.sh                       # Stop applications
 ├── restart.sh                    # Restart applications

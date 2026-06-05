@@ -13,12 +13,16 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 3000
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3000"
     image: metabase/metabase
     volumes:
       - /dev/urandom:/dev/random:ro
     environment: *environment
     healthcheck:
-      test: curl --fail -I http://localhost:${APP_PORT}/api/health || exit 1
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
       start_period: 30s
       interval: 30s
       timeout: 5s

@@ -1,5 +1,6 @@
 x-environment: &environment
-  PORT: ${APP_PORT}
+  PORT: 45876
+  HEALTHCHECK_CMD: "nc -z 127.0.0.1 $${PORT} || exit 1"
   KEY: ${BESZEL_AGENT_PUBLIC_KEY}
 services:
   beszel-agent:

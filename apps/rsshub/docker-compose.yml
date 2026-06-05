@@ -33,6 +33,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 1200
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=1200"
     image: diygod/rsshub
     environment: *environment
     healthcheck:
@@ -41,7 +45,7 @@ services:
           "CMD",
           "curl",
           "-f",
-          "http://localhost:${APP_PORT}/healthz?key=${RSSHUB_ACCESS_KEY}",
+          "http://localhost:1200/healthz?key=${RSSHUB_ACCESS_KEY}",
         ]
       start_period: 30s
       interval: 30s

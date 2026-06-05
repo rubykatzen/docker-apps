@@ -7,10 +7,12 @@ services:
     extends:
       file: ../common.yml
       service: main
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=80"
     image: rotki/rotki
     environment: *environment
     expose:
-      - ${APP_PORT}
+      - 80
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data
       - ../../apps-data/${APP_NAME}/logs:/logs

@@ -1,7 +1,7 @@
 include:
   - ../networks.yml
   - ../postgres-17.yml
-x-image: &image ghcr.io/goauthentik/server:${APP_VERSION}
+x-image: &image ghcr.io/goauthentik/server:2025.10
 x-environment: &environment
   AUTHENTIK_BOOTSTRAP_PASSWORD: ${APPS_ADMIN_DEFAULT_PASS}
   AUTHENTIK_BOOTSTRAP_EMAIL: ${APPS_ADMIN_MAIL}
@@ -21,6 +21,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 9000
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=9000"
     command: server
     environment: *environment
     volumes: *volumes

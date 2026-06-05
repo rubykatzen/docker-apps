@@ -6,6 +6,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 4005
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=4005"
     volumes:
       - ../../apps-data/${APP_NAME}/data:/databasus-data
     networks:

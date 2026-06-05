@@ -50,8 +50,7 @@ do
     generate_env "${app}"
 
     set -a
-    [[ -f "./apps/${app}/.env.base" ]] && source "./apps/${app}/.env.base"
-    [[ -f "./apps-data/${app}/.env" ]] && source "./apps-data/${app}/.env"
+    source "./apps/${app}/.env"
     set +a
 
     mkdir -p "./apps-data/${app}"

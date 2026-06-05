@@ -30,6 +30,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 8080
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8080"
     volumes:
       - ./config/nginx.server.conf:/opt/bitnami/nginx/conf/server_blocks/countly.conf:ro
     depends_on:

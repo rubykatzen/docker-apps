@@ -275,10 +275,9 @@ APPS_KEY_HEX_64             # 64-byte hex key for apps
 APPS_TIMEZONE               # System timezone (UTC, etc.)
 ```
 
-**2. App-specific (`/apps/{app}/.env`)**:
+**2. Generated app env (`/apps/{app}/.env`)**:
 ```bash
-APP_NAME   # Application identifier (used in URLs)
-APP_PORT   # Internal container port
+APP_NAME   # Generated from the app folder name and used in URLs/paths
 ```
 
 **3. Per-app overrides (`/apps-data/{app}/.env`)**:
@@ -310,15 +309,7 @@ Apps are automatically connected to appropriate networks based on their needs.
 mkdir apps/{app-name}
 ```
 
-### Step 2: Create `.env` File
-
-```bash
-# apps/{app-name}/.env
-APP_NAME=myapp
-APP_PORT=8080
-```
-
-### Step 3: Create `docker-compose.yml`
+### Step 2: Create `docker-compose.yml`
 
 ```yaml
 # apps/myapp/docker-compose.yml
@@ -335,12 +326,16 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 8080
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8080"
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data
 ```
 
-### Step 4: Add to `apps.env`
+### Step 3: Add to `apps.env`
 
 ```bash
 APPS=(
@@ -349,7 +344,7 @@ APPS=(
 )
 ```
 
-### Step 5: Start the App
+### Step 4: Start the App
 
 ```bash
 ./up.sh myapp

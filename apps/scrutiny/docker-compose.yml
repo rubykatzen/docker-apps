@@ -10,6 +10,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 8080
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8080"
     cap_add:
       - SYS_RAWIO
       - SYS_ADMIN

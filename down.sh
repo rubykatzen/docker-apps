@@ -15,5 +15,8 @@ fi
 for app in "${apps[@]}"
 do
   generate_env "${app}"
+  set -a
+  source "./apps/${app}/.env"
+  set +a
   docker compose -f "./apps/${app}/docker-compose.yml" down
 done

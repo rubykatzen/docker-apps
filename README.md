@@ -39,6 +39,27 @@ This will:
 - Create Docker networks
 - Set up Traefik SSL configuration
 
+### OCI Bundle
+
+Every push to `main` publishes a deployable project bundle to GHCR:
+
+```text
+ghcr.io/dupmachine/docker-apps:<short-sha>
+ghcr.io/dupmachine/docker-apps:latest
+```
+
+The OCI artifact contains `docker-apps.tar.gz` with the compose files and helper
+scripts, but not runtime state such as `.env`, `apps.env`, `apps-data/`, or
+`backups/`.
+
+Download and unpack a bundle:
+
+```bash
+oras pull ghcr.io/dupmachine/docker-apps:latest
+mkdir -p /opt/docker-apps/releases/latest
+tar -xzf docker-apps.tar.gz -C /opt/docker-apps/releases/latest
+```
+
 ### 2. Configure Environment
 
 Edit `.env` with your settings:

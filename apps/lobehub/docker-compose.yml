@@ -7,7 +7,7 @@ x-environment: &environment
   KEY_VAULTS_SECRET: ${APPS_KEY_HEX_16}
   AUTH_SECRET: ${APPS_KEY_HEX_64}
   APP_URL: https://${APP_NAME}.${APPS_DOMAIN}
-  INTERNAL_APP_URL: http://localhost:${APP_PORT}
+  INTERNAL_APP_URL: http://localhost:3210
   S3_ENDPOINT: https://${APPS_S3_HOST}
   S3_BUCKET: ${APP_NAME}
   S3_REGION: ${APPS_S3_REGION}
@@ -28,6 +28,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 3210
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3210"
     environment: *environment
     depends_on:
       - paradedb

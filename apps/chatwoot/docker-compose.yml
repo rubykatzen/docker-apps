@@ -7,6 +7,17 @@ x-environment: &environment
     # https://www.chatwoot.com/docs/self-hosted/configuration/environment-variables/#rails-production-variables
     SECRET_KEY_BASE: ${APPS_KEY_HEX_64} # Replace it with the URL you are planning to use for your app
     FRONTEND_URL: https://${APP_NAME}.${APPS_DOMAIN} # To use a dedicated URL for help center pages
+    IOS_APP_ID: L7YLMN4634.com.chatwoot.app
+    ANDROID_BUNDLE_ID: com.chatwoot.app
+    ANDROID_SHA256_CERT_FINGERPRINT: AC:73:8E:DE:EB:56:EA:CC:10:87:02:A7:65:37:7B:38:D4:5D:D4:53:F8:3B:FB:D3:C6:28:64:1D:AA:08:1E:D8
+    ENABLE_PUSH_RELAY_SERVER: true
+    DIRECT_UPLOADS_ENABLED:
+    RAILS_MAX_THREADS: 5
+    NODE_ENV: production
+    RAILS_ENV: production
+    RAILS_LOG_TO_STDOUT: true
+    LOG_LEVEL: info
+    LOG_SIZE: 500
     # HELPCENTER_URL=http://0.0.0.0:3000 # If the variable is set, all non-authenticated pages would fall back to the default locale.
     # DEFAULT_LOCALE=en # Whenever a new account is created, the default language will be DEFAULT_LOCALE instead of en
     ENABLE_ACCOUNT_SIGNUP: false # true: default option, allows signups, false: disable, api_only: disables the UI, but you can use account apis
@@ -84,6 +95,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 3000
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=3000"
     <<: *environment
     image: chatwoot/chatwoot
     depends_on:

@@ -6,5 +6,9 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 8080
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8080"
     volumes:
       - ../../apps-data/${APP_NAME}/assets:/www/assets

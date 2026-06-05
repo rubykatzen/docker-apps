@@ -10,7 +10,7 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - 5000:5000
     volumes:
-      - ${APP_DATA}/storage:/storage
+      - ../../apps-data/${APP_NAME}/storage:/storage
     stop_grace_period: 2m

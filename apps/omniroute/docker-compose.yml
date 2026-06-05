@@ -19,6 +19,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 20128
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=20128"
     environment: *environment
     stop_grace_period: 40s
     volumes:

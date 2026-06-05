@@ -5,13 +5,17 @@ x-environment: &environment
   STASH_GENERATED: /generated/
   STASH_METADATA: /metadata/
   STASH_CACHE: /cache/
-  STASH_PORT: ${APP_PORT}
+  STASH_PORT: 9999
 services:
   stash:
     image: stashapp/stash
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 9999
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=9999"
     environment: *environment
     volumes:
       - /etc/localtime:/etc/localtime:ro

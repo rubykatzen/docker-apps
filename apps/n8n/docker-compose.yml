@@ -29,6 +29,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 5678
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=5678"
     environment: *environment
     volumes: *volumes
     depends_on:

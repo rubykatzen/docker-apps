@@ -9,6 +9,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 8989
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=8989"
     image: ghcr.io/hotio/sonarr
     environment: *environment
     volumes:

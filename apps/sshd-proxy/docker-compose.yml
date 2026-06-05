@@ -6,7 +6,7 @@ services:
     volumes:
       - ~/.ssh/authorized_keys:/root/.ssh/authorized_keys
     ports:
-      - ${APP_PORT}:22
+      - 10022:22
     restart: unless-stopped
     networks:
       - databases

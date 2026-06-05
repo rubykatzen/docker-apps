@@ -18,6 +18,10 @@ services:
     extends:
       file: ../common.yml
       service: main
+    expose:
+      - 2283
+    labels:
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=2283"
     environment: *environment
     volumes:
       - ../../apps-data/${APP_NAME}/data:/data

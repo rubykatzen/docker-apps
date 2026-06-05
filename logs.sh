@@ -15,4 +15,7 @@ else
 fi
 
 generate_env "${app}"
+set -a
+source "./apps/${app}/.env"
+set +a
 docker compose -f "./apps/${app}/docker-compose.yml" logs -f

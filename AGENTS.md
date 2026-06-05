@@ -325,8 +325,10 @@ GitHub Actions workflow (`.github/workflows/publish.yml`) publishes a Docker App
 3. Publishes `ghcr.io/dupmachine/docker-apps:<short-sha>` and updates `latest`
 
 Deployment helpers live in this repository:
-- `ansible/deploy-docker-apps.yml` pulls the app bundle and server-specific encrypted env package, decrypts `.sops.env` on the server, switches a timestamped release, and runs `./restart.sh`
+- `ansible/deploy-docker-apps.yml` pulls `docker_apps_app_ref`, merges optional `docker_apps_extra_refs`, pulls the server-specific encrypted env package from `docker_apps_env_ref`, decrypts `.sops.env` on the server, switches a timestamped release, and runs `./restart.sh`
 - `.github/actions/publish-sops-env/` is a local composite action for rendering env manifests from GitHub Secrets/Variables, encrypting them for age recipients, and publishing `.sops.env` as an OCI artifact
+
+Extra Docker Apps bundles are OCI artifacts referenced as full refs like `ghcr.io/dupmachine/docker-apps-extra:latest`. They must contain an `apps/` directory only adding app directories; app names may not conflict with the core bundle or earlier extras.
 
 ## Notable App Configurations
 

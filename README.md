@@ -87,12 +87,24 @@ The repository includes an Ansible playbook for deploying the published Docker A
 ansible-playbook ansible/deploy-docker-apps.yml \
   -i mainframe, \
   -u root \
-  -e docker_apps_env_package=ghcr.io/dupmachine/docker-apps--mainframe
+  -e docker_apps_env_ref=ghcr.io/dupmachine/docker-apps--mainframe:latest
 ```
 
-The playbook pulls `ghcr.io/dupmachine/docker-apps:latest`, pulls the server-specific encrypted env OCI artifact, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+The playbook pulls `docker_apps_app_ref` (`ghcr.io/dupmachine/docker-apps:latest` by default), pulls the server-specific encrypted env OCI artifact from `docker_apps_env_ref`, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
 
 For now, `.env` is managed from the encrypted OCI artifact, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
+
+Optional extra app bundles can be merged into the release before restart:
+
+```bash
+ansible-playbook ansible/deploy-docker-apps.yml \
+  -i mainframe, \
+  -u root \
+  -e docker_apps_env_ref=ghcr.io/dupmachine/docker-apps--mainframe:latest \
+  -e '{"docker_apps_extra_refs":["ghcr.io/dupmachine/docker-apps-extra:latest"]}'
+```
+
+Extra bundles must contain an `apps/` directory. Extra app names cannot conflict with apps from the core bundle or earlier extra bundles.
 
 ### Publish SOPS Env Action
 

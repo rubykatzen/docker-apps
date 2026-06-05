@@ -2,10 +2,9 @@
   hosts: all
   become: true
   vars:
-    docker_apps_app_package: ghcr.io/dupmachine/docker-apps
-    docker_apps_app_version: latest
-    docker_apps_env_package: ""
-    docker_apps_env_version: latest
+    docker_apps_app_ref: ghcr.io/dupmachine/docker-apps:latest
+    docker_apps_env_ref: ""
+    docker_apps_extra_refs: []
     docker_apps_path: ~/docker-apps
     docker_apps_keep_releases: 5
     docker_apps_sops_age_key_file: ~/.config/sops/age/keys.txt
@@ -14,10 +13,10 @@
     docker_apps_shared_path: "{{ docker_apps_path }}/shared"
     docker_apps_current_path: "{{ docker_apps_path }}/current"
   tasks:
-    - name: Require encrypted env package
+    - name: Require encrypted env ref
       fail:
-        msg: "Set docker_apps_env_package, for example ghcr.io/dupmachine/docker-apps--agatha"
-      when: docker_apps_env_package | length == 0
+        msg: "Set docker_apps_env_ref, for example ghcr.io/dupmachine/docker-apps--agatha:latest"
+      when: docker_apps_env_ref | length == 0
     - name: Ensure Docker Apps directories
       file:
         path: "{{ item }}"
@@ -35,7 +34,7 @@
           register: docker_apps_app_pull
         - name: Pull Docker Apps package
           command:
-            cmd: "oras pull --output {{ docker_apps_app_pull.path }} {{ docker_apps_app_package }}:{{ docker_apps_app_version }}"
+            cmd: "oras pull --output {{ docker_apps_app_pull.path }} {{ docker_apps_app_ref }}"
         - name: Find Docker Apps bundle
           find:
             paths: "{{ docker_apps_app_pull.path }}"
@@ -45,7 +44,7 @@
           register: docker_apps_bundle
         - name: Require Docker Apps bundle
           fail:
-            msg: "docker-apps.tar.gz was not found in {{ docker_apps_app_package }}:{{ docker_apps_app_version }}"
+            msg: "docker-apps.tar.gz was not found in {{ docker_apps_app_ref }}"
           when: docker_apps_bundle.files | length == 0
         - name: Recreate release directory
           file:
@@ -61,6 +60,44 @@
             src: "{{ docker_apps_bundle.files[0].path }}"
             dest: "{{ docker_apps_release_path }}"
             remote_src: true
+        - name: Create extra packages pull directory
+          tempfile:
+            state: directory
+            suffix: docker-apps-extra-packages
+          register: docker_apps_extra_pull
+          when: docker_apps_extra_refs | length > 0
+        - name: Pull and merge extra app packages
+          shell: |
+            set -euo pipefail
+            extra_root={{ docker_apps_extra_pull.path | quote }}
+            release_apps={{ (docker_apps_release_path + '/apps') | quote }}
+            {% for ref in docker_apps_extra_refs %}
+            package_dir="$extra_root/{{ loop.index }}"
+            mkdir -p "$package_dir/pull" "$package_dir/extract"
+            oras pull --output "$package_dir/pull" {{ ref | quote }}
+            bundle="$(find "$package_dir/pull" -type f \( -name docker-apps-extra.tar.gz -o -name docker-apps.tar.gz \) | head -n 1)"
+            if [ -z "$bundle" ]; then
+              echo "No apps bundle found in {{ ref }}" >&2
+              exit 1
+            fi
+            tar -xzf "$bundle" -C "$package_dir/extract"
+            if [ ! -d "$package_dir/extract/apps" ]; then
+              echo "Extra package {{ ref }} does not contain apps/" >&2
+              exit 1
+            fi
+            for app_path in "$package_dir/extract/apps"/*; do
+              [ -d "$app_path" ] || continue
+              app="$(basename "$app_path")"
+              if [ -e "$release_apps/$app" ]; then
+                echo "Extra app conflicts with an existing app: $app" >&2
+                exit 1
+              fi
+              cp -a "$app_path" "$release_apps/"
+            done
+            {% endfor %}
+          args:
+            executable: /bin/bash
+          when: docker_apps_extra_refs | length > 0
         - name: Create env package pull directory
           tempfile:
             state: directory
@@ -68,14 +105,14 @@
           register: docker_apps_env_pull
         - name: Pull encrypted env package
           command:
-            cmd: "oras pull --output {{ docker_apps_env_pull.path }} {{ docker_apps_env_package }}:{{ docker_apps_env_version }}"
+            cmd: "oras pull --output {{ docker_apps_env_pull.path }} {{ docker_apps_env_ref }}"
         - name: Check encrypted env payload
           stat:
             path: "{{ docker_apps_env_pull.path }}/.sops.env"
           register: docker_apps_sops_env
         - name: Require encrypted env payload
           fail:
-            msg: ".sops.env was not found in {{ docker_apps_env_package }}:{{ docker_apps_env_version }}"
+            msg: ".sops.env was not found in {{ docker_apps_env_ref }}"
           when: not docker_apps_sops_env.stat.exists
         - name: Decrypt env to shared file
           shell: >
@@ -146,3 +183,8 @@
             path: "{{ docker_apps_env_pull.path }}"
             state: absent
           when: docker_apps_env_pull is defined and docker_apps_env_pull.path is defined
+        - name: Remove extra packages pull directory
+          file:
+            path: "{{ docker_apps_extra_pull.path }}"
+            state: absent
+          when: docker_apps_extra_pull is defined and docker_apps_extra_pull.path is defined

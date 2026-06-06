@@ -4,12 +4,12 @@ This file provides guidance to AI coding agents when working with code in this r
 
 ## Repository Overview
 
-This is a Docker-based application management system (docker-apps) that orchestrates multiple self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and provides a unified management interface for deploying and managing 80+ different applications.
+This is a Docker-based application management system (docker-apps) that orchestrates core self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and can merge optional extra application catalogs during Ansible deployment.
 
 ## Core Architecture
 
 ### Directory Structure
-- `apps/` - Contains docker-compose configurations for each application
+- `apps/` - Contains core docker-compose configurations and shared compose templates
 - `apps-data/` - Persistent data storage for all running applications
 - `.env` - Global environment variables (domain, credentials, SSL settings)
 - `apps.env` - List of applications to deploy (APPS array) and shared variables like APPS_DOMAIN
@@ -72,7 +72,7 @@ Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 ./up.sh
 
 # Start specific app(s)
-./up.sh traefik portainer n8n
+./up.sh traefik gatus rybbit
 ```
 
 The `up.sh` script:
@@ -88,7 +88,7 @@ The `up.sh` script:
 ./down.sh
 
 # Stop specific app(s)
-./down.sh traefik portainer
+./down.sh traefik gatus
 ```
 
 ### Restarting Applications
@@ -97,13 +97,13 @@ The `up.sh` script:
 ./restart.sh
 
 # Restart specific app(s)
-./restart.sh n8n
+./restart.sh rybbit
 ```
 
 ### Viewing Logs
 ```bash
 # View logs for a specific app (requires single app name)
-./logs.sh portainer
+./logs.sh gatus
 ```
 
 ### Backing Up Apps
@@ -125,9 +125,9 @@ The `backup.sh` script stops each active app, zips its `apps-data/` directory, d
 After `./up.sh <app>` has generated `apps/{app}/.env`, docker compose works directly from the app folder without any flags:
 
 ```bash
-cd apps/n8n && docker compose logs -f
-cd apps/n8n && docker compose restart
-cd apps/n8n && docker compose exec n8n bash
+cd apps/gatus && docker compose logs -f
+cd apps/gatus && docker compose restart
+cd apps/gatus && docker compose exec gatus sh
 cd apps/traefik && docker compose down
 ```
 
@@ -149,18 +149,7 @@ It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external D
    - Reference data path: `../../apps-data/${APP_NAME}/`
    - Set the service port explicitly with `expose` and `traefik.http.services.${APP_NAME}.loadbalancer.server.port`
 3. Add app name to `APPS` array in `apps.env`
-4. **If app uses PostgreSQL**: Add database entry to `apps/pgbouncer/config/pgbouncer.template.ini`:
-   ```ini
-   # For standard postgres.yml:
-   appname = host=appname-postgres port=5432 dbname=appname user=appname password=${APPS_DATABASE_PASSWORD}
-
-   # For pgvector.yml:
-   appname = host=appname-pgvector port=5432 dbname=appname user=appname password=${APPS_DATABASE_PASSWORD}
-
-   # For timescale.yml:
-   appname = host=appname-timescale port=5432 dbname=appname user=appname password=${APPS_DATABASE_PASSWORD}
-   ```
-5. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
+4. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 
 Example minimal app structure:
 ```yaml

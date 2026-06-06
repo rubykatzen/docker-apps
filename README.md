@@ -1,10 +1,11 @@
-# Docker Apps - Self-Hosted Application Management System
+# Docker Apps - Core Self-Hosted Application Runtime
 
-A comprehensive Docker-based orchestration system for deploying and managing 70+ self-hosted applications. Built with Traefik reverse proxy, automatic SSL certificate management, and a unified command-line interface.
+A Docker-based orchestration system for deploying core self-hosted services, with optional extra application catalogs. Built with Traefik reverse proxy, automatic SSL certificate management, OCI bundles, and a unified command-line interface.
 
 ## 🎯 Key Features
 
-- **70+ Pre-configured Applications** - Ready-to-deploy services including monitoring, automation, media, CRM, and more
+- **Core Application Set** - Essential services for routing, auth, monitoring, automation, database access, error tracking, and analytics
+- **Extra Application Bundles** - Optional OCI app catalogs can be merged during Ansible deploy
 - **Traefik Reverse Proxy** - Automatic routing, SSL/TLS termination, and certificate management
 - **Automatic SSL Certificates** - Support for Cloudflare DNS and Let's Encrypt HTTP challenges
 - **Modular Architecture** - Reusable docker-compose components for easy maintenance and scaling
@@ -27,7 +28,7 @@ A comprehensive Docker-based orchestration system for deploying and managing 70+
 ### 1. Clone and Initialize
 
 ```bash
-git clone https://github.com/rubycats-com/docker-apps.git docker-apps
+git clone https://github.com/dupmachine/docker-apps.git docker-apps
 cd docker-apps
 ./up.sh
 ```
@@ -128,10 +129,10 @@ Edit `apps.env` and choose which apps to deploy:
 ```bash
 APPS=(
 	'traefik'           # Required - reverse proxy
-	'portainer'         # Container management
-	'uptime-kuma'       # Monitoring
-	'n8n'              # Workflow automation
-	'jellyfin'         # Media server
+	'gatus'             # Monitoring
+	'beszel'            # Server monitoring
+	'semaphore'         # Automation
+	'rybbit'            # Analytics
 	# Add more as needed...
 )
 ```
@@ -143,10 +144,10 @@ APPS=(
 ./up.sh
 
 # Or start specific apps
-./up.sh traefik portainer uptime-kuma
+./up.sh traefik gatus rybbit
 
 # View logs
-./logs.sh portainer
+./logs.sh gatus
 ```
 
 All apps will be accessible at `https://{app-name}.{APPS_DOMAIN}`
@@ -206,7 +207,7 @@ docker-apps/
 ./up.sh
 
 # Start specific apps
-./up.sh traefik portainer n8n
+./up.sh traefik gatus rybbit
 ```
 
 ### Stop Applications
@@ -216,7 +217,7 @@ docker-apps/
 ./down.sh
 
 # Stop specific apps
-./down.sh jellyfin metabase
+./down.sh gatus rybbit
 ```
 
 ### Restart Applications
@@ -226,17 +227,17 @@ docker-apps/
 ./restart.sh
 
 # Restart specific apps
-./restart.sh n8n portainer
+./restart.sh gatus rybbit
 ```
 
 ### View Logs
 
 ```bash
 # View logs for specific app (requires single app name)
-./logs.sh portainer
+./logs.sh gatus
 
 # View logs with timestamps
-./logs.sh n8n
+./logs.sh rybbit
 ```
 
 ### Backup Applications
@@ -248,84 +249,20 @@ docker-apps/
 
 The script stops each app one at a time, creates a zip archive, restarts it, then downloads the archive to `backups/`. Files are named `{server}-{app}-{datetime}.zip`.
 
-## 📦 Available Applications
+## 📦 Core Applications
 | Name | Purpose |
 |------|---------|
 | **traefik** | Reverse proxy & SSL |
-| **portainer** | Container management |
-| **watchtower** | Automatic image updates |
-| **uptime-kuma** | Monitoring & alerts |
+| **semaphore** | Ansible UI & task runner |
+| **2fauth** | Two-factor auth manager |
 | **gatus** | Status page & health checks |
 | **beszel** | Server monitoring |
 | **beszel-agent** | Beszel remote agent |
-| **scrutiny** | Disk health monitor |
-| **speedtest-tracker** | Speedtest monitor |
-| **n8n** | Workflow automation |
-| **activepieces** | Workflow automation |
-| **automatisch** | Workflow automation |
-| **semaphore** | Ansible UI & task runner |
-| **jellyfin** | Media server |
-| **jellyseerr** | Media request manager |
-| **radarr** | Movie management |
-| **sonarr** | TV show management |
-| **prowlarr** | Indexer manager |
-| **bazarr** | Subtitle manager |
-| **seerr** | Unified media requests |
-| **stash** | Adult media organizer |
-| **metube** | YouTube downloader |
-| **audiobookshelf** | Audiobook server |
-| **qbittorrent** | Torrent client |
-| **qbittorrent-vpn** | Torrent client with VPN |
-| **icloudpd** | iCloud photo downloader |
-| **immich** | Photo backup & management |
-| **rotki** | Crypto portfolio tracker |
-| **yamtrack** | Media tracker |
-| **homarr** | Dashboard |
-| **homer** | Home page |
-| **homepage** | Home page |
-| **glance** | Dashboard |
-| **freshrss** | RSS reader |
-| **rssbox** | RSS aggregator |
-| **rsshub** | RSS feed generator |
-| **changedetection** | Website monitor |
-| **grocy** | Inventory manager |
-| **tandoor** | Recipe manager |
-| **kimai** | Time tracking |
-| **solidtime** | Time tracking |
-| **monica** | Personal CRM |
-| **metabase** | Analytics dashboard |
-| **umami** | Web analytics |
-| **rybbit** | Web analytics |
-| **countly** | Mobile & web analytics |
-| **chatwoot** | Customer messaging |
-| **formbricks** | Form & survey builder |
-| **wallos** | Subscription tracker |
-| **authentik** | Identity provider |
-| **2fauth** | Two-factor auth manager |
-| **outline-admin** | Wiki / knowledge base |
-| **codecov** | Code coverage |
-| **airbroke** | Error tracking |
 | **glitchtip** | Error tracking |
-| **bugsink** | Error tracking |
-| **sentry (sure)** | Error tracking |
 | **databasus** | Database management UI |
-| **pgbouncer** | PostgreSQL connection pooler |
-| **home-assistant** | Home automation |
-| **wireguard** | VPN server |
-| **amnezia** | VPN server |
-| **ipsec-vpn-server** | IPSec VPN server |
-| **sshd-proxy** | SSH proxy |
-| **virtual-dsm** | Virtual DSM (Synology) |
-| **windows** | Windows VM |
-| **lobehub** | AI chat with multi-provider support |
-| **metamcp** | MCP server aggregator & manager |
-| **omniroute** | AI provider proxy & router |
-| **paperclip** | AI coding assistant |
-| **playwright** | Playwright MCP browser automation |
-| **flaresolverr** | Cloudflare bypass proxy |
-| **whoami** | Debug/test |
+| **rybbit** | Web analytics |
 
-*See each app's directory for current status and additional options*
+Additional apps live in the optional `dupmachine/docker-apps-extra` catalog and can be merged at deploy time with `docker_apps_extra_refs`.
 
 ## ⚙️ Configuration
 
@@ -359,8 +296,6 @@ APPS_DOMAIN=other-domain.com
 ```
 
 This file is git-ignored and lives alongside app data, making it suitable for server-specific settings that shouldn't be committed.
-
-Playwright MCP is intended for internal Docker network use, for example from MetaMCP via `http://playwright:8931/mcp`.
 
 ### Network Architecture
 

@@ -43,11 +43,16 @@ runs:
         set -euo pipefail
         mkdir -p .bundle
         mapfile -t bundle_paths <<< "$PATHS"
+        filtered_paths=()
+        for path in "${bundle_paths[@]}"; do
+          [ -n "$path" ] || continue
+          filtered_paths+=("$path")
+        done
         tar \
           --exclude='.DS_Store' \
           --exclude='apps/*/.env' \
           -czf ".bundle/$BUNDLE_NAME" \
-          "${bundle_paths[@]}"
+          "${filtered_paths[@]}"
     - name: Verify bundle
       shell: bash
       env:

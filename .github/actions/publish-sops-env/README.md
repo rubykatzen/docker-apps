@@ -26,6 +26,7 @@ permissions:
 
 ```yaml
 release_tag: mainframe
+release_asset: mainframe.sops.env
 keys:
   - master
   - mainframe
@@ -36,6 +37,6 @@ env:
 
 For each name in `keys`, the action loads `<keys-directory>/<name>.pub`. Secrets win over Variables when both contexts contain the same source key.
 
-The action uploads `.sops.env`; GitHub exposes the release asset as `default.sops.env`.
+The action uploads the encrypted env using `release_asset`, defaulting to `<manifest-stem>.sops.env`.
 
 The action publishes to the current repository by default. Override that with `release-repo`, or set `release_repo` in the manifest. The release tag defaults to `release_tag` from the manifest or the manifest filename stem.

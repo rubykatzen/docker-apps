@@ -155,7 +155,7 @@
             set -euo pipefail
             ref={{ docker_apps_env_ref | quote }}
             out={{ docker_apps_env_pull.path | quote }}
-            asset=default.sops.env
+            asset=
             repo="${ref%@*}"
             tag="${ref#*@}"
             if [ "$repo" = "$ref" ] || [ -z "$repo" ] || [ -z "$tag" ]; then
@@ -165,6 +165,9 @@
             if [ "$tag" != "${tag%%:*}" ]; then
               asset="${tag#*:}"
               tag="${tag%%:*}"
+            fi
+            if [ -z "$asset" ]; then
+              asset="$tag.sops.env"
             fi
             if [ -n "${DOCKER_APPS_GITHUB_TOKEN:-}" ]; then
               export GH_TOKEN="$DOCKER_APPS_GITHUB_TOKEN"

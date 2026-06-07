@@ -15,6 +15,7 @@ SOURCE_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_]*(?:__[A-Z0-9_]+)*$")
 KEY_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 RELEASE_REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 RELEASE_TAG_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
+RELEASE_ASSET_RE = re.compile(r"^[A-Za-z0-9_.-]+\.sops\.env$")
 
 
 class ManifestError(Exception):
@@ -63,6 +64,7 @@ def load_manifest(path):
         raise ManifestError("package has been replaced by release-repo/release-tag GitHub Releases configuration")
     release_repo = manifest.get("release_repo")
     release_tag = manifest.get("release_tag", path.stem)
+    release_asset = manifest.get("release_asset", f"{path.stem}.sops.env")
     keys = manifest.get("keys")
     env = manifest.get("env")
     if release_repo is not None and (
@@ -71,6 +73,8 @@ def load_manifest(path):
         raise ManifestError("release_repo must be in owner/repo format")
     if not isinstance(release_tag, str) or not RELEASE_TAG_RE.fullmatch(release_tag):
         raise ManifestError("release_tag must contain only letters, numbers, dots, underscores, or hyphens")
+    if not isinstance(release_asset, str) or not RELEASE_ASSET_RE.fullmatch(release_asset):
+        raise ManifestError("release_asset must be named like server.sops.env")
     if not isinstance(keys, list) or not keys:
         raise ManifestError("keys must be a non-empty list")
     if not isinstance(env, dict) or not env:
@@ -143,6 +147,7 @@ def main(argv=None):
             {
                 "release_repo": manifest.get("release_repo", ""),
                 "release_tag": manifest.get("release_tag", args.manifest.stem),
+                "release_asset": manifest.get("release_asset", f"{args.manifest.stem}.sops.env"),
                 "keys": ",".join(manifest["keys"]),
             }
         )

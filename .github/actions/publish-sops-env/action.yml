@@ -12,6 +12,10 @@ inputs:
     description: Release tag to publish. Defaults to manifest release_tag or the manifest filename stem.
     required: false
     default: ""
+  asset-name:
+    description: Release asset name. Defaults to manifest release_asset or <manifest-stem>.sops.env.
+    required: false
+    default: ""
   keys-directory:
     description: Directory containing public age recipients named <key>.pub.
     required: false
@@ -85,6 +89,8 @@ runs:
         DEFAULT_RELEASE_REPO: ${{ github.repository }}
         INPUT_RELEASE_TAG: ${{ inputs.release-tag }}
         MANIFEST_RELEASE_TAG: ${{ steps.render.outputs.release_tag }}
+        INPUT_ASSET_NAME: ${{ inputs.asset-name }}
+        MANIFEST_ASSET_NAME: ${{ steps.render.outputs.release_asset }}
         GH_TOKEN: ${{ inputs.token }}
       run: |
         set -euo pipefail
@@ -99,10 +105,16 @@ runs:
         if [ -z "$tag" ]; then
           tag="$MANIFEST_RELEASE_TAG"
         fi
+        asset_name="$INPUT_ASSET_NAME"
+        if [ -z "$asset_name" ]; then
+          asset_name="$MANIFEST_ASSET_NAME"
+        fi
+        asset_path="$RUNNER_TEMP/publish-sops-env/$asset_name"
+        cp "$RUNNER_TEMP/publish-sops-env/.sops.env" "$asset_path"
         if gh release view "$tag" --repo "$release_repo" >/dev/null 2>&1; then
-          gh release upload "$tag" "$RUNNER_TEMP/publish-sops-env/.sops.env" --repo "$release_repo" --clobber
+          gh release upload "$tag" "$asset_path" --repo "$release_repo" --clobber
         else
-          gh release create "$tag" "$RUNNER_TEMP/publish-sops-env/.sops.env" \
+          gh release create "$tag" "$asset_path" \
             --repo "$release_repo" \
             --target "$GITHUB_SHA" \
             --title "$tag" \
@@ -110,7 +122,7 @@ runs:
         fi
         echo "release_repo=$release_repo" >> "$GITHUB_OUTPUT"
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
-        echo "ref=$release_repo@$tag" >> "$GITHUB_OUTPUT"
+        echo "ref=$release_repo@$tag:$asset_name" >> "$GITHUB_OUTPUT"
     - name: Cleanup
       if: always()
       shell: bash

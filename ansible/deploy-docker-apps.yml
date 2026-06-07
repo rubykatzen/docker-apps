@@ -2,17 +2,21 @@
   hosts: all
   become: true
   tasks:
+    - name: Read Docker Apps GitHub token
+      set_fact:
+        docker_apps_effective_github_token: "{{ docker_apps_github_token | default(lookup('env', 'DOCKER_APPS_GITHUB_TOKEN'), true) }}"
+      no_log: true
     - name: Require Docker Apps deploy variables
       assert:
         that:
           - docker_apps_app_ref is defined and docker_apps_app_ref | length > 0
           - docker_apps_env_ref is defined and docker_apps_env_ref | length > 0
           - docker_apps_extra_refs is defined
-          - docker_apps_github_token is defined and docker_apps_github_token | length > 0
+          - docker_apps_effective_github_token | length > 0
           - docker_apps_path is defined and docker_apps_path | length > 0
           - docker_apps_keep_releases is defined
           - docker_apps_sops_age_key_file is defined and docker_apps_sops_age_key_file | length > 0
-        fail_msg: "Set docker_apps_app_ref, docker_apps_env_ref, docker_apps_extra_refs, docker_apps_github_token, docker_apps_path, docker_apps_keep_releases, and docker_apps_sops_age_key_file"
+        fail_msg: "Set docker_apps_app_ref, docker_apps_env_ref, docker_apps_extra_refs, docker_apps_path, docker_apps_keep_releases, docker_apps_sops_age_key_file, and either docker_apps_github_token or DOCKER_APPS_GITHUB_TOKEN"
     - name: Apply Docker Apps paths
       set_fact:
         docker_apps_release_name: "{{ ansible_date_time.iso8601_basic_short }}"
@@ -61,7 +65,7 @@
           args:
             executable: /bin/bash
           environment:
-            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
+            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_effective_github_token }}"
         - name: Require Docker Apps bundle
           stat:
             path: "{{ docker_apps_app_pull.path }}/docker-apps.tar.gz"
@@ -139,7 +143,7 @@
           args:
             executable: /bin/bash
           environment:
-            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
+            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_effective_github_token }}"
           when: docker_apps_extra_refs | length > 0
         - name: Create env package pull directory
           tempfile:
@@ -173,7 +177,7 @@
           args:
             executable: /bin/bash
           environment:
-            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
+            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_effective_github_token }}"
         - name: Check encrypted env payload
           stat:
             path: "{{ docker_apps_env_pull.path }}/.sops.env"

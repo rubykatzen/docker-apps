@@ -155,7 +155,7 @@
             set -euo pipefail
             ref={{ docker_apps_env_ref | quote }}
             out={{ docker_apps_env_pull.path | quote }}
-            asset=.sops.env
+            asset=default.sops.env
             repo="${ref%@*}"
             tag="${ref#*@}"
             if [ "$repo" = "$ref" ] || [ -z "$repo" ] || [ -z "$tag" ]; then
@@ -171,9 +171,7 @@
             fi
             gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
             test -f "$out/$asset"
-            if [ "$asset" != ".sops.env" ]; then
-              cp "$out/$asset" "$out/.sops.env"
-            fi
+            cp "$out/$asset" "$out/.sops.env"
           args:
             executable: /bin/bash
           environment:

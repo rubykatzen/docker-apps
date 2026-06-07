@@ -308,18 +308,18 @@ services:
 
 ## CI/CD
 
-GitHub Actions workflow (`.github/workflows/publish.yml`) publishes a Docker Apps OCI bundle to GHCR on push to `main`:
+GitHub Actions workflow (`.github/workflows/publish.yml`) publishes a Docker Apps release bundle on push to `main`:
 1. Builds `docker-apps.tar.gz` from compose files, helper scripts, examples, and README
 2. Verifies runtime state is excluded (`.env`, `apps.env`, `apps-data`, `backups`, generated `apps/*/.env`)
-3. Publishes `ghcr.io/dupmachine/docker-apps:<short-sha>` and updates `latest`
+3. Publishes a short-SHA GitHub Release asset and updates the `latest` release asset
 
 Deployment helpers live in this repository:
 - `ansible/deploy-docker-apps.yml` pulls `docker_apps_app_ref`, merges optional `docker_apps_extra_refs`, pulls the server-specific encrypted env package from `docker_apps_env_ref`, decrypts `.sops.env` on the server, switches a timestamped release, and runs `./restart.sh`
-- `.github/actions/publish-sops-env/` is a local composite action for rendering env manifests from GitHub Secrets/Variables, encrypting them for age recipients, and publishing `.sops.env` as an OCI artifact
+- `.github/actions/publish-sops-env/` is a local composite action for rendering env manifests from GitHub Secrets/Variables, encrypting them for age recipients, and publishing `.sops.env` as a GitHub Release asset
 
-Extra Docker Apps bundles are OCI artifacts referenced as full refs like `ghcr.io/dupmachine/docker-apps-extra:latest`. They must contain an `apps/` directory only adding app directories; app names may not conflict with the core bundle or earlier extras.
+Extra Docker Apps bundles are release assets referenced as short refs like `dupmachine/docker-apps-extra@latest`. They must contain an `apps/` directory only adding app directories; app names may not conflict with the core bundle or earlier extras.
 
-Private OCI packages are supported by passing `docker_apps_registry_username` and `docker_apps_registry_token` to `ansible/deploy-docker-apps.yml`, typically from Semaphore UI secret variables. When the token is present, the playbook performs `oras login` before any pull.
+Private release assets are supported by passing `docker_apps_github_token` to `ansible/deploy-docker-apps.yml`, typically from Semaphore UI secret variables. When the token is present, the playbook exports it as `GH_TOKEN` for `gh release download`.
 
 ## Notable App Configurations
 

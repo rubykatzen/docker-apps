@@ -12,13 +12,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/publish-app-bundle
         with:
-          package: ghcr.io/dupmachine/docker-apps
           bundle-name: docker-apps.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           paths: |

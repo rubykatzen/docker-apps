@@ -1,6 +1,6 @@
 # Publish SOPS env action
 
-Composite GitHub Action that renders an env manifest from GitHub Secrets/Variables, encrypts it for named age recipients, and publishes it as an OCI artifact.
+Composite GitHub Action that renders an env manifest from GitHub Secrets/Variables, encrypts it for named age recipients, and publishes `.sops.env` as a GitHub Release asset.
 
 ## Usage
 
@@ -19,14 +19,13 @@ The calling job requires:
 
 ```yaml
 permissions:
-  contents: read
-  packages: write
+  contents: write
 ```
 
 ## Manifest
 
 ```yaml
-package: ghcr.io/dupmachine/docker-apps--mainframe
+release_tag: mainframe
 keys:
   - master
   - mainframe
@@ -39,4 +38,4 @@ For each name in `keys`, the action loads `<keys-directory>/<name>.pub`. Secrets
 
 The action publishes `.sops.env` as the artifact payload. Removing `.sops` gives the target plaintext filename, `.env`.
 
-The action publishes the first eight characters of `GITHUB_SHA` as an immutable tag and updates `latest`. Override these with the `tag` and `latest-tag` inputs.
+The action publishes to the current repository by default. Override that with `release-repo`, or set `release_repo` in the manifest. The release tag defaults to `release_tag` from the manifest or the manifest filename stem.

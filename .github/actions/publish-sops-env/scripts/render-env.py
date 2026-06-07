@@ -13,7 +13,8 @@ import yaml
 ENV_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]*$")
 SOURCE_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_]*(?:__[A-Z0-9_]+)*$")
 KEY_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
-PACKAGE_RE = re.compile(r"^[a-z0-9.-]+/[a-z0-9-]+/[a-z0-9._-]+$")
+RELEASE_REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+RELEASE_TAG_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
 
 
 class ManifestError(Exception):
@@ -58,11 +59,18 @@ def load_manifest(path):
         raise ManifestError(f"{path} is not valid YAML: {exc}") from exc
     if not isinstance(manifest, dict):
         raise ManifestError(f"{path} must contain a YAML mapping")
-    package = manifest.get("package")
+    if "package" in manifest:
+        raise ManifestError("package has been replaced by release-repo/release-tag GitHub Releases configuration")
+    release_repo = manifest.get("release_repo")
+    release_tag = manifest.get("release_tag", path.stem)
     keys = manifest.get("keys")
     env = manifest.get("env")
-    if not isinstance(package, str) or not PACKAGE_RE.fullmatch(package):
-        raise ManifestError("package must be an untagged OCI package reference")
+    if release_repo is not None and (
+        not isinstance(release_repo, str) or not RELEASE_REPO_RE.fullmatch(release_repo)
+    ):
+        raise ManifestError("release_repo must be in owner/repo format")
+    if not isinstance(release_tag, str) or not RELEASE_TAG_RE.fullmatch(release_tag):
+        raise ManifestError("release_tag must contain only letters, numbers, dots, underscores, or hyphens")
     if not isinstance(keys, list) or not keys:
         raise ManifestError("keys must be a non-empty list")
     if not isinstance(env, dict) or not env:
@@ -133,7 +141,8 @@ def main(argv=None):
         args.output.chmod(0o600)
         write_github_outputs(
             {
-                "package": manifest["package"],
+                "release_repo": manifest.get("release_repo", ""),
+                "release_tag": manifest.get("release_tag", args.manifest.stem),
                 "keys": ",".join(manifest["keys"]),
             }
         )

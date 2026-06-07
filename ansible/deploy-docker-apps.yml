@@ -2,12 +2,10 @@
   hosts: all
   become: true
   vars:
-    docker_apps_app_ref: ghcr.io/dupmachine/docker-apps:latest
+    docker_apps_app_ref: dupmachine/docker-apps@latest
     docker_apps_env_ref: ""
     docker_apps_extra_refs: []
-    docker_apps_registry: ghcr.io
-    docker_apps_registry_username: ""
-    docker_apps_registry_token: ""
+    docker_apps_github_token: ""
     docker_apps_path: ~/docker-apps
     docker_apps_keep_releases: 5
     docker_apps_sops_age_key_file: ~/.config/sops/age/keys.txt
@@ -18,14 +16,8 @@
   tasks:
     - name: Require encrypted env ref
       fail:
-        msg: "Set docker_apps_env_ref, for example ghcr.io/dupmachine/docker-apps--agatha:latest"
+        msg: "Set docker_apps_env_ref, for example dupmachine/secrets@agatha"
       when: docker_apps_env_ref | length == 0
-    - name: Require registry username when token is set
-      fail:
-        msg: "Set docker_apps_registry_username when docker_apps_registry_token is set"
-      when:
-        - docker_apps_registry_token | length > 0
-        - docker_apps_registry_username | length == 0
     - name: Ensure Docker Apps directories
       file:
         path: "{{ item }}"
@@ -36,31 +28,47 @@
         - "{{ docker_apps_path }}/releases"
         - "{{ docker_apps_shared_path }}"
     - block:
-        - name: Log in to OCI registry
-          command:
-            cmd: "oras login {{ docker_apps_registry }} --username {{ docker_apps_registry_username }} --password-stdin"
-            stdin: "{{ docker_apps_registry_token }}"
-          no_log: true
-          when: docker_apps_registry_token | length > 0
         - name: Create app package pull directory
           tempfile:
             state: directory
             suffix: docker-apps-package
           register: docker_apps_app_pull
         - name: Pull Docker Apps package
-          command:
-            cmd: "oras pull --output {{ docker_apps_app_pull.path }} {{ docker_apps_app_ref }}"
-        - name: Find Docker Apps bundle
-          find:
-            paths: "{{ docker_apps_app_pull.path }}"
-            patterns: docker-apps.tar.gz
-            recurse: true
-            file_type: file
-          register: docker_apps_bundle
+          shell: |
+            set -euo pipefail
+            ref={{ docker_apps_app_ref | quote }}
+            out={{ docker_apps_app_pull.path | quote }}
+            asset=docker-apps.tar.gz
+            repo="${ref%@*}"
+            tag="${ref#*@}"
+            if [ "$repo" = "$ref" ] || [ -z "$repo" ] || [ -z "$tag" ]; then
+              echo "Invalid release ref: $ref. Expected owner/repo@tag or owner/repo@tag:asset" >&2
+              exit 1
+            fi
+            if [ "$tag" != "${tag%%:*}" ]; then
+              asset="${tag#*:}"
+              tag="${tag%%:*}"
+            fi
+            if [ -n "${DOCKER_APPS_GITHUB_TOKEN:-}" ]; then
+              export GH_TOKEN="$DOCKER_APPS_GITHUB_TOKEN"
+            fi
+            gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
+            test -f "$out/$asset"
+            if [ "$asset" != "docker-apps.tar.gz" ]; then
+              cp "$out/$asset" "$out/docker-apps.tar.gz"
+            fi
+          args:
+            executable: /bin/bash
+          environment:
+            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
         - name: Require Docker Apps bundle
+          stat:
+            path: "{{ docker_apps_app_pull.path }}/docker-apps.tar.gz"
+          register: docker_apps_bundle
+        - name: Fail when Docker Apps bundle is missing
           fail:
             msg: "docker-apps.tar.gz was not found in {{ docker_apps_app_ref }}"
-          when: docker_apps_bundle.files | length == 0
+          when: not docker_apps_bundle.stat.exists
         - name: Recreate release directory
           file:
             path: "{{ docker_apps_release_path }}"
@@ -72,7 +80,7 @@
             mode: "0755"
         - name: Extract Docker Apps release
           unarchive:
-            src: "{{ docker_apps_bundle.files[0].path }}"
+            src: "{{ docker_apps_app_pull.path }}/docker-apps.tar.gz"
             dest: "{{ docker_apps_release_path }}"
             remote_src: true
         - name: Create extra packages pull directory
@@ -86,15 +94,32 @@
             set -euo pipefail
             extra_root={{ docker_apps_extra_pull.path | quote }}
             release_apps={{ (docker_apps_release_path + '/apps') | quote }}
+            download_release_ref() {
+              ref="$1"
+              out="$2"
+              default_asset="$3"
+              repo="${ref%@*}"
+              tag="${ref#*@}"
+              asset="$default_asset"
+              if [ "$repo" = "$ref" ] || [ -z "$repo" ] || [ -z "$tag" ]; then
+                echo "Invalid release ref: $ref. Expected owner/repo@tag or owner/repo@tag:asset" >&2
+                exit 1
+              fi
+              if [ "$tag" != "${tag%%:*}" ]; then
+                asset="${tag#*:}"
+                tag="${tag%%:*}"
+              fi
+              gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
+              test -f "$out/$asset"
+              echo "$out/$asset"
+            }
+            if [ -n "${DOCKER_APPS_GITHUB_TOKEN:-}" ]; then
+              export GH_TOKEN="$DOCKER_APPS_GITHUB_TOKEN"
+            fi
             {% for ref in docker_apps_extra_refs %}
             package_dir="$extra_root/{{ loop.index }}"
             mkdir -p "$package_dir/pull" "$package_dir/extract"
-            oras pull --output "$package_dir/pull" {{ ref | quote }}
-            bundle="$(find "$package_dir/pull" -type f \( -name docker-apps-extra.tar.gz -o -name docker-apps.tar.gz \) | head -n 1)"
-            if [ -z "$bundle" ]; then
-              echo "No apps bundle found in {{ ref }}" >&2
-              exit 1
-            fi
+            bundle="$(download_release_ref {{ ref | quote }} "$package_dir/pull" docker-apps-extra.tar.gz)"
             tar -xzf "$bundle" -C "$package_dir/extract"
             if [ ! -d "$package_dir/extract/apps" ]; then
               echo "Extra package {{ ref }} does not contain apps/" >&2
@@ -112,6 +137,8 @@
             {% endfor %}
           args:
             executable: /bin/bash
+          environment:
+            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
           when: docker_apps_extra_refs | length > 0
         - name: Create env package pull directory
           tempfile:
@@ -119,8 +146,33 @@
             suffix: docker-apps-env-package
           register: docker_apps_env_pull
         - name: Pull encrypted env package
-          command:
-            cmd: "oras pull --output {{ docker_apps_env_pull.path }} {{ docker_apps_env_ref }}"
+          shell: |
+            set -euo pipefail
+            ref={{ docker_apps_env_ref | quote }}
+            out={{ docker_apps_env_pull.path | quote }}
+            asset=.sops.env
+            repo="${ref%@*}"
+            tag="${ref#*@}"
+            if [ "$repo" = "$ref" ] || [ -z "$repo" ] || [ -z "$tag" ]; then
+              echo "Invalid release ref: $ref. Expected owner/repo@tag or owner/repo@tag:asset" >&2
+              exit 1
+            fi
+            if [ "$tag" != "${tag%%:*}" ]; then
+              asset="${tag#*:}"
+              tag="${tag%%:*}"
+            fi
+            if [ -n "${DOCKER_APPS_GITHUB_TOKEN:-}" ]; then
+              export GH_TOKEN="$DOCKER_APPS_GITHUB_TOKEN"
+            fi
+            gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
+            test -f "$out/$asset"
+            if [ "$asset" != ".sops.env" ]; then
+              cp "$out/$asset" "$out/.sops.env"
+            fi
+          args:
+            executable: /bin/bash
+          environment:
+            DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
         - name: Check encrypted env payload
           stat:
             path: "{{ docker_apps_env_pull.path }}/.sops.env"

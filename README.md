@@ -1,11 +1,11 @@
 # Docker Apps - Core Self-Hosted Application Runtime
 
-A Docker-based orchestration system for deploying core self-hosted services, with optional extra application catalogs. Built with Traefik reverse proxy, automatic SSL certificate management, OCI bundles, and a unified command-line interface.
+A Docker-based orchestration system for deploying core self-hosted services, with optional extra application catalogs. Built with Traefik reverse proxy, automatic SSL certificate management, GitHub Release bundles, and a unified command-line interface.
 
 ## 🎯 Key Features
 
 - **Core Application Set** - Essential services for routing, auth, monitoring, automation, database access, error tracking, and analytics
-- **Extra Application Bundles** - Optional OCI app catalogs can be merged during Ansible deploy
+- **Extra Application Bundles** - Optional release app catalogs can be merged during Ansible deploy
 - **Traefik Reverse Proxy** - Automatic routing, SSL/TLS termination, and certificate management
 - **Automatic SSL Certificates** - Support for Cloudflare DNS and Let's Encrypt HTTP challenges
 - **Modular Architecture** - Reusable docker-compose components for easy maintenance and scaling
@@ -40,23 +40,21 @@ This will:
 - Create Docker networks
 - Set up Traefik SSL configuration
 
-### OCI Bundle
+### Release Bundle
 
-Every push to `main` publishes a deployable project bundle to GHCR:
+Every push to `main` publishes a deployable project bundle as a GitHub Release asset:
 
 ```text
-ghcr.io/dupmachine/docker-apps:<short-sha>
-ghcr.io/dupmachine/docker-apps:latest
+dupmachine/docker-apps@<short-sha>
+dupmachine/docker-apps@latest
 ```
 
-The OCI artifact contains `docker-apps.tar.gz` with the compose files and helper
-scripts, but not runtime state such as `.env`, `apps.env`, `apps-data/`, or
-`backups/`.
+The release asset is `docker-apps.tar.gz` with the compose files and helper scripts, but not runtime state such as `.env`, `apps.env`, `apps-data/`, or `backups/`.
 
 Download and unpack a bundle:
 
 ```bash
-oras pull ghcr.io/dupmachine/docker-apps:latest
+gh release download latest --repo dupmachine/docker-apps --pattern docker-apps.tar.gz
 mkdir -p /opt/docker-apps/releases/latest
 tar -xzf docker-apps.tar.gz -C /opt/docker-apps/releases/latest
 ```
@@ -84,25 +82,26 @@ APPS_TIMEZONE=...
 
 The repository includes an Ansible playbook for deploying the published Docker Apps bundle and encrypted env package:
 
+Target servers need Docker, Docker Compose, GitHub CLI (`gh`), SOPS, and the server-local age key.
+
 ```bash
 ansible-playbook ansible/deploy-docker-apps.yml \
   -i mainframe, \
   -u root \
-  -e docker_apps_env_ref=ghcr.io/dupmachine/docker-apps--mainframe:latest
+  -e docker_apps_env_ref=dupmachine/secrets@mainframe
 ```
 
-The playbook pulls `docker_apps_app_ref` (`ghcr.io/dupmachine/docker-apps:latest` by default), pulls the server-specific encrypted env OCI artifact from `docker_apps_env_ref`, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+The playbook pulls `docker_apps_app_ref` (`dupmachine/docker-apps@latest` by default), pulls the server-specific encrypted env release asset from `docker_apps_env_ref`, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
 
-For now, `.env` is managed from the encrypted OCI artifact, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
+For now, `.env` is managed from the encrypted release asset, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
 
-For private GHCR packages, pass registry credentials through Ansible variables, for example from Semaphore UI environment/secret variables:
+For private GitHub Releases, pass a token through Ansible variables, for example from Semaphore UI secret variables:
 
 ```yaml
-docker_apps_registry_username: ineedjet
-docker_apps_registry_token: "{{ GHCR_TOKEN }}"
+docker_apps_github_token: "{{ GITHUB_TOKEN }}"
 ```
 
-When `docker_apps_registry_token` is set, the playbook runs `oras login` before pulling the app, extra, and env refs. Public packages do not need these variables.
+When `docker_apps_github_token` is set, the playbook exports it as `GH_TOKEN` for `gh release download`. Public releases do not need this variable.
 
 Optional extra app bundles can be merged into the release before restart:
 
@@ -110,8 +109,8 @@ Optional extra app bundles can be merged into the release before restart:
 ansible-playbook ansible/deploy-docker-apps.yml \
   -i mainframe, \
   -u root \
-  -e docker_apps_env_ref=ghcr.io/dupmachine/docker-apps--mainframe:latest \
-  -e '{"docker_apps_extra_refs":["ghcr.io/dupmachine/docker-apps-extra:latest"]}'
+  -e docker_apps_env_ref=dupmachine/secrets@mainframe \
+  -e '{"docker_apps_extra_refs":["dupmachine/docker-apps-extra@latest"]}'
 ```
 
 Extra bundles must contain an `apps/` directory. Extra app names cannot conflict with apps from the core bundle or earlier extra bundles.
@@ -191,9 +190,9 @@ docker-apps/
 │   └── deploy-docker-apps.yml      # Deploy published bundle and encrypted env
 ├── .github/
 │   ├── actions/
-│   │   └── publish-sops-env/       # Local action for encrypted env OCI artifacts
+│   │   └── publish-sops-env/       # Local action for encrypted env release assets
 │   └── workflows/
-│       └── publish.yml             # Publish Docker Apps OCI bundle
+│       └── publish.yml             # Publish Docker Apps release bundle
 │
 ├── .env                          # Global configuration (git-ignored)
 ├── .env.example                  # Configuration template

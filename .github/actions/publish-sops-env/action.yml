@@ -1,35 +1,37 @@
 name: Publish SOPS env
-description: Render an env manifest, encrypt it with SOPS age recipients, and publish it as an OCI artifact.
+description: Render an env manifest, encrypt it with SOPS age recipients, and publish it as a GitHub Release asset.
 inputs:
   manifest:
     description: Path to the YAML env manifest.
     required: true
+  release-repo:
+    description: GitHub repository to publish the release asset to. Defaults to the current repository or manifest release_repo.
+    required: false
+    default: ""
+  release-tag:
+    description: Release tag to publish. Defaults to manifest release_tag or the manifest filename stem.
+    required: false
+    default: ""
   keys-directory:
     description: Directory containing public age recipients named <key>.pub.
     required: false
     default: keys
   token:
-    description: Token with permission to push to the manifest's OCI package.
+    description: Token with permission to write releases.
     required: true
-  tag:
-    description: Immutable OCI tag. Defaults to the first eight characters of GITHUB_SHA.
-    required: false
-    default: ""
-  latest-tag:
-    description: Mutable tag to update after publishing. Set to an empty string to disable.
-    required: false
-    default: latest
 outputs:
-  package:
-    description: OCI package from the manifest.
-    value: ${{ steps.render.outputs.package }}
+  release-repo:
+    description: GitHub repository used for publication.
+    value: ${{ steps.publish.outputs.release_repo }}
   tag:
-    description: Immutable OCI tag used for the publication.
+    description: Release tag used for publication.
     value: ${{ steps.publish.outputs.tag }}
+  ref:
+    description: Short release ref in owner/repo@tag format.
+    value: ${{ steps.publish.outputs.ref }}
 runs:
   using: composite
   steps:
-    - uses: oras-project/setup-oras@v1
     - name: Install dependencies
       shell: bash
       env:
@@ -74,37 +76,41 @@ runs:
           "$RUNNER_TEMP/publish-sops-env/plain.env" \
           > "$RUNNER_TEMP/publish-sops-env/.sops.env"
         rm "$RUNNER_TEMP/publish-sops-env/plain.env"
-    - name: Log in to registry
-      shell: bash
-      env:
-        TOKEN: ${{ inputs.token }}
-        PACKAGE: ${{ steps.render.outputs.package }}
-      run: |
-        registry="${PACKAGE%%/*}"
-        echo "$TOKEN" | oras login "$registry" --username "$GITHUB_ACTOR" --password-stdin
-    - name: Publish OCI artifact
+    - name: Publish release asset
       id: publish
       shell: bash
       env:
-        PACKAGE: ${{ steps.render.outputs.package }}
-        REQUESTED_TAG: ${{ inputs.tag }}
-        LATEST_TAG: ${{ inputs.latest-tag }}
+        INPUT_RELEASE_REPO: ${{ inputs.release-repo }}
+        MANIFEST_RELEASE_REPO: ${{ steps.render.outputs.release_repo }}
+        DEFAULT_RELEASE_REPO: ${{ github.repository }}
+        INPUT_RELEASE_TAG: ${{ inputs.release-tag }}
+        MANIFEST_RELEASE_TAG: ${{ steps.render.outputs.release_tag }}
+        GH_TOKEN: ${{ inputs.token }}
       run: |
-        tag="$REQUESTED_TAG"
+        set -euo pipefail
+        release_repo="$INPUT_RELEASE_REPO"
+        if [ -z "$release_repo" ]; then
+          release_repo="$MANIFEST_RELEASE_REPO"
+        fi
+        if [ -z "$release_repo" ]; then
+          release_repo="$DEFAULT_RELEASE_REPO"
+        fi
+        tag="$INPUT_RELEASE_TAG"
         if [ -z "$tag" ]; then
-          tag="${GITHUB_SHA:0:8}"
+          tag="$MANIFEST_RELEASE_TAG"
         fi
-        (
-          cd "$RUNNER_TEMP/publish-sops-env"
-          oras push \
-            "$PACKAGE:$tag" \
-            --artifact-type application/vnd.dupmachine.sops.env \
-            ".sops.env:application/vnd.dupmachine.sops.env"
-        )
-        if [ -n "$LATEST_TAG" ]; then
-          oras tag "$PACKAGE:$tag" "$LATEST_TAG"
+        if gh release view "$tag" --repo "$release_repo" >/dev/null 2>&1; then
+          gh release upload "$tag" "$RUNNER_TEMP/publish-sops-env/.sops.env" --repo "$release_repo" --clobber
+        else
+          gh release create "$tag" "$RUNNER_TEMP/publish-sops-env/.sops.env" \
+            --repo "$release_repo" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes "Encrypted Docker Apps env for $tag"
         fi
+        echo "release_repo=$release_repo" >> "$GITHUB_OUTPUT"
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
+        echo "ref=$release_repo@$tag" >> "$GITHUB_OUTPUT"
     - name: Cleanup
       if: always()
       shell: bash

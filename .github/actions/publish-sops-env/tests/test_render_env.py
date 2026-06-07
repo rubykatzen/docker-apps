@@ -35,7 +35,7 @@ class RenderEnvTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "manifest.yml"
             path.write_text(
-                "package: ghcr.io/dupmachine/app\n"
+                "release_repo: dupmachine/secrets\n"
                 "keys: [master, server]\n"
                 "env:\n"
                 "  TOKEN: FIRST\n"
@@ -51,7 +51,8 @@ class RenderEnvTest(unittest.TestCase):
             env_path = root / ".env"
             outputs_path = root / "outputs"
             manifest_path.write_text(
-                "package: ghcr.io/dupmachine/app\n"
+                "release_repo: dupmachine/secrets\n"
+                "release_tag: mainframe\n"
                 "keys: [master, server]\n"
                 "env:\n"
                 "  TOKEN: TOKEN\n"
@@ -71,7 +72,8 @@ class RenderEnvTest(unittest.TestCase):
                 os.environ.update(old_env)
             self.assertEqual(result, 0)
             self.assertIn("TOKEN=secret\n", env_path.read_text())
-            self.assertIn("package=ghcr.io/dupmachine/app\n", outputs_path.read_text())
+            self.assertIn("release_repo=dupmachine/secrets\n", outputs_path.read_text())
+            self.assertIn("release_tag=mainframe\n", outputs_path.read_text())
             self.assertIn("keys=master,server\n", outputs_path.read_text())
 
 

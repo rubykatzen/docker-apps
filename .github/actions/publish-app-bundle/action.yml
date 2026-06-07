@@ -1,0 +1,97 @@
+name: Publish Docker Apps bundle
+description: Build, verify, and publish a Docker Apps OCI bundle.
+inputs:
+  package:
+    description: OCI package to publish.
+    required: true
+  bundle-name:
+    description: Bundle archive filename.
+    required: false
+    default: docker-apps.tar.gz
+  paths:
+    description: Newline-separated paths to include in the bundle.
+    required: true
+  token:
+    description: Token with permission to push to the OCI package.
+    required: true
+  tag:
+    description: Immutable OCI tag. Defaults to the first eight characters of GITHUB_SHA.
+    required: false
+    default: ""
+  latest-tag:
+    description: Mutable tag to update after publishing. Set to an empty string to disable.
+    required: false
+    default: latest
+  require-apps:
+    description: Require at least one apps/<name>/docker-compose.yml in the bundle.
+    required: false
+    default: "true"
+outputs:
+  tag:
+    description: Immutable OCI tag used for the publication.
+    value: ${{ steps.publish.outputs.tag }}
+runs:
+  using: composite
+  steps:
+    - uses: oras-project/setup-oras@v1
+    - name: Build bundle
+      shell: bash
+      env:
+        BUNDLE_NAME: ${{ inputs.bundle-name }}
+        PATHS: ${{ inputs.paths }}
+      run: |
+        set -euo pipefail
+        mkdir -p .bundle
+        mapfile -t bundle_paths <<< "$PATHS"
+        tar \
+          --exclude='.DS_Store' \
+          --exclude='apps/*/.env' \
+          -czf ".bundle/$BUNDLE_NAME" \
+          "${bundle_paths[@]}"
+    - name: Verify bundle
+      shell: bash
+      env:
+        BUNDLE_NAME: ${{ inputs.bundle-name }}
+        REQUIRE_APPS: ${{ inputs.require-apps }}
+      run: |
+        set -euo pipefail
+        tar -tzf ".bundle/$BUNDLE_NAME" > .bundle/files.txt
+        if grep -Eq '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' .bundle/files.txt; then
+          echo "Bundle contains runtime state or env files" >&2
+          grep -E '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' .bundle/files.txt >&2
+          exit 1
+        fi
+        if [ "$REQUIRE_APPS" = "true" ] && ! grep -Eq '^apps/[^/]+/docker-compose\.yml$' .bundle/files.txt; then
+          echo "Bundle does not contain any app docker-compose.yml files" >&2
+          exit 1
+        fi
+    - name: Log in to registry
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+        TOKEN: ${{ inputs.token }}
+      run: |
+        registry="${PACKAGE%%/*}"
+        echo "$TOKEN" | oras login "$registry" --username "$GITHUB_ACTOR" --password-stdin
+    - name: Publish bundle
+      id: publish
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+        BUNDLE_NAME: ${{ inputs.bundle-name }}
+        REQUESTED_TAG: ${{ inputs.tag }}
+        LATEST_TAG: ${{ inputs.latest-tag }}
+      run: |
+        set -euo pipefail
+        tag="$REQUESTED_TAG"
+        if [ -z "$tag" ]; then
+          tag="${GITHUB_SHA:0:8}"
+        fi
+        oras push \
+          "$PACKAGE:$tag" \
+          --artifact-type application/vnd.dupmachine.project.bundle \
+          ".bundle/$BUNDLE_NAME:application/vnd.dupmachine.project.bundle.tar+gzip"
+        if [ -n "$LATEST_TAG" ]; then
+          oras tag "$PACKAGE:$tag" "$LATEST_TAG"
+        fi
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"

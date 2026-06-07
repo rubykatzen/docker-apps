@@ -16,49 +16,19 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-
-      - uses: oras-project/setup-oras@v1
-
-      - name: Build project bundle
-        run: |
-          mkdir -p .bundle
-          tar \
-            --exclude='.DS_Store' \
-            --exclude='apps/*/.env' \
-            -czf .bundle/docker-apps.tar.gz \
-            apps \
-            .env.example \
-            apps.env.example \
-            backup.sh \
-            down.sh \
-            lib.sh \
-            logs.sh \
-            restart.sh \
-            up.sh \
+      - uses: ./.github/actions/publish-app-bundle
+        with:
+          package: ghcr.io/dupmachine/docker-apps
+          bundle-name: docker-apps.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          paths: |
+            apps
+            .env.example
+            apps.env.example
+            backup.sh
+            down.sh
+            lib.sh
+            logs.sh
+            restart.sh
+            up.sh
             README.md
-
-      - name: Verify project bundle
-        run: |
-          tar -tzf .bundle/docker-apps.tar.gz > .bundle/files.txt
-          if grep -Eq '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' .bundle/files.txt; then
-            echo "Bundle contains runtime state or env files" >&2
-            grep -E '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' .bundle/files.txt >&2
-            exit 1
-          fi
-
-      - name: Log in to GHCR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "$GH_TOKEN" | oras login ghcr.io --username "${{ github.actor }}" --password-stdin
-
-      - name: Publish project bundle
-        env:
-          PACKAGE: ghcr.io/dupmachine/docker-apps
-          SHORT_SHA: ${{ github.sha }}
-        run: |
-          tag="${SHORT_SHA:0:8}"
-          oras push \
-            "$PACKAGE:$tag" \
-            --artifact-type application/vnd.dupmachine.project.bundle \
-            ".bundle/docker-apps.tar.gz:application/vnd.dupmachine.project.bundle.tar+gzip"
-          oras tag "$PACKAGE:$tag" latest

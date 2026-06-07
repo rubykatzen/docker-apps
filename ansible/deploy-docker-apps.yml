@@ -5,6 +5,9 @@
     docker_apps_app_ref: ghcr.io/dupmachine/docker-apps:latest
     docker_apps_env_ref: ""
     docker_apps_extra_refs: []
+    docker_apps_registry: ghcr.io
+    docker_apps_registry_username: ""
+    docker_apps_registry_token: ""
     docker_apps_path: ~/docker-apps
     docker_apps_keep_releases: 5
     docker_apps_sops_age_key_file: ~/.config/sops/age/keys.txt
@@ -17,6 +20,12 @@
       fail:
         msg: "Set docker_apps_env_ref, for example ghcr.io/dupmachine/docker-apps--agatha:latest"
       when: docker_apps_env_ref | length == 0
+    - name: Require registry username when token is set
+      fail:
+        msg: "Set docker_apps_registry_username when docker_apps_registry_token is set"
+      when:
+        - docker_apps_registry_token | length > 0
+        - docker_apps_registry_username | length == 0
     - name: Ensure Docker Apps directories
       file:
         path: "{{ item }}"
@@ -27,6 +36,12 @@
         - "{{ docker_apps_path }}/releases"
         - "{{ docker_apps_shared_path }}"
     - block:
+        - name: Log in to OCI registry
+          command:
+            cmd: "oras login {{ docker_apps_registry }} --username {{ docker_apps_registry_username }} --password-stdin"
+            stdin: "{{ docker_apps_registry_token }}"
+          no_log: true
+          when: docker_apps_registry_token | length > 0
         - name: Create app package pull directory
           tempfile:
             state: directory

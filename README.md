@@ -95,6 +95,15 @@ The playbook pulls `docker_apps_app_ref` (`ghcr.io/dupmachine/docker-apps:latest
 
 For now, `.env` is managed from the encrypted OCI artifact, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
 
+For private GHCR packages, pass registry credentials through Ansible variables, for example from Semaphore UI environment/secret variables:
+
+```yaml
+docker_apps_registry_username: ineedjet
+docker_apps_registry_token: "{{ GHCR_TOKEN }}"
+```
+
+When `docker_apps_registry_token` is set, the playbook runs `oras login` before pulling the app, extra, and env refs. Public packages do not need these variables.
+
 Optional extra app bundles can be merged into the release before restart:
 
 ```bash

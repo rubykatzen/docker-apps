@@ -1,23 +1,24 @@
 - name: Deploy Docker Apps
   hosts: all
   become: true
-  vars:
-    docker_apps_app_ref: dupmachine/docker-apps@latest
-    docker_apps_env_ref: ""
-    docker_apps_extra_refs: []
-    docker_apps_github_token: ""
-    docker_apps_path: ~/docker-apps
-    docker_apps_keep_releases: 5
-    docker_apps_sops_age_key_file: ~/.config/sops/age/keys.txt
-    docker_apps_release_name: "{{ ansible_date_time.iso8601_basic_short }}"
-    docker_apps_release_path: "{{ docker_apps_path }}/releases/{{ docker_apps_release_name }}"
-    docker_apps_shared_path: "{{ docker_apps_path }}/shared"
-    docker_apps_current_path: "{{ docker_apps_path }}/current"
   tasks:
-    - name: Require encrypted env ref
-      fail:
-        msg: "Set docker_apps_env_ref, for example dupmachine/secrets@agatha"
-      when: docker_apps_env_ref | length == 0
+    - name: Require Docker Apps deploy variables
+      assert:
+        that:
+          - docker_apps_app_ref is defined and docker_apps_app_ref | length > 0
+          - docker_apps_env_ref is defined and docker_apps_env_ref | length > 0
+          - docker_apps_extra_refs is defined
+          - docker_apps_github_token is defined and docker_apps_github_token | length > 0
+          - docker_apps_path is defined and docker_apps_path | length > 0
+          - docker_apps_keep_releases is defined
+          - docker_apps_sops_age_key_file is defined and docker_apps_sops_age_key_file | length > 0
+        fail_msg: "Set docker_apps_app_ref, docker_apps_env_ref, docker_apps_extra_refs, docker_apps_github_token, docker_apps_path, docker_apps_keep_releases, and docker_apps_sops_age_key_file"
+    - name: Apply Docker Apps paths
+      set_fact:
+        docker_apps_release_name: "{{ ansible_date_time.iso8601_basic_short }}"
+        docker_apps_release_path: "{{ docker_apps_path }}/releases/{{ ansible_date_time.iso8601_basic_short }}"
+        docker_apps_shared_path: "{{ docker_apps_path }}/shared"
+        docker_apps_current_path: "{{ docker_apps_path }}/current"
     - name: Ensure Docker Apps directories
       file:
         path: "{{ item }}"

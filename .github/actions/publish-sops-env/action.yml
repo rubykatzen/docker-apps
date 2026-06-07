@@ -9,7 +9,7 @@ inputs:
     required: false
     default: ""
   release-tag:
-    description: Release tag to publish. Defaults to manifest release_tag or the manifest filename stem.
+    description: Release tag to publish. Defaults to manifest release_tag or current repository name.
     required: false
     default: ""
   asset-name:
@@ -87,6 +87,7 @@ runs:
         INPUT_RELEASE_REPO: ${{ inputs.release-repo }}
         MANIFEST_RELEASE_REPO: ${{ steps.render.outputs.release_repo }}
         DEFAULT_RELEASE_REPO: ${{ github.repository }}
+        DEFAULT_RELEASE_TAG: ${{ github.event.repository.name }}
         INPUT_RELEASE_TAG: ${{ inputs.release-tag }}
         MANIFEST_RELEASE_TAG: ${{ steps.render.outputs.release_tag }}
         INPUT_ASSET_NAME: ${{ inputs.asset-name }}
@@ -104,6 +105,9 @@ runs:
         tag="$INPUT_RELEASE_TAG"
         if [ -z "$tag" ]; then
           tag="$MANIFEST_RELEASE_TAG"
+        fi
+        if [ -z "$tag" ]; then
+          tag="$DEFAULT_RELEASE_TAG"
         fi
         asset_name="$INPUT_ASSET_NAME"
         if [ -z "$asset_name" ]; then

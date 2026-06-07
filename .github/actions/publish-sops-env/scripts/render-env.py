@@ -63,7 +63,7 @@ def load_manifest(path):
     if "package" in manifest:
         raise ManifestError("package has been replaced by release-repo/release-tag GitHub Releases configuration")
     release_repo = manifest.get("release_repo")
-    release_tag = manifest.get("release_tag", path.stem)
+    release_tag = manifest.get("release_tag")
     release_asset = manifest.get("release_asset", f"{path.stem}.sops.env")
     keys = manifest.get("keys")
     env = manifest.get("env")
@@ -71,7 +71,9 @@ def load_manifest(path):
         not isinstance(release_repo, str) or not RELEASE_REPO_RE.fullmatch(release_repo)
     ):
         raise ManifestError("release_repo must be in owner/repo format")
-    if not isinstance(release_tag, str) or not RELEASE_TAG_RE.fullmatch(release_tag):
+    if release_tag is not None and (
+        not isinstance(release_tag, str) or not RELEASE_TAG_RE.fullmatch(release_tag)
+    ):
         raise ManifestError("release_tag must contain only letters, numbers, dots, underscores, or hyphens")
     if not isinstance(release_asset, str) or not RELEASE_ASSET_RE.fullmatch(release_asset):
         raise ManifestError("release_asset must be named like server.sops.env")
@@ -146,7 +148,7 @@ def main(argv=None):
         write_github_outputs(
             {
                 "release_repo": manifest.get("release_repo", ""),
-                "release_tag": manifest.get("release_tag", args.manifest.stem),
+                "release_tag": manifest.get("release_tag", ""),
                 "release_asset": manifest.get("release_asset", f"{args.manifest.stem}.sops.env"),
                 "keys": ",".join(manifest["keys"]),
             }

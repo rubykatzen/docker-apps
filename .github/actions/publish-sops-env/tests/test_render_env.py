@@ -52,7 +52,6 @@ class RenderEnvTest(unittest.TestCase):
             outputs_path = root / "outputs"
             manifest_path.write_text(
                 "release_repo: dupmachine/secrets\n"
-                "release_tag: mainframe\n"
                 "release_asset: mainframe.sops.env\n"
                 "keys: [master, server]\n"
                 "env:\n"
@@ -74,7 +73,7 @@ class RenderEnvTest(unittest.TestCase):
             self.assertEqual(result, 0)
             self.assertIn("TOKEN=secret\n", env_path.read_text())
             self.assertIn("release_repo=dupmachine/secrets\n", outputs_path.read_text())
-            self.assertIn("release_tag=mainframe\n", outputs_path.read_text())
+            self.assertIn("release_tag=\n", outputs_path.read_text())
             self.assertIn("release_asset=mainframe.sops.env\n", outputs_path.read_text())
             self.assertIn("keys=master,server\n", outputs_path.read_text())
 

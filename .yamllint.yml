@@ -1,4 +1,6 @@
 extends: default
+ignore: |
+  apps-data/
 rules:
   empty-lines:
     max: 0

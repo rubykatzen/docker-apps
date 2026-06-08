@@ -34,7 +34,6 @@ services:
       NEXT_PUBLIC_DISABLE_SIGNUP: ${APPS_DISABLE_SIGNUP:-false}
     depends_on:
       - backend
-
   backend:
     image: ghcr.io/rybbit-io/rybbit-backend
     extends:

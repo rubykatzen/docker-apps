@@ -13,8 +13,8 @@ services:
       - /home:/extra-filesystems/home:ro
     environment: *environment
     cap_add:
-        - SYS_RAWIO # required for S.M.A.R.T. data
-        - SYS_ADMIN # required for NVMe S.M.A.R.T. data
+      - SYS_RAWIO # required for S.M.A.R.T. data
+      - SYS_ADMIN # required for NVMe S.M.A.R.T. data
     devices:
       - ${BESZEL_DISK_1_DEVICE:-/dev/null}:${BESZEL_DISK_1_DEVICE:-/dev/null}
       - ${BESZEL_DISK_2_DEVICE:-/dev/null}:${BESZEL_DISK_2_DEVICE:-/dev/null}

@@ -34,7 +34,6 @@ services:
     logging:
       options:
         max-size: 10m
-
 configs:
   clickhouse_network:
     content: |

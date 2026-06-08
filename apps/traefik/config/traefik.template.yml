@@ -4,8 +4,8 @@ global:
 log:
   level: INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 accesslog: {}
-  # format: common # common, json, logfmt
-  # filePath: /var/log/traefik/access.log
+# format: common # common, json, logfmt
+# filePath: /var/log/traefik/access.log
 api:
   dashboard: true
 ping:

@@ -10,7 +10,7 @@ alerting:
       send-on-resolved: true
       failure-threshold: 2
       success-threshold: 1
-ui: 
+ui:
   dashboard-subheading: ""
   dark-mode: false
   default-sort-by: group

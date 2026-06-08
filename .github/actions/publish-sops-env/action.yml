@@ -87,7 +87,7 @@ runs:
         INPUT_RELEASE_REPO: ${{ inputs.release-repo }}
         MANIFEST_RELEASE_REPO: ${{ steps.render.outputs.release_repo }}
         DEFAULT_RELEASE_REPO: ${{ github.repository }}
-        DEFAULT_RELEASE_TAG: ${{ github.event.repository.name }}
+        DEFAULT_RELEASE_TAG: latest
         INPUT_RELEASE_TAG: ${{ inputs.release-tag }}
         MANIFEST_RELEASE_TAG: ${{ steps.render.outputs.release_tag }}
         INPUT_ASSET_NAME: ${{ inputs.asset-name }}

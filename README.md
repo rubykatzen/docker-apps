@@ -115,21 +115,6 @@ ansible-playbook ansible/deploy-docker-apps.yml \
 
 Extra bundles must contain an `apps/` directory. Extra app names cannot conflict with apps from the core bundle or earlier extra bundles.
 
-### Publish SOPS Env Action
-
-This repository also vendors the local composite action that publishes encrypted env artifacts:
-
-```yaml
-- uses: ./.github/actions/publish-sops-env
-  with:
-    manifest: projects/docker-apps/mainframe.yml
-    keys-directory: keys
-    token: ${{ secrets.GITHUB_TOKEN }}
-  env:
-    GITHUB_SECRETS_JSON: ${{ toJson(secrets) }}
-    GITHUB_VARS_JSON: ${{ toJson(vars) }}
-```
-
 ### 3. Select Applications
 
 Edit `apps.env` and choose which apps to deploy:
@@ -190,7 +175,9 @@ docker-apps/
 │   └── deploy-docker-apps.yml      # Deploy published bundle and encrypted env
 ├── .github/
 │   ├── actions/
-│   │   └── publish-sops-env/       # Local action for encrypted env release assets
+│   │   ├── discover-manifest-matrix/  # Build a strategy matrix from files matching a glob
+│   │   ├── publish-sops-env/          # Encrypt env manifest and upload to GitHub Release
+│   │   └── publish-app-bundle/        # Build and publish a Docker Apps release bundle
 │   └── workflows/
 │       └── publish.yml             # Publish Docker Apps release bundle
 │
@@ -443,6 +430,117 @@ If you're evaluating alternatives, these projects solve a similar problem from d
 | **Dokploy** | [dokploy.com](https://dokploy.com) | PaaS-style deployment panel for apps, databases, and containers | [Dokploy/templates/blueprints](https://github.com/Dokploy/templates/tree/canary/blueprints) |
 | **Runtipi** | [runtipi.io](https://runtipi.io) | Beginner-friendly self-hosted app store and dashboard | [runtipi/runtipi-appstore/apps](https://github.com/runtipi/runtipi-appstore/tree/master/apps) |
 | **Coolify** | [coolify.io](https://coolify.io) | Self-hosted Heroku/Vercel-style platform for apps, databases, and services | [coollabsio/coolify/templates/compose](https://github.com/coollabsio/coolify/tree/v4.x/templates/compose) |
+
+## ⚙️ GitHub Actions
+
+This repository provides three reusable composite actions under `.github/actions/`.
+
+---
+
+### `discover-manifest-matrix`
+
+Builds a GitHub Actions strategy matrix from files matching a glob pattern.
+
+```yaml
+- id: discover
+  uses: dupmachine/docker-apps/.github/actions/discover-manifest-matrix@main
+  with:
+    pattern: projects/*/*.yml   # required
+```
+
+**Outputs:** `matrix` — JSON object `{"manifest": ["path/a.yml", "path/b.yml", ...]}`.
+
+**Typical use** — feed the output into a matrix job:
+
+```yaml
+jobs:
+  discover:
+    outputs:
+      matrix: ${{ steps.discover.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: discover
+        uses: dupmachine/docker-apps/.github/actions/discover-manifest-matrix@main
+        with:
+          pattern: projects/*/*.yml
+
+  publish:
+    needs: discover
+    strategy:
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - run: echo ${{ matrix.manifest }}
+```
+
+---
+
+### `publish-sops-env`
+
+Renders an env manifest from GitHub Secrets/Variables, encrypts it with SOPS age recipients, and uploads `.sops.env` as a GitHub Release asset.
+
+The release must already exist before this action runs. Create it in a separate job and pass the tag explicitly.
+
+```yaml
+- uses: dupmachine/docker-apps/.github/actions/publish-sops-env@main
+  with:
+    manifest: projects/docker-apps/mainframe.yml   # required
+    keys-directory: keys                           # default: keys
+    release-tag: latest                            # default: manifest release_tag or repo name
+    release-repo: ""                               # default: current repository
+    asset-name: ""                                 # default: manifest release_asset or <stem>.sops.env
+    token: ${{ secrets.GITHUB_TOKEN }}             # required
+  env:
+    GITHUB_SECRETS_JSON: ${{ toJson(secrets) }}
+    GITHUB_VARS_JSON: ${{ toJson(vars) }}
+```
+
+Requires `contents: write` permission on the calling job.
+
+**Manifest format:**
+
+```yaml
+release_asset: docker-apps--mainframe.sops.env
+
+keys:
+  - master
+  - mainframe
+
+raw_env:        # optional — skip shell quoting for bash array values
+  - APPS
+
+env:
+  APPS_DOMAIN: APPS_DOMAIN         # output name: GitHub Secret/Variable name
+  APPS: APPS_AGATHA
+```
+
+Secrets take precedence over Variables when both contain the same source key. Every source key must exist or the action fails.
+
+---
+
+### `publish-app-bundle`
+
+Builds a `tar.gz` bundle from specified paths and publishes it as a GitHub Release asset — once under an immutable short-SHA tag and once under a mutable `latest` tag.
+
+```yaml
+- uses: dupmachine/docker-apps/.github/actions/publish-app-bundle@main
+  with:
+    paths: |                        # required — newline-separated paths to include
+      apps
+      ansible
+      *.sh
+      *.env.example
+    token: ${{ secrets.GITHUB_TOKEN }}   # required
+    bundle-name: docker-apps.tar.gz      # default
+    tag: ""                              # default: first 8 chars of GITHUB_SHA
+    latest-tag: latest                   # default: latest (set to "" to disable)
+    release-repo: ""                     # default: current repository
+```
+
+Requires `contents: write` permission on the calling job.
+
+The action refuses bundles that contain `.env`, `apps.env`, `apps-data/`, or `backups/`.
+
+**Outputs:** `tag` (immutable SHA tag used), `ref` (`owner/repo@tag`).
 
 ## 📝 License
 

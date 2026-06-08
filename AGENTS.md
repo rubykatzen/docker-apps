@@ -324,8 +324,15 @@ Private release assets are supported by passing `docker_apps_github_token` to `a
 ## Notable App Configurations
 
 - **traefik**: Entry point, must be started first, uses external network
+- **watchtower**: Infrastructure app — recommended on every server. Handles automatic image updates for apps that opt in via the `com.centurylinklabs.watchtower.enable=true` label. `restart.sh` automatically skips any app with this label, so Watchtower is their sole lifecycle manager.
 - Apps with databases include postgres.yml and create app-specific database named `${APP_NAME}`
 - Config templates use `envsubst` - variables must be shell-compatible (`${VAR}` syntax)
+
+## Watchtower-managed Apps
+
+Apps that carry the `com.centurylinklabs.watchtower.enable=true` label are updated automatically by Watchtower and are **skipped by `restart.sh`**. The label in the compose file is the single source of truth — no separate skip list exists.
+
+Currently opted in: `traefik`, `semaphore`, `watchtower` itself.
 
 ## Important: Template Files vs Generated Files
 

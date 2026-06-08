@@ -2,7 +2,6 @@ include:
   - ../networks.yml
   - ../postgres-18.yml
   - ../clickhouse-26.5.yml
-
 x-environment: &environment
   NODE_ENV: production
   BASE_URL: https://${APP_NAME}.${APPS_DOMAIN}
@@ -19,7 +18,6 @@ x-environment: &environment
   CLICKHOUSE_DB: ${APP_NAME}
   CLICKHOUSE_USER: ${APP_NAME}
   CLICKHOUSE_PASSWORD: ${APPS_DATABASE_PASSWORD}
-
 services:
   client:
     image: ghcr.io/rybbit-io/rybbit-client

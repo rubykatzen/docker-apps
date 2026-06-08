@@ -499,7 +499,6 @@ Requires `contents: write` permission on the calling job.
 release_asset: docker-apps--mainframe.sops.env
 
 keys:
-  - master
   - mainframe
 
 raw_env:        # optional — skip shell quoting for bash array values

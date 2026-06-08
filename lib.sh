@@ -4,7 +4,6 @@ generate_env() {
   local output="./apps/${app}/.env"
   {
     cat .env
-    [[ -f "apps.env" ]] && { echo; cat apps.env; }
     echo "APP_NAME=${app}"
     [[ -f "./apps-data/${app}/.env" ]] && { echo; cat "./apps-data/${app}/.env"; }
   } | awk '

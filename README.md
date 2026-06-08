@@ -35,7 +35,6 @@ cd docker-apps
 
 This will:
 - Copy `.env.example` to `.env`
-- Copy `apps.env.example` to `apps.env`
 - Create `apps-data/` directory structure
 - Create Docker networks
 - Set up Traefik SSL configuration
@@ -49,7 +48,7 @@ dupmachine/docker-apps@<short-sha>
 dupmachine/docker-apps@latest
 ```
 
-The release asset is `docker-apps.tar.gz` with the compose files and helper scripts, but not runtime state such as `.env`, `apps.env`, `apps-data/`, or `backups/`.
+The release asset is `docker-apps.tar.gz` with the compose files and helper scripts, but not runtime state such as `.env`, `apps-data/`, or `backups/`.
 
 Download and unpack a bundle:
 
@@ -91,11 +90,9 @@ ansible-playbook ansible/deploy-docker-apps.yml \
   -e docker_apps_env_ref=dupmachine/secrets@latest:docker-apps--mainframe.sops.env
 ```
 
-The `docker_apps_env_ref` format is `owner/repo@tag:asset`. The playbook downloads the asset, decrypts it with the server-local SOPS age key (`docker_apps_sops_age_key_file`), links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+The `docker_apps_env_ref` format is `owner/repo@tag:asset`. The playbook downloads the asset, decrypts it with the server-local SOPS age key (`docker_apps_sops_age_key_file`), links shared `.env` and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
 
 The `docker_apps_app_ref` defaults to `dupmachine/docker-apps@latest`.
-
-For now, `.env` is managed from the encrypted release asset, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
 
 For private GitHub Releases, pass a token through Ansible variables, for example from Semaphore UI secret variables:
 
@@ -119,7 +116,7 @@ Extra bundles must contain an `apps/` directory. Extra app names cannot conflict
 
 ### 3. Select Applications
 
-Edit `apps.env` and choose which apps to deploy:
+Edit `.env` and set the `APPS` array:
 
 ```bash
 APPS=(
@@ -183,10 +180,8 @@ docker-apps/
 │   └── workflows/
 │       └── publish.yml             # Publish Docker Apps release bundle
 │
-├── .env                          # Global configuration (git-ignored)
+├── .env                          # All server configuration incl. APPS array (git-ignored)
 ├── .env.example                  # Configuration template
-├── apps.env                      # App list (git-ignored)
-├── apps.env.example             # App list template
 │
 ├── up.sh                         # Start applications
 ├── down.sh                       # Stop applications
@@ -337,12 +332,14 @@ services:
       - ../../apps-data/${APP_NAME}/data:/data
 ```
 
-### Step 3: Add to `apps.env`
+### Step 3: Add to `.env`
+
+Add your app to the `APPS` array in `.env`:
 
 ```bash
 APPS=(
   'traefik'
-  'myapp'     # Add your new app
+  'myapp'
 )
 ```
 
@@ -540,7 +537,7 @@ Builds a `tar.gz` bundle from specified paths and publishes it as a GitHub Relea
 
 Requires `contents: write` permission on the calling job.
 
-The action refuses bundles that contain `.env`, `apps.env`, `apps-data/`, or `backups/`.
+The action refuses bundles that contain `.env`, `apps-data/`, or `backups/`.
 
 **Outputs:** `tag` (immutable SHA tag used), `ref` (`owner/repo@tag`).
 

@@ -2,7 +2,6 @@
 set -e
 set -a
 source .env
-source apps.env
 set +a
 
 if [ $# -gt 0 ]; then

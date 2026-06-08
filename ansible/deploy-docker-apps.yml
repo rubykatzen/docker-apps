@@ -200,12 +200,6 @@
         - name: Publish env file
           command:
             cmd: "mv {{ docker_apps_shared_path }}/.env.tmp {{ docker_apps_shared_path }}/.env"
-        - name: Ensure shared apps.env
-          copy:
-            dest: "{{ docker_apps_shared_path }}/apps.env"
-            content: ""
-            force: false
-            mode: "0600"
         - name: Ensure shared apps-data directory
           file:
             path: "{{ docker_apps_shared_path }}/apps-data"
@@ -220,8 +214,6 @@
           loop:
             - src: "{{ docker_apps_shared_path }}/.env"
               dest: "{{ docker_apps_release_path }}/.env"
-            - src: "{{ docker_apps_shared_path }}/apps.env"
-              dest: "{{ docker_apps_release_path }}/apps.env"
             - src: "{{ docker_apps_shared_path }}/apps-data"
               dest: "{{ docker_apps_release_path }}/apps-data"
         - name: Switch current release

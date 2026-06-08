@@ -23,7 +23,6 @@ ensure_network() {
 source "$(dirname "$0")/lib.sh"
 
 ensure_file .env.example .env
-ensure_file apps.env.example apps.env
 mkdir -p apps-data/traefik
 touch apps-data/traefik/acme.json
 chmod 600 apps-data/traefik/acme.json
@@ -33,7 +32,6 @@ ensure_network mcp
 
 set -a
 source .env
-source apps.env
 set +a
 
 if [ $# -gt 0 ]; then

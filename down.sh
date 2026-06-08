@@ -3,7 +3,6 @@ set -e
 source "$(dirname "$0")/lib.sh"
 set -a
 source .env
-source apps.env
 set +a
 
 if [ $# -gt 0 ]; then

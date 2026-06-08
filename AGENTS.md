@@ -11,8 +11,7 @@ This is a Docker-based application management system (docker-apps) that orchestr
 ### Directory Structure
 - `apps/` - Contains core docker-compose configurations and shared compose templates
 - `apps-data/` - Persistent data storage for all running applications
-- `.env` - Global environment variables (domain, credentials, SSL settings)
-- `apps.env` - List of applications to deploy (APPS array) and shared variables like APPS_DOMAIN
+- `.env` - All environment variables for this server: global settings, per-server overrides, and the `APPS` array. Deployed via Ansible from encrypted `dupmachine-secrets` release assets.
 - Shell scripts at root for orchestration
 
 ### Docker Compose Architecture
@@ -38,14 +37,14 @@ The repository uses a modular docker-compose structure with reusable components:
 
 ### Environment Variable System
 
-Three-tier environment variable cascade (each level overrides the previous):
-1. `.env` - Global settings (APPS_* variables for domain, database password, API keys)
-2. `apps.env` - APPS array and shared variables (APPS_DOMAIN, APPS_CERTIFICATE_RESOLVER, etc.)
-3. `apps-data/{app}/.env` - Per-app runtime overrides (git-ignored, server-specific, e.g. different APPS_DOMAIN)
+Two-tier environment variable cascade (each level overrides the previous):
+1. `.env` - All server variables: global settings, per-server overrides, and the `APPS` array. Deployed by Ansible from an encrypted `dupmachine-secrets` release asset.
+2. `apps-data/{app}/.env` - Per-app runtime overrides (git-ignored, rarely needed)
 
-Before starting each app, `up.sh` runs `generate_env` which writes `APP_NAME` from the app folder name and merges the environment cascade into `apps/{app}/.env`. This allows running docker compose directly from the app folder without any `--env-file` flags.
+Before starting each app, `up.sh` runs `generate_env` which writes `APP_NAME` from the app folder name and merges the cascade into `apps/{app}/.env`. This allows running docker compose directly from the app folder without any `--env-file` flags.
 
-Key global variables in `.env`:
+Key variables in `.env`:
+- `APPS` - Bash array of app names to deploy on this server, e.g. `APPS=(traefik gatus semaphore)`
 - `APPS_DOMAIN` - Base domain for all services
 - `APPS_CERTIFICATE_RESOLVER` - SSL resolver (Cloudflare DNS or HTTP challenge)
 - `APPS_DATABASE_PASSWORD` - Shared database password
@@ -68,7 +67,7 @@ Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 
 ### Starting Applications
 ```bash
-# Start all apps defined in APPS array in apps.env
+# Start all apps defined in APPS array in .env
 ./up.sh
 
 # Start specific app(s)
@@ -137,7 +136,7 @@ The `up.sh` script performs first-run setup automatically before loading environ
 ```bash
 ./up.sh
 ```
-It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing. The default `apps.env.example` has an empty `APPS` array, so first run is safe before selecting apps.
+It creates `.env` from `.env.example`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing.
 
 ## Adding New Applications
 
@@ -148,7 +147,7 @@ It creates `.env`, `apps.env`, `apps-data/traefik/acme.json`, and the external D
    - Include `../postgres.yml` and/or `../redis.yml`, `../mongo.yml` if needed
    - Reference data path: `../../apps-data/${APP_NAME}/`
    - Set the service port explicitly with `expose` and `traefik.http.services.${APP_NAME}.loadbalancer.server.port`
-3. Add app name to `APPS` array in `apps.env`
+3. Add app name to the `APPS` array in `.env`
 4. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 
 Example minimal app structure:
@@ -310,7 +309,7 @@ services:
 
 GitHub Actions workflow (`.github/workflows/publish.yml`) publishes a Docker Apps release bundle on push to `main`:
 1. Builds `docker-apps.tar.gz` from compose files, helper scripts, examples, and README
-2. Verifies runtime state is excluded (`.env`, `apps.env`, `apps-data`, `backups`, generated `apps/*/.env`)
+2. Verifies runtime state is excluded (`.env`, `apps-data`, `backups`, generated `apps/*/.env`)
 3. Publishes a short-SHA GitHub Release asset and updates the `latest` release asset
 
 Deployment helpers live in this repository:

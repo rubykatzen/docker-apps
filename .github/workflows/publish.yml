@@ -22,7 +22,6 @@ jobs:
           paths: |
             apps
             .env.example
-            apps.env.example
             backup.sh
             down.sh
             lib.sh

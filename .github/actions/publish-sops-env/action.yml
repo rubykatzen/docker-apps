@@ -115,15 +115,7 @@ runs:
         fi
         asset_path="$RUNNER_TEMP/publish-sops-env/$asset_name"
         cp "$RUNNER_TEMP/publish-sops-env/.sops.env" "$asset_path"
-        if gh release view "$tag" --repo "$release_repo" >/dev/null 2>&1; then
-          gh release upload "$tag" "$asset_path" --repo "$release_repo" --clobber
-        else
-          gh release create "$tag" "$asset_path" \
-            --repo "$release_repo" \
-            --target "$GITHUB_SHA" \
-            --title "$tag" \
-            --notes "Encrypted Docker Apps env for $tag"
-        fi
+        gh release upload "$tag" "$asset_path" --repo "$release_repo" --clobber
         echo "release_repo=$release_repo" >> "$GITHUB_OUTPUT"
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
         echo "ref=$release_repo@$tag:$asset_name" >> "$GITHUB_OUTPUT"

@@ -27,6 +27,19 @@ class RenderEnvTest(unittest.TestCase):
         output = render_env.render_env({"env": {"TOKEN": "TOKEN"}}, {"TOKEN": "hello world"}, {})
         self.assertIn("TOKEN='hello world'\n", output)
 
+    def test_raw_env_skips_quoting(self):
+        manifest = {"env": {"APPS": "APPS"}, "raw_env": ["APPS"]}
+        output = render_env.render_env(manifest, {"APPS": "('beszel-agent' 'watchtower')"}, {})
+        self.assertIn("APPS=('beszel-agent' 'watchtower')\n", output)
+
+    def test_raw_env_quotes_non_raw(self):
+        manifest = {"env": {"TOKEN": "TOKEN", "APPS": "APPS"}, "raw_env": ["APPS"]}
+        output = render_env.render_env(
+            manifest, {"TOKEN": "hello world", "APPS": "('a' 'b')"}, {}
+        )
+        self.assertIn("TOKEN='hello world'\n", output)
+        self.assertIn("APPS=('a' 'b')\n", output)
+
     def test_missing_source_fails(self):
         with self.assertRaises(render_env.ManifestError):
             render_env.render_env({"env": {"TOKEN": "TOKEN"}}, {}, {})

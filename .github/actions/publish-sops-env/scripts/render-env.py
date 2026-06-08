@@ -67,6 +67,12 @@ def load_manifest(path):
     release_asset = manifest.get("release_asset", f"{path.stem}.sops.env")
     keys = manifest.get("keys")
     env = manifest.get("env")
+    raw_env = manifest.get("raw_env", [])
+    if not isinstance(raw_env, list):
+        raise ManifestError("raw_env must be a list")
+    for name in raw_env:
+        if not isinstance(name, str) or not ENV_NAME_RE.fullmatch(name):
+            raise ManifestError(f"invalid raw_env name: {name!r}")
     if release_repo is not None and (
         not isinstance(release_repo, str) or not RELEASE_REPO_RE.fullmatch(release_repo)
     ):
@@ -92,13 +98,13 @@ def load_manifest(path):
     return manifest
 
 
-def dotenv_value(value):
+def dotenv_value(value, raw=False):
     value = str(value)
     if "\x00" in value:
         raise ManifestError("env values cannot contain NUL bytes")
-    if "\n" in value or "\r" in value:
+    if not raw and ("\n" in value or "\r" in value):
         raise ManifestError("env values cannot contain newlines")
-    return shlex.quote(value)
+    return value if raw else shlex.quote(value)
 
 
 def resolve_value(source_name, secrets, variables):
@@ -112,6 +118,7 @@ def resolve_value(source_name, secrets, variables):
 
 
 def render_env(manifest, secrets, variables):
+    raw_env = set(manifest.get("raw_env", []))
     lines = []
     missing = []
     for output_name, source_name in manifest["env"].items():
@@ -119,7 +126,7 @@ def render_env(manifest, secrets, variables):
         if value is None:
             missing.append(source_name)
             continue
-        lines.append(f"{output_name}={dotenv_value(value)}")
+        lines.append(f"{output_name}={dotenv_value(value, raw=output_name in raw_env)}")
     if missing:
         raise ManifestError("missing GitHub Secrets/Variables: " + ", ".join(sorted(missing)))
     return "\n".join(lines) + "\n"

@@ -88,10 +88,12 @@ Target servers need Docker, Docker Compose, GitHub CLI (`gh`), SOPS, and the ser
 ansible-playbook ansible/deploy-docker-apps.yml \
   -i mainframe, \
   -u root \
-  -e docker_apps_env_ref=dupmachine/secrets@mainframe
+  -e docker_apps_env_ref=dupmachine/secrets@latest:docker-apps--mainframe.sops.env
 ```
 
-The playbook pulls `docker_apps_app_ref` (`dupmachine/docker-apps@latest` by default), pulls the server-specific encrypted env release asset from `docker_apps_env_ref`, decrypts it with the server-local SOPS age key, links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+The `docker_apps_env_ref` format is `owner/repo@tag:asset`. The playbook downloads the asset, decrypts it with the server-local SOPS age key (`docker_apps_sops_age_key_file`), links shared `.env`, `apps.env`, and `apps-data` into a timestamped release, switches `current`, and runs `./restart.sh`.
+
+The `docker_apps_app_ref` defaults to `dupmachine/docker-apps@latest`.
 
 For now, `.env` is managed from the encrypted release asset, while `apps.env` remains persistent server state in `shared/apps.env` until the app list migration is completed.
 
@@ -109,7 +111,7 @@ Optional extra app bundles can be merged into the release before restart:
 ansible-playbook ansible/deploy-docker-apps.yml \
   -i mainframe, \
   -u root \
-  -e docker_apps_env_ref=dupmachine/secrets@mainframe \
+  -e docker_apps_env_ref=dupmachine/secrets@latest:docker-apps--mainframe.sops.env \
   -e '{"docker_apps_extra_refs":["dupmachine/docker-apps-extra@latest"]}'
 ```
 

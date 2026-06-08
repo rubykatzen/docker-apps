@@ -37,11 +37,30 @@ The repository uses a modular docker-compose structure with reusable components:
 
 ### Environment Variable System
 
-Two-tier environment variable cascade (each level overrides the previous):
-1. `.env` - All server variables: global settings, per-server overrides, and the `APPS` array. Deployed by Ansible from an encrypted `dupmachine-secrets` release asset.
-2. `apps-data/{app}/.env` - Per-app runtime overrides (git-ignored, rarely needed)
+Environment variables come from a single `.env` file deployed by Ansible from an encrypted `dupmachine-secrets` release asset. It contains all server variables: global settings, per-server overrides, and the `APPS` array.
 
-Before starting each app, `up.sh` runs `generate_env` which writes `APP_NAME` from the app folder name and merges the cascade into `apps/{app}/.env`. This allows running docker compose directly from the app folder without any `--env-file` flags.
+Before starting each app, `up.sh` runs `generate_env` which writes `APP_NAME` from the app folder name and merges `.env` into `apps/{app}/.env`. This allows running docker compose directly from the app folder without any `--env-file` flags.
+
+### Per-app and per-server overrides
+
+Compose files explicitly declare which variables are overridable using bash fallback syntax:
+
+```yaml
+# App-specific override, falls back to server-wide value
+SHOWS_PATH: ${JELLYFIN_SHOWS_PATH:-${APPS_SHOWS_PATH}}
+
+# App-specific only — must be set per app
+SHOWS_PATH: ${JELLYFIN_SHOWS_PATH}
+
+# Server-wide — same value for all apps on this server
+SHOWS_PATH: ${APPS_SHOWS_PATH}
+```
+
+Naming convention:
+- `{APPNAME}_{VAR}` — app-specific variable (e.g. `JELLYFIN_SHOWS_PATH`, `TRAEFIK_HTTP_PORT`)
+- `APPS_{VAR}` — server-wide variable shared across apps (e.g. `APPS_DOMAIN`, `APPS_TIMEZONE`)
+
+The compose file is the source of truth for which overrides are allowed. Not every variable needs an app-specific override — only declare one when you actually want to allow it.
 
 Key variables in `.env`:
 - `APPS` - Bash array of app names to deploy on this server, e.g. `APPS=(traefik gatus semaphore)`

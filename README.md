@@ -94,13 +94,16 @@ The `docker_apps_env_ref` format is `owner/repo@tag:asset`. The playbook downloa
 
 The `docker_apps_app_ref` defaults to `dupmachine/docker-apps@latest`.
 
-For private GitHub Releases, pass a token through Ansible variables, for example from Semaphore UI secret variables:
+For private GitHub Releases, pass a token through the `DOCKER_APPS_GITHUB_TOKEN`
+environment variable. In Semaphore, store it as a secret environment variable,
+not in the plain Variables JSON.
 
-```yaml
-docker_apps_github_token: "{{ GITHUB_TOKEN }}"
+```bash
+DOCKER_APPS_GITHUB_TOKEN=...
 ```
 
-When `docker_apps_github_token` is set, the playbook exports it as `GH_TOKEN` for `gh release download`. Public releases do not need this variable.
+When `DOCKER_APPS_GITHUB_TOKEN` is set, the playbook exports it as `GH_TOKEN`
+for `gh release download`. Public releases do not need this variable.
 
 Optional extra app bundles can be merged into the release before restart:
 

@@ -337,7 +337,7 @@ Deployment helpers live in this repository:
 
 Extra Docker Apps bundles are release assets referenced as short refs like `dupmachine/docker-apps-extra@latest`. They must contain an `apps/` directory only adding app directories; app names may not conflict with the core bundle or earlier extras.
 
-Private release assets are supported by passing `docker_apps_github_token` to `ansible/deploy-docker-apps.yml`, typically from Semaphore UI secret variables. When the token is present, the playbook exports it as `GH_TOKEN` for `gh release download`.
+Private release assets are supported by passing `DOCKER_APPS_GITHUB_TOKEN` as a secret environment variable to `ansible/deploy-docker-apps.yml`. In Semaphore, store it under **Secrets → Environment variables**, not in the plain Variables JSON. When the token is present, the playbook exports it as `GH_TOKEN` for `gh release download`.
 
 ## Notable App Configurations
 

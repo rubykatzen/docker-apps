@@ -37,7 +37,7 @@ set +a
 if [ $# -gt 0 ]; then
   apps=("$@")
 else
-  apps=("${APPS[@]}")
+  parse_apps "$APPS"
 fi
 
 for app in "${apps[@]}"
@@ -45,6 +45,7 @@ do
   (
     echo "Starting: ${app}"
 
+    require_app_compose "${app}"
     generate_env "${app}"
 
     set -a

@@ -8,11 +8,12 @@ set +a
 if [ $# -gt 0 ]; then
   apps=("$@")
 else
-  apps=("${APPS[@]}")
+  parse_apps "$APPS"
 fi
 
 for app in "${apps[@]}"
 do
+  require_app_compose "${app}"
   generate_env "${app}"
   set -a
   source "./apps/${app}/.env"

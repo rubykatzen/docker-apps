@@ -24,8 +24,8 @@ if [ -z "$APPS" ]; then
   exit 0
 fi
 
-echo "==> Reading APPS array from remote .env..."
-APPS_LIST=$(ssh "$SERVER" "bash -c 'source $REMOTE_PROJECT/.env && echo \"\${APPS[*]}\"'")
+echo "==> Reading APPS from remote .env..."
+APPS_LIST=$(ssh "$SERVER" "bash -c 'source $REMOTE_PROJECT/.env && echo \"\${APPS//,/ }\"'")
 
 echo "==> Found apps: $(echo $APPS | tr '\n' ' ')"
 echo "==> Active APPS: $APPS_LIST"

@@ -27,18 +27,9 @@ class RenderEnvTest(unittest.TestCase):
         output = render_env.render_env({"env": {"TOKEN": "TOKEN"}}, {"TOKEN": "hello world"}, {})
         self.assertIn("TOKEN='hello world'\n", output)
 
-    def test_raw_env_skips_quoting(self):
-        manifest = {"env": {"APPS": "APPS"}, "raw_env": ["APPS"]}
-        output = render_env.render_env(manifest, {"APPS": "('beszel-agent' 'watchtower')"}, {})
-        self.assertIn("APPS=('beszel-agent' 'watchtower')\n", output)
-
-    def test_raw_env_quotes_non_raw(self):
-        manifest = {"env": {"TOKEN": "TOKEN", "APPS": "APPS"}, "raw_env": ["APPS"]}
-        output = render_env.render_env(
-            manifest, {"TOKEN": "hello world", "APPS": "('a' 'b')"}, {}
-        )
-        self.assertIn("TOKEN='hello world'\n", output)
-        self.assertIn("APPS=('a' 'b')\n", output)
+    def test_rejects_raw_env(self):
+        with self.assertRaises(render_env.ManifestError):
+            render_env.load_manifest(self.write_manifest("raw_env: [APPS]\nenv:\n  APPS: APPS\n"))
 
     def test_missing_source_fails(self):
         with self.assertRaises(render_env.ManifestError):
@@ -56,6 +47,13 @@ class RenderEnvTest(unittest.TestCase):
             )
             with self.assertRaises(render_env.ManifestError):
                 render_env.load_manifest(path)
+
+    def write_manifest(self, content):
+        self.addCleanup(lambda: self._manifest_tmp.cleanup())
+        self._manifest_tmp = tempfile.TemporaryDirectory()
+        path = Path(self._manifest_tmp.name) / "manifest.yml"
+        path.write_text(content)
+        return path
 
     def test_main_writes_env_and_outputs(self):
         with tempfile.TemporaryDirectory() as directory:

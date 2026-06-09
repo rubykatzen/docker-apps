@@ -63,7 +63,7 @@ Naming convention:
 The compose file is the source of truth for which overrides are allowed. Not every variable needs an app-specific override — only declare one when you actually want to allow it.
 
 Key variables in `.env`:
-- `APPS` - Bash array of app names to deploy on this server, e.g. `APPS=(traefik gatus semaphore)`
+- `APPS` - Comma-separated app names to deploy on this server, e.g. `traefik,gatus,semaphore`
 - `APPS_DOMAIN` - Base domain for all services
 - `APPS_CERTIFICATE_RESOLVER` - SSL resolver (Cloudflare DNS or HTTP challenge)
 - `APPS_DATABASE_PASSWORD` - Shared database password
@@ -86,7 +86,7 @@ Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 
 ### Starting Applications
 ```bash
-# Start all apps defined in APPS array in .env
+# Start all apps defined in APPS in .env
 ./up.sh
 
 # Start specific app(s)

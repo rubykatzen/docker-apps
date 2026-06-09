@@ -116,17 +116,10 @@ Extra bundles must contain an `apps/` directory. Extra app names cannot conflict
 
 ### 3. Select Applications
 
-Edit `.env` and set the `APPS` array:
+Edit `.env` and set `APPS` to a comma-separated app list:
 
 ```bash
-APPS=(
-	'traefik'           # Required - reverse proxy
-	'gatus'             # Monitoring
-	'beszel'            # Server monitoring
-	'semaphore'         # Automation
-	'rybbit'            # Analytics
-	# Add more as needed...
-)
+APPS=traefik,gatus,beszel,semaphore,rybbit
 ```
 
 ### 4. Start Applications
@@ -179,7 +172,7 @@ docker-apps/
 │   └── workflows/
 │       └── publish.yml             # Publish Docker Apps release bundle
 │
-├── .env                          # All server configuration incl. APPS array (git-ignored)
+├── .env                          # All server configuration incl. APPS list (git-ignored)
 ├── .env.example                  # Configuration template
 │
 ├── up.sh                         # Start applications
@@ -194,7 +187,7 @@ docker-apps/
 ### Start Applications
 
 ```bash
-# Start all apps defined in APPS array (pulls latest images automatically)
+# Start all apps defined in APPS (pulls latest images automatically)
 ./up.sh
 
 # Start specific apps
@@ -265,7 +258,7 @@ Variables use a two-tier cascade — each level overrides the previous:
 
 Contains all variables for this server: global settings, per-server overrides, and the `APPS` array. Deployed by Ansible from an encrypted `dupmachine-secrets` release asset.
 ```bash
-APPS                        # Bash array of apps to deploy on this server
+APPS                        # Comma-separated apps to deploy on this server
 APPS_DOMAIN                 # Base domain (required)
 APPS_CERTIFICATE_RESOLVER   # letsencrypt or cloudflare
 APPS_CLOUDFLARE_DNS_API_TOKEN   # If using Cloudflare DNS
@@ -332,13 +325,10 @@ services:
 
 ### Step 3: Add to `.env`
 
-Add your app to the `APPS` array in `.env`:
+Add your app to `APPS` in `.env`:
 
 ```bash
-APPS=(
-  'traefik'
-  'myapp'
-)
+APPS=traefik,myapp
 ```
 
 ### Step 4: Start the App
@@ -500,9 +490,6 @@ release_asset: docker-apps--mainframe.sops.env
 
 keys:
   - mainframe
-
-raw_env:        # optional — skip shell quoting for bash array values
-  - APPS
 
 env:
   APPS_DOMAIN: APPS_DOMAIN         # output name: GitHub Secret/Variable name

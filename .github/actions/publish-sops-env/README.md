@@ -33,11 +33,7 @@ permissions:
 release_asset: docker-apps--mainframe.sops.env
 
 keys:
-  - master
   - mainframe
-
-raw_env:          # optional — values written as-is, without shell quoting (for bash arrays)
-  - APPS
 
 env:
   APPS_DOMAIN: APPS_DOMAIN         # output name: GitHub Secret/Variable name

@@ -8,3 +8,5 @@ jobs:
     uses: dupmachine/linters/.github/workflows/yamllint.yml@main
   pymarkdown:
     uses: dupmachine/linters/.github/workflows/pymarkdown.yml@main
+  ruff:
+    uses: dupmachine/linters/.github/workflows/ruff.yml@main

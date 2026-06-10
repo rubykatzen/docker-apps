@@ -9,12 +9,14 @@ This is a Docker-based application management system (docker-apps) that orchestr
 ## Core Architecture
 
 ### Directory Structure
+
 - `apps/` - Contains core docker-compose configurations and shared compose templates
 - `apps-data/` - Persistent data storage for all running applications
 - `.env` - All environment variables for this server: global settings, per-server overrides, and the `APPS` array. Deployed via Ansible from encrypted `dupmachine-secrets` release assets.
 - Shell scripts at root for orchestration
 
 ### Docker Compose Architecture
+
 The repository uses a modular docker-compose structure with reusable components:
 
 1. **Common Service Definitions** (`apps/common.yml`):
@@ -57,12 +59,14 @@ SHOWS_PATH: ${APPS_SHOWS_PATH}
 ```
 
 Naming convention:
+
 - `{APPNAME}_{VAR}` — app-specific variable (e.g. `JELLYFIN_SHOWS_PATH`, `TRAEFIK_HTTP_PORT`)
 - `APPS_{VAR}` — server-wide variable shared across apps (e.g. `APPS_DOMAIN`, `APPS_TIMEZONE`)
 
 The compose file is the source of truth for which overrides are allowed. Not every variable needs an app-specific override — only declare one when you actually want to allow it.
 
 Key variables in `.env`:
+
 - `APPS` - Comma-separated app names to deploy on this server, e.g. `traefik,gatus,semaphore`
 - `APPS_DOMAIN` - Base domain for all services
 - `APPS_CERTIFICATE_RESOLVER` - SSL resolver (Cloudflare DNS or HTTP challenge)
@@ -73,6 +77,7 @@ Key variables in `.env`:
 ### Traefik Integration
 
 All apps use Traefik labels pattern:
+
 ```yaml
 traefik.enable=true
 traefik.http.routers.${APP_NAME}.rule=Host(`${APP_NAME}.${APPS_DOMAIN}`)
@@ -85,6 +90,7 @@ Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 ## Common Commands
 
 ### Starting Applications
+
 ```bash
 # Start all apps defined in APPS in .env
 ./up.sh
@@ -94,6 +100,7 @@ Apps are accessible at `{app-name}.{APPS_DOMAIN}` with automatic SSL.
 ```
 
 The `up.sh` script:
+
 - Generates `apps/{app}/.env` by merging the three-tier cascade for each app
 - Sources the merged env for template processing
 - Processes config templates using envsubst (files matching `*.template.*`)
@@ -101,6 +108,7 @@ The `up.sh` script:
 - Runs docker compose up for each app
 
 ### Stopping Applications
+
 ```bash
 # Stop all apps
 ./down.sh
@@ -110,6 +118,7 @@ The `up.sh` script:
 ```
 
 ### Restarting Applications
+
 ```bash
 # Restart all apps (down + up)
 ./restart.sh
@@ -119,12 +128,14 @@ The `up.sh` script:
 ```
 
 ### Viewing Logs
+
 ```bash
 # View logs for a specific app (requires single app name)
 ./logs.sh gatus
 ```
 
 ### Backing Up Apps
+
 ```bash
 # Back up all apps-data directories from a remote server to local backups/
 ./backup.sh root@hawkeye.dupmachine.com
@@ -134,12 +145,14 @@ The `up.sh` script:
 The `backup.sh` script stops each active app, zips its `apps-data/` directory, downloads it locally, then restarts the app. Inactive apps (not in APPS) are archived without stopping.
 
 ### Updating Applications
+
 ```bash
 # up.sh pulls latest images automatically before starting
 ./restart.sh
 ```
 
 ### Direct Docker Compose Commands
+
 After `./up.sh <app>` has generated `apps/{app}/.env`, docker compose works directly from the app folder without any flags:
 
 ```bash
@@ -152,9 +165,11 @@ cd apps/traefik && docker compose down
 ## Initial Setup
 
 The `up.sh` script performs first-run setup automatically before loading environment variables:
+
 ```bash
 ./up.sh
 ```
+
 It creates `.env` from `.env.example`, `apps-data/traefik/acme.json`, and the external Docker networks `traefik`, `databases`, and `mcp` when missing.
 
 ## Adding New Applications
@@ -170,6 +185,7 @@ It creates `.env` from `.env.example`, `apps-data/traefik/acme.json`, and the ex
 4. If app needs configuration templates, create `config/{name}.template.yml` (envsubst will process)
 
 Example minimal app structure:
+
 ```yaml
 include:
   - ../networks.yml
@@ -192,6 +208,7 @@ services:
 ```
 
 **IMPORTANT: Always use x-environment anchor pattern for environment variables:**
+
 - Declare environment variables once using `x-environment: &environment` at the top of the file
 - Reference them in services using `environment: *environment`
 - This ensures consistency, reduces duplication, and makes maintenance easier
@@ -202,6 +219,7 @@ services:
 To maintain consistency across all applications, follow these strict field ordering rules:
 
 ### File-level field order:
+
 ```yaml
 # 1. INCLUDE DIRECTIVES (always first)
 include:
@@ -229,6 +247,7 @@ services:
 ```
 
 ### Service-level field order:
+
 ```yaml
 services:
   app:
@@ -278,6 +297,7 @@ services:
 ```
 
 ### Key ordering principles:
+
 1. **Include order**: networks.yml → postgres.yml → redis.yml → mongo.yml
 2. **X-fields order**: x-image → x-environment → x-volumes (only if needed)
 3. **X-image for shared images** - if multiple services use the same image, use `x-image: &image`
@@ -291,6 +311,7 @@ services:
 11. **Paths use ${APP_NAME}** - for reusability across apps
 
 ### YAML formatting rules:
+
 1. **No quotes unless necessary** - avoid quotes around strings when YAML doesn't require them
 2. **Double quotes when needed** - use double quotes `"` (not single) when quotes are required
 3. **Omit :latest tag** - `image: traefik` instead of `image: traefik:latest`
@@ -303,6 +324,7 @@ services:
 10. **Volume paths consistency** - host folder name must match container mount point: `../../apps-data/${APP_NAME}/data:/data` (both are `data`), not `../../apps-data/${APP_NAME}/app-data:/data` or `../../apps-data/${APP_NAME}/library:/data`
 
 Example:
+
 ```yaml
 include:
   - ../networks.yml
@@ -327,11 +349,13 @@ services:
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/publish.yml`) publishes a Docker Apps release bundle on push to `main`:
+
 1. Builds `docker-apps.tar.gz` from compose files, helper scripts, examples, and README
 2. Verifies runtime state is excluded (`.env`, `apps-data`, `backups`, generated `apps/*/.env`)
 3. Publishes a short-SHA GitHub Release asset and updates the `latest` release asset
 
 Deployment helpers live in this repository:
+
 - `ansible/deploy-docker-apps.yml` pulls `docker_apps_app_ref`, merges optional `docker_apps_extra_refs`, pulls the server-specific encrypted env package from `docker_apps_env_ref`, decrypts `.sops.env` on the server, switches a timestamped release, and runs `./restart.sh`
 - `.github/actions/publish-sops-env/` is a local composite action for rendering env manifests from GitHub Secrets/Variables, encrypting them for age recipients, and publishing `.sops.env` as a GitHub Release asset
 

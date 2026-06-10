@@ -5,7 +5,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "render-env.py"
 SPEC = importlib.util.spec_from_file_location("render_env", MODULE_PATH)
 render_env = importlib.util.module_from_spec(SPEC)

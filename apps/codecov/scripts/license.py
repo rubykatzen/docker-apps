@@ -1,12 +1,13 @@
 """
 Note: Script requires use of pycryptodome. pip install pycryptodome
 """
-from json import dumps, loads
-from Crypto import Random
-from base64 import b64encode, b64decode
-from Crypto.Cipher import AES
-from datetime import datetime
 import argparse
+from base64 import b64decode, b64encode
+from datetime import datetime
+from json import dumps, loads
+
+from Crypto import Random
+from Crypto.Cipher import AES
 
 KEY = bytes([0xfb, 0xe9, 0x1b, 0x34, 0x60, 0xff, 0xe2, 0xa1, 0xfa, 0xe3, 0xd0, 0xf9, 0x8d, 0xa6, 0x25, 0x7f])
 BS = 16
@@ -58,14 +59,6 @@ def decode_license(license):
 
 
 def main(args=None):
-    expires = None
-    company = None
-    seats = None
-    repos = None
-    license = None
-    url = None
-    trial = True
-
     parser = argparse.ArgumentParser(prog='codecov key gen', add_help=True,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     subparsers = parser.add_subparsers(title='Commands')

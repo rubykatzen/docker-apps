@@ -9,7 +9,6 @@ from pathlib import Path
 
 import yaml
 
-
 ENV_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]*$")
 SOURCE_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_]*(?:__[A-Z0-9_]+)*$")
 KEY_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")

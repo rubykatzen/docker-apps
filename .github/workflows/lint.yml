@@ -5,8 +5,4 @@ on:
   pull_request:
 jobs:
   yamllint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - run: pip install yamllint
-      - run: yamllint -c .yamllint.yml .
+    uses: dupmachine/linters/.github/workflows/yamllint.yml@main

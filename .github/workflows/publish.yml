@@ -17,6 +17,7 @@ jobs:
           bundle-name: docker-apps.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           paths: |
+            ansible
             apps
             ansible.cfg
             .env.example

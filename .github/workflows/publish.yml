@@ -20,7 +20,9 @@ jobs:
             apps
             .env.example
             backup.sh
+            deploy.sh
             down.sh
+            generate-env.sh
             lib.sh
             logs.sh
             restart.sh

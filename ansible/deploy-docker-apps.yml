@@ -43,7 +43,7 @@
             set -euo pipefail
             ref={{ docker_apps_app_ref | quote }}
             out={{ docker_apps_app_pull.path | quote }}
-            asset=docker-apps.tar.gz
+            asset=docker-apps.zip
             repo="${ref%@*}"
             tag="${ref#*@}"
             if [ "$repo" = "$ref" ] || [ -z "$repo" ] || [ -z "$tag" ]; then
@@ -59,8 +59,8 @@
             fi
             gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
             test -f "$out/$asset"
-            if [ "$asset" != "docker-apps.tar.gz" ]; then
-              cp "$out/$asset" "$out/docker-apps.tar.gz"
+            if [ "$asset" != "docker-apps.zip" ]; then
+              cp "$out/$asset" "$out/docker-apps.zip"
             fi
           args:
             executable: /bin/bash
@@ -68,11 +68,11 @@
             DOCKER_APPS_GITHUB_TOKEN: "{{ docker_apps_github_token }}"
         - name: Require Docker Apps bundle
           stat:
-            path: "{{ docker_apps_app_pull.path }}/docker-apps.tar.gz"
+            path: "{{ docker_apps_app_pull.path }}/docker-apps.zip"
           register: docker_apps_bundle
         - name: Fail when Docker Apps bundle is missing
           fail:
-            msg: "docker-apps.tar.gz was not found in {{ docker_apps_app_ref }}"
+            msg: "docker-apps.zip was not found in {{ docker_apps_app_ref }}"
           when: not docker_apps_bundle.stat.exists
         - name: Recreate release directory
           file:
@@ -85,7 +85,7 @@
             mode: "0755"
         - name: Extract Docker Apps release
           unarchive:
-            src: "{{ docker_apps_app_pull.path }}/docker-apps.tar.gz"
+            src: "{{ docker_apps_app_pull.path }}/docker-apps.zip"
             dest: "{{ docker_apps_release_path }}"
             remote_src: true
         - name: Create extra packages pull directory
@@ -124,8 +124,8 @@
             {% for ref in docker_apps_extra_refs %}
             package_dir="$extra_root/{{ loop.index }}"
             mkdir -p "$package_dir/pull" "$package_dir/extract"
-            bundle="$(download_release_ref {{ ref | quote }} "$package_dir/pull" docker-apps-extra.tar.gz)"
-            tar -xzf "$bundle" -C "$package_dir/extract"
+            bundle="$(download_release_ref {{ ref | quote }} "$package_dir/pull" docker-apps-extra.zip)"
+            unzip "$bundle" -d "$package_dir/extract"
             if [ ! -d "$package_dir/extract/apps" ]; then
               echo "Extra package {{ ref }} does not contain apps/" >&2
               exit 1

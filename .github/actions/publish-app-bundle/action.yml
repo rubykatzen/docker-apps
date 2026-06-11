@@ -8,7 +8,7 @@ inputs:
   bundle-name:
     description: Bundle archive filename.
     required: false
-    default: docker-apps.tar.gz
+    default: docker-apps.zip
   paths:
     description: Newline-separated paths to include in the bundle.
     required: true
@@ -51,11 +51,10 @@ runs:
           [ -n "$path" ] || continue
           filtered_paths+=("$path")
         done
-        tar \
-          --exclude='.DS_Store' \
-          --exclude='apps/*/.env' \
-          -czf ".bundle/$BUNDLE_NAME" \
-          "${filtered_paths[@]}"
+        zip -r ".bundle/$BUNDLE_NAME" \
+          "${filtered_paths[@]}" \
+          -x '*.DS_Store' \
+          -x 'apps/*/.env'
     - name: Verify bundle
       shell: bash
       env:
@@ -63,7 +62,7 @@ runs:
         REQUIRE_APPS: ${{ inputs.require-apps }}
       run: |
         set -euo pipefail
-        tar -tzf ".bundle/$BUNDLE_NAME" > .bundle/files.txt
+        zipinfo -1 ".bundle/$BUNDLE_NAME" > .bundle/files.txt
         if grep -Eq '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' .bundle/files.txt; then
           echo "Bundle contains runtime state or env files" >&2
           grep -E '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' .bundle/files.txt >&2

@@ -19,8 +19,8 @@
         fail_msg: "Set docker_apps_app_ref, docker_apps_env_ref, docker_apps_extra_refs, docker_apps_path, docker_apps_keep_releases, docker_apps_sops_age_key_file, and the DOCKER_APPS_GITHUB_TOKEN environment variable"
     - name: Apply Docker Apps paths
       set_fact:
-        docker_apps_release_name: "{{ ansible_date_time.iso8601_basic_short }}"
-        docker_apps_release_path: "{{ docker_apps_path }}/releases/{{ ansible_date_time.iso8601_basic_short }}"
+        docker_apps_release_name: "{{ ansible_facts['date_time'].iso8601_basic_short }}"
+        docker_apps_release_path: "{{ docker_apps_path }}/releases/{{ ansible_facts['date_time'].iso8601_basic_short }}"
         docker_apps_shared_path: "{{ docker_apps_path }}/shared"
         docker_apps_current_path: "{{ docker_apps_path }}/current"
     - name: Ensure Docker Apps directories

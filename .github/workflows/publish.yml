@@ -18,6 +18,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           paths: |
             apps
+            ansible.cfg
             .env.example
             backup.sh
             deploy.sh

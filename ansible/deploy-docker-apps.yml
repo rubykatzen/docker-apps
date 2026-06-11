@@ -222,9 +222,9 @@
             dest: "{{ docker_apps_current_path }}"
             state: link
             force: true
-        - name: Restart Docker Apps
+        - name: Deploy Docker Apps
           command:
-            cmd: ./restart.sh
+            cmd: ./deploy.sh
             chdir: "{{ docker_apps_current_path }}"
         - name: Find Docker Apps releases
           find:

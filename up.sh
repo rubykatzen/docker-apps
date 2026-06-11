@@ -46,7 +46,7 @@ do
     echo "Starting: ${app}"
 
     require_app_compose "${app}"
-    generate_env "${app}"
+    "$(dirname "$0")/generate-env.sh" "${app}"
 
     set -a
     source "./apps/${app}/.env"

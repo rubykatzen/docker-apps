@@ -100,7 +100,7 @@ runs:
             --repo "$release_repo" \
             --target "$GITHUB_SHA" \
             --title "$tag" \
-            --notes "Docker Apps bundle for $GITHUB_SHA" \
+            --generate-notes \
             --latest=false
         fi
         if [ -n "$LATEST_TAG" ]; then

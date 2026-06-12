@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: dupmachine/workflows/.github/actions/publish-app-bundle@latest
+      - uses: dupmachine/baseline/.github/actions/publish-app-bundle@latest
         with:
           bundle-name: docker-apps.zip
           token: ${{ secrets.GITHUB_TOKEN }}

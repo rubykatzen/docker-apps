@@ -105,6 +105,7 @@ runs:
         if [ -n "$LATEST_TAG" ]; then
           if gh release view "$LATEST_TAG" --repo "$release_repo" >/dev/null 2>&1; then
             gh release upload "$LATEST_TAG" ".bundle/$BUNDLE_NAME" --repo "$release_repo" --clobber
+            gh release edit "$LATEST_TAG" --repo "$release_repo" --target "$GITHUB_SHA"
           else
             gh release create "$LATEST_TAG" ".bundle/$BUNDLE_NAME" \
               --repo "$release_repo" \

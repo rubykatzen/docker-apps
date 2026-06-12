@@ -72,6 +72,41 @@ runs:
           echo "Bundle does not contain any app docker-compose.yml files" >&2
           exit 1
         fi
+    - name: Generate release notes
+      id: release-notes
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REQUESTED_TAG: ${{ inputs.tag }}
+      run: |
+        set -euo pipefail
+        tag="$REQUESTED_TAG"
+        [ -z "$tag" ] && tag="${GITHUB_SHA:0:8}"
+        prev_tag=$(git tag --sort=-version:refname | grep -E '^v[0-9]' | grep -v "^${tag}$" | head -1 || true)
+        if [ -n "$prev_tag" ]; then
+          commits=$(git log "${prev_tag}..HEAD" --format="- %s" --no-merges | head -50)
+        else
+          commits=$(git log HEAD --format="- %s" --no-merges | head -50)
+        fi
+        notes=""
+        if [ -n "$commits" ]; then
+          payload=$(jq -n --arg commits "$commits" '{
+            model: "gpt-4o-mini",
+            messages: [{
+              role: "user",
+              content: ("You are writing a changelog entry for a self-hosted infrastructure release (Docker Compose apps and Ansible playbooks). Below are the git commits in this release. Write a concise 2-4 sentence summary in English. Write plain prose — no bullet points, no headers.\n\nCommits:\n" + $commits)
+            }],
+            max_tokens: 300
+          }')
+          response=$(curl -sf \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://models.inference.ai.azure.com/chat/completions" \
+            -d "$payload" || true)
+          notes=$(echo "$response" | jq -r '.choices[0].message.content // empty' 2>/dev/null || true)
+        fi
+        [ -z "$notes" ] && notes="$commits"
+        printf '%s' "$notes" > .bundle/release-notes.md
     - name: Publish bundle
       id: publish
       shell: bash
@@ -94,13 +129,15 @@ runs:
         fi
         if gh release view "$tag" --repo "$release_repo" >/dev/null 2>&1; then
           gh release upload "$tag" ".bundle/$BUNDLE_NAME" --repo "$release_repo" --clobber
+          echo "created=false" >> "$GITHUB_OUTPUT"
         else
           gh release create "$tag" ".bundle/$BUNDLE_NAME" \
             --repo "$release_repo" \
             --target "$GITHUB_SHA" \
             --title "$tag" \
-            --generate-notes \
+            --notes-file .bundle/release-notes.md \
             --latest=false
+          echo "created=true" >> "$GITHUB_OUTPUT"
         fi
         if [ -n "$LATEST_TAG" ]; then
           if gh release view "$LATEST_TAG" --repo "$release_repo" >/dev/null 2>&1; then
@@ -116,3 +153,38 @@ runs:
         fi
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
         echo "ref=$release_repo@$tag" >> "$GITHUB_OUTPUT"
+    - name: Update changelog
+      if: steps.publish.outputs.created == 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REQUESTED_TAG: ${{ inputs.tag }}
+      run: |
+        set -euo pipefail
+        tag="$REQUESTED_TAG"
+        [ -z "$tag" ] && tag="${GITHUB_SHA:0:8}"
+        echo "$tag" | grep -Eq '^v[0-9]' || exit 0
+        date=$(date -u +%Y-%m-%d)
+        notes=$(cat .bundle/release-notes.md)
+        new_entry="## [${tag}] - ${date}"$'\n\n'"${notes}"
+        file_resp=$(curl -sf \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/CHANGELOG.md" || echo "{}")
+        current_sha=$(echo "$file_resp" | jq -r '.sha // empty')
+        current_content=$(echo "$file_resp" | jq -r '.content // empty' | base64 -d 2>/dev/null || echo "")
+        if [ -n "$current_content" ]; then
+          new_content="${new_entry}"$'\n\n'"${current_content}"
+        else
+          new_content="# Changelog"$'\n\n'"${new_entry}"
+        fi
+        update_payload=$(jq -n \
+          --arg message "chore: update changelog for ${tag}" \
+          --arg content "$(printf '%s' "$new_content" | base64 -w 0)" \
+          --arg sha "$current_sha" \
+          'if $sha == "" then {message: $message, content: $content} else {message: $message, content: $content, sha: $sha} end')
+        curl -sf -X PUT \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Content-Type: application/json" \
+          "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/CHANGELOG.md" \
+          -d "$update_payload" > /dev/null

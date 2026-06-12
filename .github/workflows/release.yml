@@ -1,13 +1,12 @@
-name: Publish
+name: Release
 on:
   push:
     tags:
       - "v*"
-  workflow_dispatch:
 concurrency:
-  group: publish-docker-apps
+  group: release-docker-apps
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,5 +34,5 @@ jobs:
       - uses: dupmachine/baseline/.github/actions/create-release@latest
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          tag: ${{ github.ref_name }}
           artifact-path: ${{ steps.bundle.outputs.bundle-path }}

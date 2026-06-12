@@ -243,7 +243,7 @@ The script stops each app one at a time, creates a zip archive, restarts it, the
 |------|---------|
 | **traefik** | Reverse proxy & SSL |
 | **semaphore** | Ansible UI & task runner |
-| **2fauth** | Two-factor auth manager |
+| **twofauth** | Two-factor auth manager |
 | **gatus** | Status page & health checks |
 | **beszel** | Server monitoring |
 | **beszel-agent** | Beszel remote agent |

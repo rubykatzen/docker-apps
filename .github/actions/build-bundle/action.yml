@@ -1,0 +1,42 @@
+name: Build app bundle
+description: Build and validate a zip bundle from specified paths.
+inputs:
+  paths:
+    description: Newline-separated paths to include in the bundle.
+    required: true
+  bundle-name:
+    description: Bundle archive filename.
+    required: false
+    default: bundle.zip
+outputs:
+  bundle-path:
+    description: Path to the built bundle archive.
+    value: ${{ steps.build.outputs.bundle-path }}
+runs:
+  using: composite
+  steps:
+    - name: Build bundle
+      id: build
+      shell: bash
+      env:
+        BUNDLE_NAME: ${{ inputs.bundle-name }}
+        PATHS: ${{ inputs.paths }}
+      run: |
+        set -euo pipefail
+        mkdir -p .bundle
+        mapfile -t bundle_paths <<< "$PATHS"
+        filtered_paths=()
+        for path in "${bundle_paths[@]}"; do
+          [ -n "$path" ] || continue
+          filtered_paths+=("$path")
+        done
+        zip -r ".bundle/$BUNDLE_NAME" \
+          "${filtered_paths[@]}" \
+          -x '*.DS_Store' \
+          -x 'apps/*/.env'
+        if zipinfo -1 ".bundle/$BUNDLE_NAME" | grep -Eq '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)'; then
+          echo "Bundle contains runtime state or env files:" >&2
+          zipinfo -1 ".bundle/$BUNDLE_NAME" | grep -E '(^|/)(\.env|apps\.env)$|(^|/)(apps-data|backups)(/|$)' >&2
+          exit 1
+        fi
+        echo "bundle-path=.bundle/$BUNDLE_NAME" >> "$GITHUB_OUTPUT"

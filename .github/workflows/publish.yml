@@ -15,11 +15,10 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: dupmachine/baseline/.github/actions/publish-app-bundle@latest
+      - id: bundle
+        uses: ./.github/actions/build-bundle
         with:
           bundle-name: docker-apps.zip
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
           paths: |
             apps
             ansible.cfg
@@ -33,3 +32,8 @@ jobs:
             restart.sh
             up.sh
             README.md
+      - uses: dupmachine/baseline/.github/actions/create-release@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          artifact-path: ${{ steps.bundle.outputs.bundle-path }}

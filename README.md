@@ -49,14 +49,13 @@ dupmachine/docker-apps@<short-sha>
 dupmachine/docker-apps@latest
 ```
 
-The release asset is `docker-apps.tar.gz` with the compose files and helper scripts, but not runtime state such as `.env`, `apps-data/`, or `backups/`.
+The release asset is `docker-apps.zip` with the compose files and helper scripts, but not runtime state such as `.env`, `apps-data/`, or `backups/`.
 
 Download and unpack a bundle:
 
 ```bash
-gh release download latest --repo dupmachine/docker-apps --pattern docker-apps.tar.gz
-mkdir -p /opt/docker-apps/releases/latest
-tar -xzf docker-apps.tar.gz -C /opt/docker-apps/releases/latest
+gh release download latest --repo dupmachine/docker-apps --pattern docker-apps.zip
+unzip -q docker-apps.zip -d /opt/docker-apps/releases/latest
 ```
 
 ### 2. Configure Environment
@@ -171,8 +170,7 @@ docker-apps/
 ├── .github/
 │   ├── actions/
 │   │   ├── discover-manifest-matrix/  # Build a strategy matrix from files matching a glob
-│   │   ├── publish-sops-env/          # Encrypt env manifest and upload to GitHub Release
-│   │   └── publish-app-bundle/        # Build and publish a Docker Apps release bundle
+│   │   └── publish-sops-env/          # Encrypt env manifest and upload to GitHub Release
 │   └── workflows/
 │       └── publish.yml             # Publish Docker Apps release bundle
 │
@@ -428,7 +426,7 @@ If you're evaluating alternatives, these projects solve a similar problem from d
 
 ## ⚙️ GitHub Actions
 
-This repository provides three reusable composite actions under `.github/actions/`.
+This repository provides two reusable composite actions under `.github/actions/`.
 
 ---
 
@@ -505,33 +503,6 @@ env:
 ```
 
 Secrets take precedence over Variables when both contain the same source key. Every source key must exist or the action fails.
-
----
-
-### `publish-app-bundle`
-
-Builds a `tar.gz` bundle from specified paths and publishes it as a GitHub Release asset — once under an immutable short-SHA tag and once under a mutable `latest` tag.
-
-```yaml
-- uses: dupmachine/docker-apps/.github/actions/publish-app-bundle@main
-  with:
-    paths: |                        # required — newline-separated paths to include
-      apps
-      ansible
-      *.sh
-      *.env.example
-    token: ${{ secrets.GITHUB_TOKEN }}   # required
-    bundle-name: docker-apps.tar.gz      # default
-    tag: ""                              # default: first 8 chars of GITHUB_SHA
-    latest-tag: latest                   # default: latest (set to "" to disable)
-    release-repo: ""                     # default: current repository
-```
-
-Requires `contents: write` permission on the calling job.
-
-The action refuses bundles that contain `.env`, `apps-data/`, or `backups/`.
-
-**Outputs:** `tag` (immutable SHA tag used), `ref` (`owner/repo@tag`).
 
 ## 📝 License
 

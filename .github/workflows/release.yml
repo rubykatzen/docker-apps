@@ -35,4 +35,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
-          artifact-path: ${{ steps.bundle.outputs.bundle-path }}
+      - run: gh release upload "${{ github.ref_name }}" "${{ steps.bundle.outputs.bundle-path }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -31,7 +31,7 @@ jobs:
             restart.sh
             up.sh
             README.md
-      - uses: dupmachine/baseline/.github/actions/create-release@latest
+      - uses: rubykatzen/baseline/.github/actions/create-release@v0.0.10
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}

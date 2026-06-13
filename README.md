@@ -28,7 +28,7 @@ A Docker-based orchestration system for deploying core self-hosted services, wit
 ### 1. Clone and Initialize
 
 ```bash
-git clone https://github.com/dupmachine/docker-apps.git docker-apps
+git clone https://github.com/rubykatzen/docker-apps.git docker-apps
 cd docker-apps
 ./up.sh
 ```
@@ -45,8 +45,8 @@ This will:
 Pushing a semver tag matching `v*` publishes a deployable project bundle as a GitHub Release asset and updates the mutable `latest` release:
 
 ```text
-dupmachine/docker-apps@v1.2.3
-dupmachine/docker-apps@latest
+rubykatzen/docker-apps@v1.2.3
+rubykatzen/docker-apps@latest
 ```
 
 The release asset is `docker-apps.zip` with the compose files and helper scripts, but not runtime state such as `.env`, `apps-data/`, or `backups/`.
@@ -54,7 +54,7 @@ The release asset is `docker-apps.zip` with the compose files and helper scripts
 Download and unpack a bundle:
 
 ```bash
-gh release download latest --repo dupmachine/docker-apps --pattern docker-apps.zip
+gh release download latest --repo rubykatzen/docker-apps --pattern docker-apps.zip
 unzip -q docker-apps.zip -d /opt/docker-apps/releases/latest
 ```
 
@@ -92,7 +92,7 @@ ansible-playbook ansible/deploy-docker-apps.yml \
 
 The `docker_apps_env_ref` format is `owner/repo@tag:asset`. The playbook downloads the asset, decrypts it with the server-local SOPS age key (`docker_apps_sops_age_key_file`), links shared `.env` and `apps-data` into a timestamped release, switches `current`, and runs `./deploy.sh`.
 
-The `docker_apps_app_ref` defaults to `dupmachine/docker-apps@latest`.
+The `docker_apps_app_ref` defaults to `rubykatzen/docker-apps@latest`.
 
 For private GitHub Releases, pass a token through the `DOCKER_APPS_GITHUB_TOKEN`
 environment variable. In Semaphore, store it as a secret environment variable,
@@ -443,7 +443,7 @@ Builds a GitHub Actions strategy matrix from files matching a glob pattern.
 
 ```yaml
 - id: discover
-  uses: dupmachine/docker-apps/.github/actions/discover-manifest-matrix@main
+  uses: rubykatzen/docker-apps/.github/actions/discover-manifest-matrix@main
   with:
     pattern: projects/*/*.yml   # required
 ```
@@ -460,7 +460,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - id: discover
-        uses: dupmachine/docker-apps/.github/actions/discover-manifest-matrix@main
+        uses: rubykatzen/docker-apps/.github/actions/discover-manifest-matrix@main
         with:
           pattern: projects/*/*.yml
 
@@ -481,7 +481,7 @@ Renders an env manifest from GitHub Secrets/Variables, encrypts it with SOPS age
 The release must already exist before this action runs. Create it in a separate job and pass the tag explicitly.
 
 ```yaml
-- uses: dupmachine/docker-apps/.github/actions/publish-sops-env@main
+- uses: rubykatzen/docker-apps/.github/actions/publish-sops-env@main
   with:
     manifest: projects/docker-apps/mainframe.yml   # required
     keys-directory: keys                           # default: keys

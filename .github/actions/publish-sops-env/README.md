@@ -7,7 +7,7 @@ The release must exist before this action runs. Create it in a dedicated job and
 ## Usage
 
 ```yaml
-- uses: dupmachine/docker-apps/.github/actions/publish-sops-env@main
+- uses: rubykatzen/docker-apps/.github/actions/publish-sops-env@main
   with:
     manifest: projects/docker-apps/mainframe.yml   # required
     keys-directory: keys                           # default: keys

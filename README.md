@@ -42,19 +42,22 @@ This will:
 
 ### Release Bundle
 
-Pushing a semver tag matching `v*` publishes a deployable project bundle as a GitHub Release asset and updates the mutable `latest` release:
+Pushing a semver tag matching `v*` publishes a deployable project bundle as a GitHub Release asset:
 
 ```text
 rubykatzen/docker-apps@v1.2.3
 rubykatzen/docker-apps@latest
 ```
 
+In deploy refs, `@latest` is resolved through GitHub's latest release API. It is not a mutable `latest` tag or release.
+
 The release asset is `docker-apps.zip` with the compose files and helper scripts, but not runtime state such as `.env`, `apps-data/`, or `backups/`.
 
 Download and unpack a bundle:
 
 ```bash
-gh release download latest --repo rubykatzen/docker-apps --pattern docker-apps.zip
+tag="$(gh release view --repo rubykatzen/docker-apps --json tagName --jq .tagName)"
+gh release download "$tag" --repo rubykatzen/docker-apps --pattern docker-apps.zip
 unzip -q docker-apps.zip -d /opt/docker-apps/releases/latest
 ```
 
@@ -90,7 +93,7 @@ ansible-playbook ansible/deploy-docker-apps.yml \
   -e docker_apps_env_ref=dupmachine/secrets@latest:docker-apps--mainframe.sops.env
 ```
 
-The `docker_apps_env_ref` format is `owner/repo@tag:asset`. The playbook downloads the asset, decrypts it with the server-local SOPS age key (`docker_apps_sops_age_key_file`), links shared `.env` and `apps-data` into a timestamped release, switches `current`, and runs `./deploy.sh`.
+The `docker_apps_env_ref` format is `owner/repo@tag:asset`. Use an immutable semver tag for a pinned deploy, or `@latest` to resolve GitHub's latest release at deploy time. The playbook downloads the asset, decrypts it with the server-local SOPS age key (`docker_apps_sops_age_key_file`), links shared `.env` and `apps-data` into a timestamped release, switches `current`, and runs `./deploy.sh`.
 
 The `docker_apps_app_ref` defaults to `rubykatzen/docker-apps@latest`.
 

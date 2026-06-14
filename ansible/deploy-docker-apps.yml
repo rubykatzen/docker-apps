@@ -57,6 +57,15 @@
             if [ -n "${DOCKER_APPS_GITHUB_TOKEN:-}" ]; then
               export GH_TOKEN="$DOCKER_APPS_GITHUB_TOKEN"
             fi
+            if [ "$tag" = "latest" ]; then
+              resolved_tag="$(gh release view --repo "$repo" --json tagName --jq .tagName)"
+              if [ -z "$resolved_tag" ] || [ "$resolved_tag" = "null" ]; then
+                echo "Could not resolve GitHub latest release for $repo" >&2
+                exit 1
+              fi
+              echo "Resolved $repo@latest to $repo@$resolved_tag"
+              tag="$resolved_tag"
+            fi
             gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
             test -f "$out/$asset"
             if [ "$asset" != "docker-apps.zip" ]; then
@@ -114,6 +123,15 @@
                 asset="${tag#*:}"
                 tag="${tag%%:*}"
               fi
+              if [ "$tag" = "latest" ]; then
+                resolved_tag="$(gh release view --repo "$repo" --json tagName --jq .tagName)"
+                if [ -z "$resolved_tag" ] || [ "$resolved_tag" = "null" ]; then
+                  echo "Could not resolve GitHub latest release for $repo" >&2
+                  exit 1
+                fi
+                echo "Resolved $repo@latest to $repo@$resolved_tag" >&2
+                tag="$resolved_tag"
+              fi
               gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
               test -f "$out/$asset"
               echo "$out/$asset"
@@ -166,11 +184,20 @@
               asset="${tag#*:}"
               tag="${tag%%:*}"
             fi
-            if [ -z "$asset" ]; then
-              asset="$tag.sops.env"
-            fi
             if [ -n "${DOCKER_APPS_GITHUB_TOKEN:-}" ]; then
               export GH_TOKEN="$DOCKER_APPS_GITHUB_TOKEN"
+            fi
+            if [ "$tag" = "latest" ]; then
+              resolved_tag="$(gh release view --repo "$repo" --json tagName --jq .tagName)"
+              if [ -z "$resolved_tag" ] || [ "$resolved_tag" = "null" ]; then
+                echo "Could not resolve GitHub latest release for $repo" >&2
+                exit 1
+              fi
+              echo "Resolved $repo@latest to $repo@$resolved_tag"
+              tag="$resolved_tag"
+            fi
+            if [ -z "$asset" ]; then
+              asset="$tag.sops.env"
             fi
             gh release download "$tag" --repo "$repo" --pattern "$asset" --dir "$out"
             test -f "$out/$asset"

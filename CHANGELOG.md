@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.2.0] - 2026-06-14
+
+- fix: add actions: read permission to release job
+- refactor: use composable baseline actions for release workflow
+- switch release to workflow_dispatch + release-shared.yml
+- update baseline workflow refs to -shared suffix
+- resolve deploy latest refs via GitHub releases
+- update license copyright
+- add MIT license
+- chore: update changelog for v0.0.4
+
 ## [v0.0.4] - 2026-06-13
 
 - fix changelog trailing newline

@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.1] - 2026-06-14
+
+- chore: update baseline actions ref to v0.2.2
+
 ## [v0.2.0] - 2026-06-14
 
 - fix: add actions: read permission to release job

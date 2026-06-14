@@ -1,19 +1,33 @@
 name: Release
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: New version without v prefix (e.g. 0.1.0)
+        required: true
+        type: string
+      base_sha:
+        description: Expected HEAD SHA of main
+        required: true
+        type: string
 concurrency:
   group: release-docker-apps
 jobs:
   release:
+    uses: rubykatzen/baseline/.github/workflows/release-shared.yml@v0.1.0
+    with:
+      version: ${{ inputs.version }}
+      base_sha: ${{ inputs.base_sha }}
+    secrets: inherit
+  upload:
+    needs: release
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          ref: v${{ inputs.version }}
       - id: bundle
         uses: ./.github/actions/build-bundle
         with:
@@ -31,10 +45,6 @@ jobs:
             restart.sh
             up.sh
             README.md
-      - uses: rubykatzen/baseline/.github/actions/create-release@v0.0.12
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-      - run: gh release upload "${{ github.ref_name }}" "${{ steps.bundle.outputs.bundle-path }}"
+      - run: gh release upload "v${{ inputs.version }}" "${{ steps.bundle.outputs.bundle-path }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

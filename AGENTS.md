@@ -2,6 +2,25 @@
 
 This file provides guidance to AI coding agents when working with code in this repository.
 
+## Message Prefix
+
+Prefix every user-visible agent message with the agent emoji followed by the
+repository name in square brackets:
+
+`EMOJI [OWNER/REPO]:`
+
+Replace `OWNER/REPO` with the current GitHub repository name.
+
+Use the emoji to identify the agent:
+
+- `🤖` Codex
+- `🤔` Claude Code
+- `🖊️` Cursor
+- `🧩` unknown or other agent
+
+This applies to chat replies, PR comments, review comments, issue comments,
+status updates, and any other written communication.
+
 ## Repository Overview
 
 This is a Docker-based application management system (docker-apps) that orchestrates core self-hosted services using docker-compose. The architecture uses Traefik as a reverse proxy with automatic SSL certificate management, and can merge optional extra application catalogs during Ansible deployment.

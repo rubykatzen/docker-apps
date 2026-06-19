@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/dupmachine/workflows
-    rev: v0.0.12
+    rev: v0.5.3
     hooks:
       - id: yamllint
       - id: pymarkdown

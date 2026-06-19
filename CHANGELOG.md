@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+## [v0.2.2] - 2026-06-19
+
+- chore: migrate release workflow from baseline to releaser (#51)
+- chore(deps): bump https://github.com/dupmachine/workflows (#50)
+- chore: replace pre-commit autoupdate workflow with Dependabot (#37)
+- chore(deps): bump actions/checkout from 6 to 7 (#45)
+- chore(deps): bump rubykatzen/baseline/.github/workflows/pre-commit-autoupdate-shared.yml (#48)
+- chore(deps): bump rubykatzen/releaser/.github/workflows/dependabot-automerge-shared.yml (#46)
+- chore(deps): bump rubykatzen/baseline from 0.0.12 to 0.5.3 (#47)
+- chore(deps): bump rubykatzen/releaser/.github/workflows/telegram-release-notify-shared.yml (#49)
+- docs: add portable agent message prefix (#42)
+- chore: reference telegram-notify and dependabot-automerge from rubykatzen/releaser@v0.3.1
+
 ## [v0.2.1] - 2026-06-14
 
 - chore: update baseline actions ref to v0.2.2
